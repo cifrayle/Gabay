@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gabay.fragments.GabAIPage;
 import com.example.gabay.fragments.HomePage;
+import com.example.gabay.fragments.JourneyPage;
 import com.example.gabay.fragments.SettingsPage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarItemView;
@@ -65,8 +66,11 @@ public class MainActivity extends AppCompatActivity {
             title = "Settings";
             selectedFragment = new SettingsPage();
             updateActionBarVisibility(true); // Show action bar for SettingsPage
+        } else if (itemId == R.id.nav_Journey) {
+            title = "Journey";
+            selectedFragment = new JourneyPage();
+            updateActionBarVisibility(true); // Show action bar for SettingsPage
         }
-
 
         if (selectedFragment != null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
