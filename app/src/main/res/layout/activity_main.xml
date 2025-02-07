@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#D8E6F8"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <!-- Custom Action Bar -->
     <RelativeLayout
@@ -17,7 +17,7 @@
         android:visibility="visible">
 
         <include
-            layout="@layout/actionbar"
+            layout="@layout/main_activity_action_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </RelativeLayout>

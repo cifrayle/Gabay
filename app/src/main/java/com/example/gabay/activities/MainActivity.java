@@ -1,29 +1,27 @@
-package com.example.gabay;
+package com.example.gabay.activities;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
+import com.example.gabay.R;
 import com.example.gabay.fragments.GabAIPage;
 import com.example.gabay.fragments.HomePage;
 import com.example.gabay.fragments.JourneyPage;
 import com.example.gabay.fragments.SettingsPage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarItemView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
     private TextView actionBarTitle;
+
     private View actionBarContainer; // For toggling visibility
 
     @Override
@@ -95,6 +93,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", "Action bar visibility: " + (show ? "VISIBLE" : "GONE"));
         } else {
             Log.d("MainActivity", "Action bar container is NULL");
-        }
+        } 
     }
 }
