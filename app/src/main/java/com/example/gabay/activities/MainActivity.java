@@ -1,27 +1,28 @@
 package com.example.gabay.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
-import com.example.gabay.fragments.GabAIPage;
-import com.example.gabay.fragments.HomePage;
-import com.example.gabay.fragments.JourneyPage;
-import com.example.gabay.fragments.SettingsPage;
+import com.example.gabay.fragments.pages.GabAIPage;
+import com.example.gabay.fragments.pages.HomePage;
+import com.example.gabay.fragments.pages.JourneyPage;
+import com.example.gabay.fragments.pages.SettingsPage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class MainActivity extends AppCompatActivity {
-    private TextView actionBarTitle;
+public class MainActivity extends AppCompatActivity{
+//implements View.OnClickListener
 
+    private TextView actionBarTitle;
     private View actionBarContainer; // For toggling visibility
 
     @Override
@@ -32,18 +33,25 @@ public class MainActivity extends AppCompatActivity {
         actionBarTitle = findViewById(R.id.action_bar_title); // Initialize the title
         actionBarContainer = findViewById(R.id.custom_action_bar_container); // Initialize the container
 
+        // Handle navigation item clicks
         BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+        bottomNavView.setOnItemSelectedListener(navListener);
 
-        // HomePage is the default page
+        // Set HomePage as default page
         bottomNavView.setSelectedItemId(R.id.nav_Home); // Set the default item
         Fragment selectedFragment = new HomePage();
         updateActionBarVisibility(false); // Hide action bar on Home page
 
-        // Handle navigation item clicks
-        bottomNavView.setOnItemSelectedListener(navListener);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit(); // Set the default fragment
+
+        // Check if we should navigate to a specific tab on startup
+        if (getIntent().hasExtra("selectedTab")) {
+            int tabId = getIntent().getIntExtra("selectedTab", R.id.nav_Home);
+            bottomNavView.setSelectedItemId(tabId);
+        }
     }
+
 
     private NavigationBarView.OnItemSelectedListener navListener = item -> {
 
@@ -84,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             actionBarTitle.setText(title);
         }
     }
+
     // Method to toggle the visibility of the action bar
     private void updateActionBarVisibility(boolean show) {
         RelativeLayout actionBar = findViewById(R.id.custom_action_bar_container);
@@ -93,6 +102,19 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", "Action bar visibility: " + (show ? "VISIBLE" : "GONE"));
         } else {
             Log.d("MainActivity", "Action bar container is NULL");
-        } 
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        // Check if we need to select a specific tab
+        if (intent.hasExtra("selectedTab")) {
+            int tabId = intent.getIntExtra("selectedTab", R.id.nav_Home);
+            BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+            bottomNavView.setSelectedItemId(tabId);
+        }
     }
 }

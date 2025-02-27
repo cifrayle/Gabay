@@ -1,4 +1,4 @@
-package com.example.gabay.fragments;
+package com.example.gabay.fragments.pages;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,16 +11,15 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
 
-public class HomePage extends Fragment {
+public class GabAIPage extends Fragment {
 
-    View view; // Declare the view variable
+    View view;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_home_page, container, false);
+        view = inflater.inflate(R.layout.fragment_gabai_page, container, false);
 
         return view;
     }

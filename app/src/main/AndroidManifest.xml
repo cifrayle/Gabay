@@ -18,7 +18,11 @@
             android:name=".activities.MainActivity"
             android:exported="true">
 
-
+            <!--intent.action.MAIN for setting starting activity-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!--Lesson Activity-->
@@ -26,11 +30,7 @@
             android:name=".activities.LessonActivity"
             android:exported="true">
 
-            <!--intent.action.MAIN for setting starting activity-->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
     </application>

@@ -7,7 +7,7 @@ android:id="@+id/main"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="#D8E6F8"
-tools:context=".fragments.JourneyPage">
+tools:context=".fragments.pages.JourneyPage">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
