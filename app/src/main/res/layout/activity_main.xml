@@ -9,15 +9,34 @@
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
+    <!-- Custom Action Bar -->
+
     <!-- Fragment Container -->
-    <RelativeLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation"
-        />
 
     <!-- Bottom Navigation Menu -->
+    <RelativeLayout
+        android:id="@+id/custom_action_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fragment_container"
+        android:layout_marginTop="-51dp"
+        android:visibility="visible">
+
+        <include
+            layout="@layout/main_activity_action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="733dp"
+        android:layout_above="@+id/bottom_navigation"
+        android:layout_marginBottom="1dp">
+
+    </FrameLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
