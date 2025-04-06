@@ -9,25 +9,11 @@
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
-    <!-- Custom Action Bar -->
-    <RelativeLayout
-        android:id="@+id/custom_action_bar_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible">
-
-        <include
-            layout="@layout/main_activity_action_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-
     <!-- Fragment Container -->
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/custom_action_bar_container"
         android:layout_above="@+id/bottom_navigation"
         />
 

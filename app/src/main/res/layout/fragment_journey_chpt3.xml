@@ -14,7 +14,7 @@ tools:context=".fragments.pages.JourneyPage">
         android:layout_height="match_parent">
 
         <ScrollView
-            android:id="@+id/lvlscrl"
+            android:id="@+id/lvl_scrl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true">

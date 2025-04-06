@@ -18,7 +18,6 @@ public class GabAIPage extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         view = inflater.inflate(R.layout.fragment_gabai_page, container, false);
 
         return view;

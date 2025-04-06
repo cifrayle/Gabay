@@ -1,59 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- Container for chapter fragments -->
-    <RelativeLayout
-        android:id="@+id/custom_fragment_journey_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/chptscrl"
-        android:visibility="visible">
-        <!-- No include by default, we'll inflate programmatically -->
-    </RelativeLayout>
 
-    <HorizontalScrollView
+    <ScrollView
         android:id="@+id/chptscrl"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="wrap_content"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:visibility="visible">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/chapters_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="-8dp"
+            tools:layout_editor_absoluteY="-46dp">
 
             <Button
                 android:id="@+id/chpt1"
                 style="@style/Widget.AppCompat.Button"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="50dp"
                 android:text="@string/chapter_1"
-                android:visibility="visible" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/chpt2"
                 style="@style/Widget.AppCompat.Button"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="35dp"
                 android:text="@string/chapter_2"
-                android:visibility="visible" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt1" />
 
             <Button
                 android:id="@+id/chpt3"
                 style="@style/Widget.AppCompat.Button"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="35dp"
                 android:text="@string/chapter_3"
-                android:visibility="visible" />
-        </LinearLayout>
-    </HorizontalScrollView>
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt2" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/chpt4"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="35dp"
+                android:text="@string/chapter_4"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt3" />
+
+            <Button
+                android:id="@+id/chpt5"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="35dp"
+                android:text="@string/chapter_5"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt4" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+<!--
+    <RelativeLayout
+        android:id="@+id/custom_fragment_journey_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="36dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chptscrl">
+
+    </RelativeLayout>
+    -->
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

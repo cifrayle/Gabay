@@ -13,13 +13,11 @@ import com.example.gabay.R;
 
 public class HomePage extends Fragment {
 
-    View view; // Declare the view variable
+    View view;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home_page, container, false);
 
         return view;
