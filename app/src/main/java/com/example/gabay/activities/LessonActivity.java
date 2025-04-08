@@ -35,7 +35,7 @@ public class LessonActivity extends AppCompatActivity {
         currentLevel = getIntent().getIntExtra("level", 1);
 
         // Initialize back button from lesson to Journey page
-        toMainActivity = findViewById(R.id.lesson_activity_back_button);
+        toMainActivity = findViewById(R.id.levels_back_button);
         toMainActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,15 +91,7 @@ public class LessonActivity extends AppCompatActivity {
     }
 
     private void returnToJourneyPage() {
-        // Method 1: Finish this activity to return to previous screen
-        // This is the simplest approach if you always navigate from Journey to Lesson
         finish();
 
-        // Method 2: Explicitly navigate to MainActivity with Journey tab selected
-        // Use this if you might enter from different places
-        // Intent intent = new Intent(this, MainActivity.class);
-        // intent.putExtra("selectedTab", R.id.nav_Journey); // Add extra to specify Journey tab
-        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Clear activities on top of MainActivity
-        // startActivity(intent);
     }
 }

@@ -15,7 +15,6 @@
         android:layout_gravity="center"
         android:contentDescription="@null"
         android:src="@drawable/letter_e"
-
         tools:src="@tools:sample/avatars"
         tools:visibility="visible" />
 

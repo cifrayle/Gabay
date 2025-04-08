@@ -2,32 +2,28 @@ package com.example.gabay.fragments.chapters;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
 import com.example.gabay.activities.LessonActivity;
 
-public class Chapter1 extends Fragment implements View.OnClickListener {
+public class Chapter5 extends Fragment implements View.OnClickListener {
     private static final int[] BUTTON_IDS = {
-            R.id.lvl1, R.id.lvl2, R.id.lvl3, R.id.lvl4, R.id.lvl5, R.id.lvl6, R.id.lvl7, R.id.lvl8, R.id.lvl9, R.id.lvl10, R.id.lvl11, R.id.lvl12, R.id.lvl13, R.id.lvl14, R.id.lvl15
+            R.id.lvl1, R.id.lvl2, R.id.lvl3, R.id.lvl4, R.id.lvl5, R.id.lvl6, R.id.lvl7
     };
 
     private static int currentLessonLevel = -1;
     private View view;
 
-    public static Chapter1 newInstance() {
-        Chapter1 fragment = new Chapter1();
+    public static Chapter5 newInstance() {
+        Chapter5 fragment = new Chapter5();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -42,7 +38,7 @@ public class Chapter1 extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_journey_chpt1, container, false);
+        return inflater.inflate(R.layout.fragment_journey_chpt5, container, false);
     }
 
     @Override

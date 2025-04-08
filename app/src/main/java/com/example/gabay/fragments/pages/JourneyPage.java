@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,6 +16,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
 import com.example.gabay.fragments.chapters.Chapter1;
+import com.example.gabay.fragments.chapters.Chapter2;
+import com.example.gabay.fragments.chapters.Chapter3;
+import com.example.gabay.fragments.chapters.Chapter4;
+import com.example.gabay.fragments.chapters.Chapter5;
 
 public class JourneyPage extends Fragment{
     private ConstraintLayout mainContentContainer;
@@ -31,7 +37,7 @@ public class JourneyPage extends Fragment{
     }
 
     private void initializeChapterButtons() {
-        int[] buttonIds = {R.id.chpt1, R.id.chpt2, R.id.chpt3};
+        int[] buttonIds = {R.id.chpt1, R.id.chpt2, R.id.chpt3, R.id.chpt4, R.id.chpt5};
 
         // Set the onClickListener for each chapter button
         for (int i = 0; i < buttonIds.length; i++) {
@@ -59,12 +65,22 @@ public class JourneyPage extends Fragment{
             case 2:
                 chapterView = inflater.inflate(R.layout.fragment_journey_chpt2, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
-//                selectedChapter = new Chapter2();
+                selectedChapter = new Chapter2();
                 break;
             case 3:
                 chapterView = inflater.inflate(R.layout.fragment_journey_chpt3, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
-//                selectedChapter = new Chapter3();
+                selectedChapter = new Chapter3();
+                break;
+            case 4:
+                chapterView = inflater.inflate(R.layout.fragment_journey_chpt4, mainContentContainer, false);
+                mainContentContainer.addView(chapterView);
+                selectedChapter = new Chapter4();
+                break;
+            case 5:
+                chapterView = inflater.inflate(R.layout.fragment_journey_chpt5, mainContentContainer, false);
+                mainContentContainer.addView(chapterView);
+                selectedChapter = new Chapter5();
                 break;
         }
         if (selectedChapter != null){

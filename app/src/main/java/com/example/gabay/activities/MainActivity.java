@@ -1,14 +1,12 @@
 package com.example.gabay.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.ImageButton;
+
 import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity{
 //            bottomNavView.setSelectedItemId(tabId);
 //        }
     }
-
 
     //Manages bottomNavigation pages
     private NavigationBarView.OnItemSelectedListener navListener = item -> {

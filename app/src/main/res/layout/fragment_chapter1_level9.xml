@@ -9,12 +9,13 @@
     <!-- TODO: Update blank fragment layout -->
 
     <ImageView
-        android:id="@+id/MediaIconLvl3"
+        android:id="@+id/MediaIconLvl9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:contentDescription="@null"
-        android:src="@drawable/letter_c"
+        android:src="@drawable/letter_i"
+
         tools:src="@tools:sample/avatars"
         tools:visibility="visible" />
 
