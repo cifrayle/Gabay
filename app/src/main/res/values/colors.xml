@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="gabAI_blue">#D8E6F8</color>
-    <color name="transparent">#00FFFFFF</color>
+    <color name="primaryColor">#FFFFFF</color>
+    <color name="primaryVariant">#3700B3</color>
+    <color name="secondaryColor">#2369D1</color>
+    <color name="backgroundColor">#D8E6F8</color>
+    <color name="buttonTextColor">#000000</color>
+    <color name="buttonBackground">#FFFFFF</color>
+    <color name="transparentBackground">@android:color/transparent</color>
 </resources>
 

@@ -21,10 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:elevation="@dimen/cardview_default_elevation"
+        android:background="@color/primaryColor"
+        android:elevation="0dp"
         app:itemIconTint="@color/bottom_nav_selector"
-        app:itemTextColor="@color/bottom_nav_selector"
         app:menu="@menu/bottom_nav"
         />
 

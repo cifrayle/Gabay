@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:elevation="@dimen/cardview_default_elevation"
         android:layout_height="wrap_content"
-        android:background="@color/transparent">
+        android:background="@color/transparentBackground">
 
         <!-- Back Button -->
         <ImageButton
@@ -18,7 +18,7 @@
             android:paddingTop="35px"
             android:paddingBottom="35px"
             android:paddingStart="20px"
-            android:background="@color/transparent"
+            android:background="@color/transparentBackground"
             android:contentDescription="Back"
             />
 
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textSize="18sp"
-            android:textColor="@color/black"
+            android:textColor="@color/buttonTextColor"
             android:textStyle="bold"
             android:paddingTop="35px"
             android:paddingBottom="35px"

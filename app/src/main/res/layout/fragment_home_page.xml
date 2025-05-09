@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:text="Home Page"
         android:textSize="20sp"
-        android:textColor="@color/black"
+        android:textColor="@color/buttonTextColor"
         android:layout_centerInParent="true"/>
 </RelativeLayout>
