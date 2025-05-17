@@ -10,12 +10,6 @@
         tools:ignore="MenuTitle" />
 
     <item
-        android:contentDescription="Journey"
-        android:id="@+id/nav_Journey"
-        android:icon="@drawable/journey"
-        tools:ignore="MenuTitle" />
-
-    <item
         android:contentDescription="GabAI"
         android:id="@+id/nav_GabAI"
         android:icon="@drawable/hello"

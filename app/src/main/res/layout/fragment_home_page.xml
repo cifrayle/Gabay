@@ -8,11 +8,180 @@
     android:background="#D8E6F8"
     tools:context=".fragments.pages.HomePage">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Page"
-        android:textSize="20sp"
-        android:textColor="@color/buttonTextColor"
-        android:layout_centerInParent="true"/>
+    <!-- Replace or update this LinearLayout -->
+    <LinearLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- User title -->
+        <TextView
+            android:id="@+id/user_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="24dp"
+            android:text="Hello, User!"
+            android:textStyle="bold"
+            android:textSize="32sp"
+            android:textColor="@color/buttonTextColor"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/todo_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="25dp"
+            android:backgroundTint="@android:color/white"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/todo_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today's To-Do"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/buttonTextColor" />
+
+                <TextView
+                    android:id="@+id/todo_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Complete Chapter 2"
+                    android:textSize="14sp"
+                    android:textColor="@color/buttonTextColor"
+                    android:layout_marginTop="4dp" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:progress="70"
+                    android:max="100"
+                    android:progressTint="@color/secondaryColor" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- Lessons title -->
+        <TextView
+            android:id="@+id/lessons_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="24dp"
+            android:text="Your lessons"
+            android:textStyle="bold"
+            android:textSize="32sp"
+            android:textColor="@color/buttonTextColor"/>
+
+        <ScrollView
+            android:id="@+id/chptscrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/chapters_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                tools:layout_editor_absoluteX="-8dp"
+                tools:layout_editor_absoluteY="-46dp">
+
+
+                <Button
+                    android:id="@+id/chpt1"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="364dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/roundstyle"
+                    android:text="@string/chapter_1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.489"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/chpt2"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="364dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/roundstyle"
+                    android:text="@string/chapter_2"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.489"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chpt1" />
+
+                <Button
+                    android:id="@+id/chpt3"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="364dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/roundstyle"
+                    android:text="@string/chapter_3"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chpt2" />
+
+                <Button
+                    android:id="@+id/chpt4"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="364dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/roundstyle"
+                    android:text="@string/chapter_4"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chpt3" />
+
+                <Button
+                    android:id="@+id/chpt5"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="364dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/roundstyle"
+                    android:text="@string/chapter_5"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chpt4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </LinearLayout>
 </RelativeLayout>

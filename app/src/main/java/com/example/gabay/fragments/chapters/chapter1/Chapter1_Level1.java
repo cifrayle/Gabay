@@ -1,5 +1,6 @@
 package com.example.gabay.fragments.chapters.chapter1;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.MediaController;
+import android.widget.VideoView;
 
 import com.example.gabay.R;
 
@@ -60,7 +63,22 @@ public class Chapter1_Level1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chapter1_level1, container, false);
+        // layout inflater
+        View view = inflater.inflate(R.layout.fragment_chapter1_level1, container, false);
+
+        // ui elements
+        VideoView videoView = view.findViewById(R.id.videoView);
+        String path = "android.resource://" + getContext().getPackageName() + "/" + R.raw.a;
+        Uri uri = Uri.parse(path);
+        videoView.setVideoURI(uri);
+
+        // media controls
+        MediaController mediaController = new MediaController(getContext());
+        videoView.setMediaController(mediaController);
+        mediaController.setAnchorView(videoView);
+
+        videoView.start(); // Start playing the video
+
+        return view;
     }
 }

@@ -1,18 +1,13 @@
 package com.example.gabay.activities;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-import android.widget.ImageButton;
-
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
 import com.example.gabay.fragments.pages.GabAIPage;
 import com.example.gabay.fragments.pages.HomePage;
-import com.example.gabay.fragments.pages.JourneyPage;
 import com.example.gabay.fragments.pages.SettingsPage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -30,12 +25,6 @@ public class MainActivity extends AppCompatActivity{
 
         // Set HomePage as default page
         bottomNavView.setSelectedItemId(R.id.nav_Home);
-
-        // Check if we should navigate to a specific tab on startup
-//        if (getIntent().hasExtra("selectedTab")) {
-//            int tabId = getIntent().getIntExtra("selectedTab", R.id.nav_Home);
-//            bottomNavView.setSelectedItemId(tabId);
-//        }
     }
 
     //Manages bottomNavigation pages
@@ -49,8 +38,6 @@ public class MainActivity extends AppCompatActivity{
             selectedFragment = new GabAIPage();
         } else if (itemId == R.id.nav_Settings) {
             selectedFragment = new SettingsPage();
-        } else if (itemId == R.id.nav_Journey) {
-            selectedFragment = new JourneyPage();
         }
 
         if (selectedFragment != null) {
@@ -59,17 +46,5 @@ public class MainActivity extends AppCompatActivity{
         return true;
     };
 
-
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        setIntent(intent);
-//
-//        // Check if we need to select a specific tab
-//        if (intent.hasExtra("selectedTab")) {
-//            int tabId = intent.getIntExtra("selectedTab", R.id.nav_Home);
-//            BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
-//            bottomNavView.setSelectedItemId(tabId);
-//        }
-//    }
 }
+
