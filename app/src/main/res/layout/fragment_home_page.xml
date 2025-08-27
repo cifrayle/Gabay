@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,180 +8,336 @@
     android:background="#D8E6F8"
     tools:context=".fragments.pages.HomePage">
 
-    <!-- Replace or update this LinearLayout -->
-    <LinearLayout
-        android:id="@+id/main_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    
 
-        <!-- User title -->
-        <TextView
-            android:id="@+id/user_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="24dp"
-            android:text="Hello, User!"
-            android:textStyle="bold"
-            android:textSize="32sp"
-            android:textColor="@color/buttonTextColor"/>
+    <!-- User title -->
+    <TextView
+        android:id="@+id/user_title"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:gravity="start|center"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Hello, Cian!"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/todo_card"
+    <!-- Todo Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/todo_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="@android:color/white"
+        android:visibility="visible"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_title">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="25dp"
-            android:backgroundTint="@android:color/white"
-            android:visibility="visible">
+            android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/todo_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:orientation="vertical">
+                android:text="Today's To-Do"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/todo_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today's To-Do"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="@color/buttonTextColor" />
+            <TextView
+                android:id="@+id/todo_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Complete Chapter 1"
+                android:textColor="@color/accentTextColor"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/todo_title" />
 
-                <TextView
-                    android:id="@+id/todo_desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Complete Chapter 2"
-                    android:textSize="14sp"
-                    android:textColor="@color/buttonTextColor"
-                    android:layout_marginTop="4dp" />
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:max="100"
+                android:progress="30"
+                android:progressTint="@color/secondaryColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/todo_desc" />
 
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    style="?android:attr/progressBarStyleHorizontal"
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Lessons title -->
+    <TextView
+        android:id="@+id/lessons_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:text="Your lessons"
+        android:textColor="@color/buttonTextColor"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/todo_card" />
+
+    <!-- Chapters Container -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/chptscrl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lessons_title">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/chapters_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Chapter 1 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chpt1"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:progress="70"
-                    android:max="100"
-                    android:progressTint="@color/secondaryColor" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/buttonTextColor" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Alphabet"
+                        android:textColor="@color/accentTextColor"
+                        android:textSize="12sp" />
 
-        <!-- Lessons title -->
-        <TextView
-            android:id="@+id/lessons_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginLeft="24dp"
-            android:text="Your lessons"
-            android:textStyle="bold"
-            android:textSize="32sp"
-            android:textColor="@color/buttonTextColor"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <ScrollView
-            android:id="@+id/chptscrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
+            <!-- Chapter 2 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chpt2"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt1">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/chapters_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible"
-                tools:layout_editor_absoluteX="-8dp"
-                tools:layout_editor_absoluteY="-46dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_2"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/buttonTextColor" />
 
-                <Button
-                    android:id="@+id/chpt1"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="364dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/roundstyle"
-                    android:text="@string/chapter_1"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.489"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Greetings and Family Signs"
+                        android:textColor="@color/accentTextColor"
+                        android:textSize="12sp" />
 
-                <Button
-                    android:id="@+id/chpt2"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="364dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/roundstyle"
-                    android:text="@string/chapter_2"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.489"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chpt1" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <Button
-                    android:id="@+id/chpt3"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="364dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/roundstyle"
-                    android:text="@string/chapter_3"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chpt2" />
+            <!-- Chapter 3 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chpt3"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt2">
 
-                <Button
-                    android:id="@+id/chpt4"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="364dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/roundstyle"
-                    android:text="@string/chapter_4"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chpt3" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
-                <Button
-                    android:id="@+id/chpt5"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="364dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/roundstyle"
-                    android:text="@string/chapter_5"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chpt4" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_3"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/buttonTextColor" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
-    </LinearLayout>
-</RelativeLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Numbers and Ordinal Numbers"
+                        android:textColor="@color/accentTextColor"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Chapter 4 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chpt4"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt3">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_4"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/buttonTextColor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Weather"
+                        android:textColor="@color/accentTextColor"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Chapter 5 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chpt5"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chpt4">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_5"
+                        android:textColor="@color/buttonTextColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Color"
+                        android:textColor="@color/accentTextColor"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

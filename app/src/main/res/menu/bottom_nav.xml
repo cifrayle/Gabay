@@ -4,21 +4,23 @@
 
 
     <item
-        android:contentDescription="Home"
         android:id="@+id/nav_Home"
         android:icon="@drawable/ic_home"
-        tools:ignore="MenuTitle" />
+        android:title="Home" />
 
     <item
-        android:contentDescription="GabAI"
         android:id="@+id/nav_GabAI"
         android:icon="@drawable/hello"
-        tools:ignore="MenuTitle" />
+        android:title="GabAI" />
 
     <item
-        android:contentDescription="Settings"
-        android:id="@+id/nav_Settings"
-        android:icon="@drawable/setting"
-        tools:ignore="MenuTitle" />
+        android:id="@+id/nav_Dictionary"
+        android:icon="@drawable/ic_dictionary"
+        android:title="Dictionary" />
+
+    <item
+        android:id="@+id/nav_Profile"
+        android:icon="@drawable/ic_profileid"
+        android:title="Profile" />
 
 </menu>

@@ -6,6 +6,7 @@
     <color name="backgroundColor">#D8E6F8</color>
     <color name="buttonTextColor">#000000</color>
     <color name="buttonBackground">#FFFFFF</color>
+    <color name="accentTextColor">#454545</color>
     <color name="transparentBackground">@android:color/transparent</color>
 </resources>
 

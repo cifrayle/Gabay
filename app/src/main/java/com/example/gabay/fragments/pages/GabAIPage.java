@@ -222,21 +222,37 @@ public class GabAIPage extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (getView() != null && isAdded()) {
-            try {
-                ProcessCameraProvider cameraProvider = ProcessCameraProvider.getInstance(requireContext()).get();
-                cameraProvider.unbindAll();
-            } catch (Exception e) {
-                Log.e("CameraX", "Error unbinding camera: " + e.getMessage());
-            }
-        }
+        stopCameraSafely();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopCameraSafely();
         if (cameraExecutor != null) {
             cameraExecutor.shutdown();
+        }
+        if (tflite != null) {
+            try {
+                tflite.close();
+            } catch (Exception ignored) {}
+            tflite = null;
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopCameraSafely();
+    }
+
+    private void stopCameraSafely() {
+        if (!isAdded()) return;
+        try {
+            ProcessCameraProvider cameraProvider = ProcessCameraProvider.getInstance(requireContext()).get();
+            cameraProvider.unbindAll();
+        } catch (Exception e) {
+            Log.e("CameraX", "Error unbinding camera: " + e.getMessage());
         }
     }
 }

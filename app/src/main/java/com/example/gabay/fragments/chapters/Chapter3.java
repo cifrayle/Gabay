@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gabay.R;
 import com.example.gabay.activities.LessonActivity;
+import com.example.gabay.activities.MainActivity;
 
 public class Chapter3 extends Fragment implements View.OnClickListener {
     private static final int[] BUTTON_IDS = {
@@ -38,7 +39,7 @@ public class Chapter3 extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_journey_chpt3, container, false);
+        return inflater.inflate(R.layout.fragment_lessons_chpt3, container, false);
     }
 
     @Override
@@ -49,6 +50,7 @@ public class Chapter3 extends Fragment implements View.OnClickListener {
         Intent intent = new Intent(getActivity(), LessonActivity.class);
         intent.putExtra("level", level);
         intent.putExtra("fragment_to_load", "level_" + level);
+        intent.putExtra("chapter", 3);
 
         if (currentLessonLevel != level) {
             if (currentLessonLevel != -1) {
@@ -59,6 +61,14 @@ public class Chapter3 extends Fragment implements View.OnClickListener {
         } else {
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 3");
         }
     }
 

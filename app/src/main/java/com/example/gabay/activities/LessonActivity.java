@@ -24,6 +24,8 @@ import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level7;
 public class LessonActivity extends AppCompatActivity {
     private ImageButton toMainActivity;
     private int currentLevel = 1;
+    private int currentChapter = 1;
+    private TextView actionBarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +33,13 @@ public class LessonActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_lesson);
 
-        // Get level parameter from intent if available
+        // Get parameters from intent if available
         currentLevel = getIntent().getIntExtra("level", 1);
+        currentChapter = getIntent().getIntExtra("chapter", 1);
+
+        // Initialize action bar title view
+        actionBarTitle = findViewById(R.id.action_bar_title);
+        updateActionBarTitle();
 
         // Initialize back button from lesson to Journey page
         toMainActivity = findViewById(R.id.levels_back_button);
@@ -51,6 +58,13 @@ public class LessonActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void updateActionBarTitle() {
+        if (actionBarTitle != null) {
+            String title = "Chapter " + currentChapter + " - Level " + currentLevel;
+            actionBarTitle.setText(title);
+        }
     }
 
     private void loadLevelFragment(int level) {
@@ -88,6 +102,9 @@ public class LessonActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
+
+        // Ensure title reflects the current level
+        updateActionBarTitle();
     }
 
     private void returnToJourneyPage() {

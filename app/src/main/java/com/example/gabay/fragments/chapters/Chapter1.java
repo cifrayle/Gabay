@@ -5,17 +5,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import com.example.gabay.R;
+import com.example.gabay.activities.MainActivity;
 import com.example.gabay.activities.LessonActivity;
 
 public class Chapter1 extends Fragment implements View.OnClickListener {
@@ -42,7 +40,7 @@ public class Chapter1 extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_journey_chpt1, container, false);
+        return inflater.inflate(R.layout.fragment_lessons_chpt1, container, false);
     }
 
     @Override
@@ -53,6 +51,7 @@ public class Chapter1 extends Fragment implements View.OnClickListener {
         Intent intent = new Intent(getActivity(), LessonActivity.class);
         intent.putExtra("level", level);
         intent.putExtra("fragment_to_load", "level_" + level);
+        intent.putExtra("chapter", 1);
 
         if (currentLessonLevel != level) {
             if (currentLessonLevel != -1) {
@@ -63,6 +62,14 @@ public class Chapter1 extends Fragment implements View.OnClickListener {
         } else {
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 1");
         }
     }
 

@@ -7,10 +7,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,7 +27,7 @@ public class JourneyPage extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.fragment_journey_page, container, false);
+        view = inflater.inflate(R.layout.fragment_lessons_page, container, false);
         mainContentContainer = view.findViewById(R.id.chapters_container);
         initializeChapterButtons();
 
@@ -60,34 +56,36 @@ public class JourneyPage extends Fragment{
 
         switch(chapterNumber) {
             case 1:
-                chapterView = inflater.inflate(R.layout.fragment_journey_chpt1, mainContentContainer, false);
+                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt1, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
                 selectedChapter = new Chapter1();
                 break;
             case 2:
-                chapterView = inflater.inflate(R.layout.fragment_journey_chpt2, mainContentContainer, false);
+                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt2, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
                 selectedChapter = new Chapter2();
                 break;
             case 3:
-                chapterView = inflater.inflate(R.layout.fragment_journey_chpt3, mainContentContainer, false);
+                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt3, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
                 selectedChapter = new Chapter3();
                 break;
             case 4:
-                chapterView = inflater.inflate(R.layout.fragment_journey_chpt4, mainContentContainer, false);
+                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt4, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
                 selectedChapter = new Chapter4();
                 break;
             case 5:
-                chapterView = inflater.inflate(R.layout.fragment_journey_chpt5, mainContentContainer, false);
+                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt5, mainContentContainer, false);
                 mainContentContainer.addView(chapterView);
                 selectedChapter = new Chapter5();
                 break;
         }
-        if (selectedChapter != null){
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.chapters_container, selectedChapter).commit();
-
+        if (selectedChapter != null && activity != null){
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, selectedChapter)
+                    .addToBackStack(null)
+                    .commit();
         }
     }
 
