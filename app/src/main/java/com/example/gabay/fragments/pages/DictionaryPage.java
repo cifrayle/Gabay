@@ -16,7 +16,12 @@ public class DictionaryPage extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Gabay);
         return inflater.inflate(R.layout.fragment_dictionary_page, container, false);
+    }
+
+    private void setTheme(int themeGabay) {
+
     }
 }
 

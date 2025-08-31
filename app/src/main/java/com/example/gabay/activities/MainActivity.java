@@ -32,47 +32,42 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.Theme_Gabay);
         setContentView(R.layout.activity_main);
 
-        // Initialize fragment manager and cache
         fragmentManager = getSupportFragmentManager();
         fragmentCache = new HashMap<>();
         fragmentStateManager = new FragmentStateManager(fragmentManager);
 
-        // Initialize custom action bar views
         actionBarContainer = findViewById(R.id.custom_action_bar_container);
         actionBarTitle = findViewById(R.id.action_bar_title);
         backButton = findViewById(R.id.levels_back_button);
+
         if (backButton != null) {
             backButton.setOnClickListener(v -> onBackPressed());
         }
 
-        // Listen for back stack changes to update action bar visibility/title
         fragmentManager.addOnBackStackChangedListener(this::updateActionBarForTopFragment);
 
-        // Set onClickListener for bottomNavigationView
         BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
         bottomNavView.setOnItemSelectedListener(navListener);
 
-        // Set HomePage as default page
+        // default page
         bottomNavView.setSelectedItemId(R.id.nav_Home);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save fragment states
         fragmentStateManager.saveState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore fragment states
         fragmentStateManager.restoreState(savedInstanceState);
     }
 
-    // Manages bottomNavigation pages with caching
     private NavigationBarView.OnItemSelectedListener navListener = item -> {
         int itemId = item.getItemId();
         Fragment selectedFragment = getOrCreateFragment(itemId);

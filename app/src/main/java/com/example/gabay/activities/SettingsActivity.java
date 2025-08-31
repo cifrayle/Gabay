@@ -17,17 +17,11 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // Force light theme to prevent UI color changes
         setTheme(R.style.Theme_Gabay);
-        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        // Setup toolbar
         setupToolbar();
-
-        // Load the settings fragment
         loadSettingsFragment();
-        
-        // Ensure toolbar colors are properly set
         ensureToolbarColors();
     }
 

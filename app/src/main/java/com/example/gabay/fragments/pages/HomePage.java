@@ -37,7 +37,7 @@ public class HomePage extends BaseFragment {
 
     // Progress tracking
     private ProgressViewModel progressViewModel;
-    private CardView[] chapterCards; // Changed from Button[] to CardView[]
+    private CardView[] chapterCards;
 
     @Nullable
     @Override
@@ -63,11 +63,10 @@ public class HomePage extends BaseFragment {
         // Initialize ProgressViewModel
         progressViewModel = getActivityViewModel(ProgressViewModel.class);
 
-        initializeChapterCards(); // Changed method name
-        // profile button removed; bottom nav handles profile now
+        initializeChapterCards();
         setupProgressObservers();
 
-        // Analyze layout performance in debug builds
+        // layout perf
         if (rootView != null) {
             LayoutPerformanceMonitor.analyzeLayout(rootView);
         }
@@ -226,16 +225,14 @@ public class HomePage extends BaseFragment {
             default: return R.string.chapter_1;
         }
     }
-
-    // Initialize chapter cards with proper lifecycle management
-    private void initializeChapterCards() { // Updated method for CardView
+    private void initializeChapterCards() {
         if (!isFragmentActive()) return;
 
         int[] cardIds = {R.id.chpt1, R.id.chpt2, R.id.chpt3, R.id.chpt4, R.id.chpt5};
-        chapterCards = new CardView[cardIds.length]; // Changed to CardView array
+        chapterCards = new CardView[cardIds.length];
 
         for (int i = 0; i < cardIds.length; i++) {
-            chapterCards[i] = rootView.findViewById(cardIds[i]); // Now finds CardView instead of Button
+            chapterCards[i] = rootView.findViewById(cardIds[i]);
             if (chapterCards[i] != null) {
                 final int chapterNumber = i + 1;
                 chapterCards[i].setOnClickListener(v -> loadChapter(chapterNumber));
@@ -246,7 +243,6 @@ public class HomePage extends BaseFragment {
     private void loadChapter(int chapterNumber) {
         if (!isFragmentActive()) return;
 
-        // Update current progress in ViewModel
         if (progressViewModel != null) {
             progressViewModel.setCurrentProgress(chapterNumber, 1);
         }

@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Gabay" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryVariant">@color/primaryVariant</item>
-        <item name="colorOnPrimary">@color/buttonTextColor</item>
+        <item name="colorPrimaryVariant">#0074B3</item>
+        <item name="colorOnPrimary">@color/secondaryColor</item>
 
         <!-- Secondary colors -->
         <item name="colorSecondary">@color/secondaryColor</item>

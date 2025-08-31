@@ -29,6 +29,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -52,6 +55,9 @@ dependencies {
 
     //card view dependency
     implementation ("androidx.cardview:cardview:1.0.0")
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    implementation(libs.annotation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
