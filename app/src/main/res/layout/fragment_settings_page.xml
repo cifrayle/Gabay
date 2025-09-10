@@ -113,9 +113,9 @@
                     android:id="@+id/switch_soundeffects"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:backgroundTint="@color/secondaryColor"/>
+                    android:layout_weight="0"
+                    android:backgroundTint="@color/secondaryColor"
+                    android:checked="true" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -173,8 +173,8 @@
                     android:id="@+id/switch_notif"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/secondaryColor"/>
+                    android:layout_weight="0"
+                    android:backgroundTint="@color/secondaryColor" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -286,7 +286,7 @@
 
         <!-- Terms and Conditions Setting -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/terms_conditions_card"
+            android:id="@+id/Answer_A"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
@@ -341,7 +341,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/terms_conditions_card" />
+            app:layout_constraintTop_toBottomOf="@id/Answer_A" />
 
         <!-- Delete account settings -->
         <androidx.cardview.widget.CardView
@@ -393,13 +393,13 @@
         <Button
             android:id="@+id/logout_button"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginTop="48dp"
             android:backgroundTint="@color/secondaryColor"
             android:elevation="2dp"
             android:text="LOG OUT"
-            android:textColor="@color/backgroundColor"
-            android:textSize="14sp"
+            android:textColor="@color/primaryColor"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/delete_acc_button" />

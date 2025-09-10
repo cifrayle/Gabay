@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +20,7 @@ import com.example.gabay.viewmodels.ProgressViewModel;
  */
 public class QuizFragment extends BaseFragment {
 
-    private TextView questionTextView;
+    private ImageView questionImageView;
     private Button[] answerButtons;
     private Button submitButton;
     private ProgressViewModel progressViewModel;
@@ -58,10 +58,10 @@ public class QuizFragment extends BaseFragment {
     private void initializeQuizUI() {
         if (rootView == null) return;
         
-        questionTextView = rootView.findViewById(R.id.question_text);
+        questionImageView = rootView.findViewById(R.id.question_image);
         
         // Initialize answer buttons
-        int[] buttonIds = {R.id.answer_1, R.id.answer_2, R.id.answer_3, R.id.answer_4};
+        int[] buttonIds = {R.id.Answer_A, R.id.Answer_B, R.id.Answer_C, R.id.Answer_D};
         answerButtons = new Button[buttonIds.length];
         
         for (int i = 0; i < buttonIds.length; i++) {
@@ -80,12 +80,6 @@ public class QuizFragment extends BaseFragment {
 
     private void loadQuestion() {
         // This will be implemented when quiz content is added
-        // For now, just show a placeholder question
-        if (questionTextView != null) {
-            questionTextView.setText("Quiz Question " + (currentQuestionIndex + 1) + 
-                " for Chapter " + currentChapter + " Level " + currentLevel);
-        }
-        
         // Set placeholder answers
         if (answerButtons != null) {
             for (int i = 0; i < answerButtons.length; i++) {
@@ -125,23 +119,12 @@ public class QuizFragment extends BaseFragment {
             progressViewModel.updateChapterProgress(currentChapter, currentLevel, score);
         }
         
-        // Show completion message
-        if (questionTextView != null) {
-            questionTextView.setText("Quiz completed! Score: " + score + "/50");
-        }
-        
         // Hide answer buttons and submit button
         for (Button button : answerButtons) {
             if (button != null) button.setVisibility(View.GONE);
         }
         if (submitButton != null) submitButton.setVisibility(View.GONE);
-        
-        // Add continue button
-        Button continueButton = rootView.findViewById(R.id.continue_button);
-        if (continueButton != null) {
-            continueButton.setVisibility(View.VISIBLE);
-            continueButton.setOnClickListener(v -> navigateBack());
-        }
+
     }
 
     private void navigateBack() {
@@ -153,7 +136,7 @@ public class QuizFragment extends BaseFragment {
 
     @Override
     protected void cleanupResources() {
-        questionTextView = null;
+        questionImageView = null;
         answerButtons = null;
         submitButton = null;
         progressViewModel = null;
