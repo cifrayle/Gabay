@@ -16,17 +16,17 @@
             android:id="@+id/profile_title"
             android:layout_width="0dp"
             android:layout_height="42dp"
-            android:gravity="start|center"
-            android:layout_marginTop="0dp"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="6dp"
+            android:fontFamily="@font/nunito_extrabold"
+            android:gravity="start|center"
             android:text="Profile"
             android:textColor="@color/buttonTextColor"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Settings Button (top-right) -->
         <ImageButton
@@ -84,17 +84,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginTop="5dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/nunito_bold"
+            android:gravity="center"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
             android:text="Cian Bernales"
-            android:textStyle="bold"
-            android:textSize="18sp"
             android:textColor="@color/buttonTextColor"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_picture_container" />
 
         
@@ -105,6 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="Learning Progress"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
@@ -147,10 +149,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="Overall"
                         android:textColor="@color/buttonTextColor"
-                        android:textStyle="bold"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <ProgressBar
                         android:id="@+id/progress_overall"
@@ -190,19 +193,21 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="Chapters"
                         android:textColor="@color/buttonTextColor"
-                        android:textStyle="bold"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/chapters_completed_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:text="0/5"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="14sp"
-                        android:text="0/5"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -229,19 +234,21 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="Quiz Passed"
                         android:textColor="@color/buttonTextColor"
-                        android:textStyle="bold"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/quizzes_passed_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:text="0"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="14sp"
-                        android:text="0"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -253,6 +260,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="Chapter Progress"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
@@ -283,6 +291,7 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="Chapter 1"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="16sp"
@@ -294,6 +303,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/nunito_semibold"
                     android:text="5/15 levels completed"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp"

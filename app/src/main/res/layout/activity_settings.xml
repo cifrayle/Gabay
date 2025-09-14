@@ -8,21 +8,14 @@
     android:background="#D8E6F8"
     tools:context=".activities.SettingsActivity">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/settings_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primaryColor"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.Material3.ActionBar"
-        app:titleTextColor="@color/buttonTextColor"
-        app:subtitleTextColor="@color/buttonTextColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        layout="@layout/action_bar"
+        android:layout_width="match_parent"
+        android:id="@+id/action_bar"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- Settings fragment container -->
+
     <FrameLayout
         android:id="@+id/settings_fragment_container"
         android:layout_width="0dp"
@@ -30,6 +23,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/action_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

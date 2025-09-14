@@ -19,12 +19,13 @@
             android:id="@+id/in_app_settings_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="App Settings"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
         <!-- Language Translation Setting -->
@@ -59,13 +60,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Language Translation"
+                    android:fontFamily="@font/nunito"
+                    android:text="Language"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito"
                     android:text="English"
                     android:textColor="@color/secondaryColor"
                     android:textSize="14sp" />
@@ -105,6 +108,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/nunito"
                     android:text="Sound effects"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp" />
@@ -126,6 +130,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="Notifications"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
@@ -165,7 +170,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Daily Reminder"
+                    android:fontFamily="@font/nunito"
+                    android:text="Daily reminder"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp" />
 
@@ -211,13 +217,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Reminder Time"
+                    android:fontFamily="@font/nunito"
+                    android:text="Reminder time"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito"
                     android:text="9:00 AM"
                     android:textColor="@color/secondaryColor"
                     android:textSize="14sp" />
@@ -231,6 +239,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="Contact Us"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
@@ -240,7 +249,7 @@
 
         <!-- About Us Setting -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/about_us_card"
+            android:id="@+id/dictionary_item2"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="12dp"
@@ -270,6 +279,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/nunito"
                     android:text="About Us"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp" />
@@ -295,7 +305,7 @@
             app:cardElevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/about_us_card">
+            app:layout_constraintTop_toBottomOf="@id/dictionary_item2">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -316,6 +326,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/nunito"
                     android:text="Terms and Conditions"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp" />
@@ -336,6 +347,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="Account"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
@@ -375,6 +387,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/nunito"
                     android:text="Delete account"
                     android:textColor="@color/design_default_color_error"
                     android:textSize="14sp" />
@@ -397,6 +410,7 @@
             android:layout_marginTop="48dp"
             android:backgroundTint="@color/secondaryColor"
             android:elevation="2dp"
+            android:fontFamily="@font/nunito_bold"
             android:text="LOG OUT"
             android:textColor="@color/primaryColor"
             android:textSize="16sp"

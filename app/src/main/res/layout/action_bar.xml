@@ -5,22 +5,21 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:elevation="4dp"
-        android:layout_height="wrap_content"
-        android:background="@color/primaryColor">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primaryColor"
+        android:elevation="4dp">
 
         <!-- Back Button -->
         <ImageButton
             android:id="@+id/levels_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/baseline_arrow_back_24"
-            android:paddingTop="35px"
-            android:paddingBottom="35px"
-            android:paddingStart="20px"
             android:background="@color/transparentBackground"
             android:contentDescription="Back"
-            />
+            android:paddingStart="20px"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
+            android:src="@drawable/baseline_arrow_back_24" />
 
         <!-- Action Bar Title Container -->
         <LinearLayout
@@ -28,8 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:orientation="vertical"
             android:gravity="center"
+            android:orientation="vertical"
             android:paddingTop="35px"
             android:paddingBottom="35px">
 
@@ -38,22 +37,23 @@
                 android:id="@+id/action_bar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:fontFamily="@font/nunito_bold"
+                android:text="Default Title"
                 android:textColor="@color/buttonTextColor"
-                android:textStyle="bold"
-                android:text="Default Title" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <!-- Action Bar Subtitle -->
             <TextView
                 android:id="@+id/action_bar_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/buttonTextColor"
-                android:textStyle="italic"
                 android:layout_marginTop="2dp"
-                android:visibility="gone"
-                android:text="Default Subtitle" />
+                android:text="Default Subtitle"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
 
         </LinearLayout>
 

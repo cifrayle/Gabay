@@ -54,6 +54,7 @@ dependencies {
     implementation ("org.tensorflow:tensorflow-lite-support:0.4.3")
 
     //card view dependency
+    implementation ("com.google.android.material:material:1.6.0")
     implementation ("androidx.cardview:cardview:1.0.0")
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)

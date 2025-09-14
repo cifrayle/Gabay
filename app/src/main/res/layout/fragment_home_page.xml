@@ -15,10 +15,11 @@
         android:id="@+id/user_title"
         android:layout_width="0dp"
         android:layout_height="42dp"
-        android:gravity="start|center"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:fontFamily="@font/nunito_extrabold"
+        android:gravity="start|center"
         android:text="Hello, Cian!"
         android:textColor="@color/buttonTextColor"
         android:textSize="24sp"
@@ -51,6 +52,7 @@
                 android:id="@+id/todo_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_bold"
                 android:text="Today's To-Do"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="16sp"
@@ -63,9 +65,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:fontFamily="@font/nunito_semibold"
                 android:text="Complete Chapter 1"
                 android:textColor="@color/accentTextColor"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/todo_title" />
 
@@ -90,8 +93,9 @@
         android:id="@+id/lessons_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/nunito_extrabold"
         android:text="Your lessons"
         android:textColor="@color/buttonTextColor"
         android:textSize="24sp"
@@ -144,18 +148,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="@string/chapter_1"
+                        android:textColor="@color/buttonTextColor"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/buttonTextColor" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:fontFamily="@font/nunito_semibold"
                         android:text="Alphabet"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -188,18 +194,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="@string/chapter_2"
+                        android:textColor="@color/buttonTextColor"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/buttonTextColor" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:fontFamily="@font/nunito_semibold"
                         android:text="Greetings and Family Signs"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -232,18 +240,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="@string/chapter_3"
+                        android:textColor="@color/buttonTextColor"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/buttonTextColor" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:fontFamily="@font/nunito_semibold"
                         android:text="Numbers and Ordinal Numbers"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -276,18 +286,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="@string/chapter_4"
+                        android:textColor="@color/buttonTextColor"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/buttonTextColor" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:fontFamily="@font/nunito_semibold"
                         android:text="Weather"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -321,6 +333,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
                         android:text="@string/chapter_5"
                         android:textColor="@color/buttonTextColor"
                         android:textSize="16sp"
@@ -330,9 +343,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:fontFamily="@font/nunito_semibold"
                         android:text="Color"
                         android:textColor="@color/accentTextColor"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

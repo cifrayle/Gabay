@@ -11,63 +11,98 @@
 
 
     <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:background="@drawable/timer_bg_color_blue"
+        android:elevation="5dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:gravity="center"
+        android:text= "Time left: 10"
+        android:padding="8dp"
+        android:textAlignment="gravity"
+        android:textColor="@color/primaryColor"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/quiz_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:fontFamily="@font/nunito_extrabold"
+        android:gravity="center|start"
         android:text="Chapter Quiz"
         android:textColor="@color/buttonTextColor"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Question Text -->
+    <TextView
+        android:id="@+id/quiz_header2"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:gravity="center"
+        android:text="Chapter Quiz"
+        android:textColor="@color/transparentBackground"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Question Text -->
     <ImageView
         android:id="@+id/question_image"
         android:layout_width="256dp"
         android:layout_height="256dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="64dp"
         android:src="@drawable/letter_c"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/quiz_header" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/textHolder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/question_image">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/boldTitle_txtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/nunito_bold"
             android:text="Multiple choice: "
+            android:textColor="@color/buttonTextColor"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/regTitle_txtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/nunito"
             android:text="Select the correct sign."
+            android:textColor="@color/accentTextColor"
             android:textSize="16sp" />
     </LinearLayout>
 
     <!-- Answer A -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/Answer_A"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="@android:color/white"
+        android:background="@drawable/btn_choose_color_bg"
         android:clickable="true"
         android:elevation="12dp"
         app:cardCornerRadius="12dp"
@@ -77,8 +112,11 @@
         app:layout_constraintTop_toBottomOf="@+id/textHolder">
 
         <LinearLayout
+            android:id="@+id/layout_answer_A"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/transparentBackground"
+            android:clickable="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -93,26 +131,28 @@
                 android:backgroundTint="@color/secondaryColor"
                 android:clickable="false"
                 android:contentDescription="Change picture"
-                android:elevation="3dp"
+                android:elevation="0dp"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/letter_a" />
 
             <TextView
+                android:id="@+id/answerTextView_A"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/nunito_bold"
                 android:paddingStart="12dp"
-                android:text="C"
-                android:textColor="@color/accentTextColor"
+                android:text="choice a"
+                android:textColor="@color/buttonTextColor"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Answer B -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/Answer_B"
         android:layout_width="0dp"
         android:layout_height="40dp"
@@ -127,8 +167,10 @@
         app:layout_constraintTop_toBottomOf="@+id/Answer_A">
 
         <LinearLayout
+            android:id="@+id/layout_answer_B"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -142,26 +184,28 @@
                 android:background="@drawable/circular_button"
                 android:clickable="false"
                 android:contentDescription="B"
-                android:elevation="3dp"
+                android:elevation="0dp"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/letter_b" />
 
             <TextView
+                android:id="@+id/answerTextView_B"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/nunito_bold"
                 android:paddingStart="12dp"
-                android:text="Hello"
-                android:textColor="@color/accentTextColor"
+                android:text="choice b"
+                android:textColor="@color/buttonTextColor"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Answer C -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/Answer_C"
         android:layout_width="0dp"
         android:layout_height="40dp"
@@ -176,8 +220,10 @@
         app:layout_constraintTop_toBottomOf="@+id/Answer_B">
 
         <LinearLayout
+            android:id="@+id/layout_answer_C"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -191,26 +237,28 @@
                 android:background="@drawable/circular_button"
                 android:clickable="false"
                 android:contentDescription="C"
-                android:elevation="3dp"
+                android:elevation="0dp"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/letter_c" />
 
             <TextView
+                android:id="@+id/answerTextView_C"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/nunito_bold"
                 android:paddingStart="12dp"
-                android:text="A"
-                android:textColor="@color/accentTextColor"
+                android:text="choice c"
+                android:textColor="@color/buttonTextColor"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Answer D -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/Answer_D"
         android:layout_width="0dp"
         android:layout_height="40dp"
@@ -225,8 +273,10 @@
         app:layout_constraintTop_toBottomOf="@+id/Answer_C">
 
         <LinearLayout
+            android:id="@+id/layout_answer_D"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -240,23 +290,25 @@
                 android:background="@drawable/circular_button"
                 android:clickable="false"
                 android:contentDescription="D"
-                android:elevation="3dp"
+                android:elevation="0dp"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/letter_d" />
 
             <TextView
+                android:id="@+id/answerTextView_D"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/nunito_bold"
                 android:paddingStart="12dp"
-                android:text="No"
-                android:textColor="@color/accentTextColor"
+                android:text="choice d"
+                android:textColor="@color/buttonTextColor"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 
     <!-- Continue Button (initially hidden) -->
@@ -267,6 +319,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/secondaryColor"
+        android:fontFamily="@font/nunito_bold"
         android:text="Submit Answer"
         android:textColor="@color/primaryColor"
         android:textSize="16sp"
@@ -277,10 +330,11 @@
 
 
     <TextView
-        android:id="@+id/progress_indicator"
+        android:id="@+id/question_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:fontFamily="@font/nunito_semibold"
         android:text="Question 1 of 5"
         android:textColor="@color/secondaryColor"
         android:textSize="14sp"

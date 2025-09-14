@@ -54,6 +54,9 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     android:text="@string/_1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -70,7 +73,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_2"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,7 +92,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_3"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -102,7 +111,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_4"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -118,7 +130,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_5"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -134,7 +149,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_6"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -150,7 +168,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_7"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -166,7 +187,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_8"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -182,7 +206,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_9"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -198,7 +225,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_10"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -214,7 +244,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_11"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -230,7 +263,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_12"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -246,7 +282,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_13"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -262,7 +301,10 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_14"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -278,13 +320,33 @@ tools:context=".fragments.pages.JourneyPage">
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/roundstyle"
+                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/_15"
+                    android:textColor="@color/buttonTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </GridLayout>
+
         </ScrollView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <Button
+        android:id="@+id/btn_chapter_quiz"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="48dp"
+        android:backgroundTint="@color/secondaryColor"
+        android:fontFamily="@font/nunito_bold"
+        android:text="Take quiz"
+        android:textColor="@color/primaryColor"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/content_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
