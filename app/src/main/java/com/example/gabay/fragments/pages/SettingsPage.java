@@ -1,10 +1,13 @@
 package com.example.gabay.fragments.pages;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +19,11 @@ import com.example.gabay.viewmodels.ProgressViewModel;
 public class SettingsPage extends BaseFragment {
 
     private Button logoutButton;
+    private Switch soundSwitch;
     private ProgressViewModel progressViewModel;
+
+    private static final String PREFS_NAME = "AppSettings";
+    private static final String SOUND_PREF_KEY = "sound_enabled";
 
     @Nullable
     @Override
@@ -32,6 +39,18 @@ public class SettingsPage extends BaseFragment {
         // Initialize logout button
         if (rootView != null) {
             logoutButton = rootView.findViewById(R.id.logout_button);
+            soundSwitch = rootView.findViewById(R.id.switch_soundeffects);
+
+            SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            boolean soundEnabled = prefs.getBoolean(SOUND_PREF_KEY, true);
+            soundSwitch.setChecked(soundEnabled);
+
+            // Save preference when toggled
+            soundSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(SOUND_PREF_KEY, isChecked);
+                editor.apply();
+            });
             if (logoutButton != null) {
                 logoutButton.setOnClickListener(v -> logout());
             }
@@ -58,6 +77,7 @@ public class SettingsPage extends BaseFragment {
     @Override
     protected void cleanupResources() {
         logoutButton = null;
+        soundSwitch = null;
         progressViewModel = null;
     }
 }

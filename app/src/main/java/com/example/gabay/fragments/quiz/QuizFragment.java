@@ -1,7 +1,13 @@
 package com.example.gabay.fragments.quiz;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -47,18 +53,23 @@ public class QuizFragment extends BaseFragment {
 
     private ImageView questionImageView;
     private MaterialCardView[] answerCardViews;
+    private MaterialCardView timeBackground;
     private TextView[] answerTextViews;
     private Button submitButton;
     private TextView questionNumberTextView;
     private TextView quizHeaderTextView, quizHeaderTextView2;
-    private TextView boldTitle_txtView;
-    private TextView regTitle_txtView;
+    private TextView boldTitle_txtView, regTitle_txtView;
     private ProgressViewModel progressViewModel;
 
     private TextView timerTextView;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = 11000; // 11 seconds per question
     private static final long COUNTDOWN_INTERVAL = 1000; // 1 second intervals
+    private int lastSecond = -1;
+
+    private SoundPool soundPool;
+    private int tickSoundSFX, timeoutSoundSFX;
+    private int correctAnswerSFX, wrongAnswerSFX, completeSFX;
     
     private int currentChapter;
     private int currentLevel;
@@ -66,18 +77,44 @@ public class QuizFragment extends BaseFragment {
     private int score = 0;
     private int selectedAnswerIndex = -1;
     private boolean quizInProgress = false;
+    private boolean isSoundEnabled() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        return prefs.getBoolean("sound_enabled", true);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_quiz, container, false);
+        rootView = inflater.inflate(R.layout.fragment_quiz, container, false);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(2)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+        } else {
+            soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        // load sounds
+        tickSoundSFX = soundPool.load(requireContext(),R.raw.tick, 1);
+        timeoutSoundSFX = soundPool.load(requireContext(),R.raw.timeout, 1);
+        correctAnswerSFX = soundPool.load(requireContext(),R.raw.correctchoice, 1);
+        wrongAnswerSFX = soundPool.load(requireContext(),R.raw.wrongchoice, 1);
+        completeSFX = soundPool.load(requireContext(),R.raw.complete, 1);
+
+        return rootView;
     }
 
     @Override
     protected void initializeViews() {
-        // Initialize ProgressViewModel
         progressViewModel = getActivityViewModel(ProgressViewModel.class);
         
         // Get chapter and level from arguments
@@ -88,7 +125,6 @@ public class QuizFragment extends BaseFragment {
         }
 
         initializeQuizUI();
-
         showQuizIntroduction();
     }
 
@@ -98,6 +134,7 @@ public class QuizFragment extends BaseFragment {
         builder.setMessage("Quiz instructions:\n" +
                 "• The quiz is multiple choice\n" +
                 "• You have 10 seconds per question\n" +
+                "• Once you submit your answer, you cannot go back\n" +
                 "• You cannot cancel/pause the quiz once started\n\n" +
                 "Good luck!");
         builder.setPositiveButton("Start Quiz", (dialog, which) -> {
@@ -130,6 +167,7 @@ public class QuizFragment extends BaseFragment {
     private void initializeQuizUI() {
         if (rootView == null) return;
 
+        timeBackground = rootView.findViewById(R.id.time_background);
         questionImageView = rootView.findViewById(R.id.question_image);
         quizHeaderTextView = rootView.findViewById(R.id.quiz_header);
         quizHeaderTextView2 = rootView.findViewById(R.id.quiz_header2);
@@ -173,7 +211,6 @@ public class QuizFragment extends BaseFragment {
             public void onFinish() {
                 timeLeftInMillis = 0;
                 updateTimer();
-                // Time's up! Auto-submit or mark as wrong
                 onTimeUp();
             }
         }.start();
@@ -181,36 +218,49 @@ public class QuizFragment extends BaseFragment {
     private void updateTimer() {
         if (timerTextView != null) {
             int seconds = (int) (timeLeftInMillis / 1000);
-            timerTextView.setText(String.format("Time left: %02d", seconds));
+            timerTextView.setText(String.format(":%02d", seconds));
 
-            // Change color when time is running out
-            if (seconds <= 5) {
-                timerTextView.setBackground(getResources().getDrawable(R.drawable.timer_bg_color_red));
+            if (seconds > 3) {
+                if (isSoundEnabled() && tickSoundSFX != 0) {
+                    soundPool.play(tickSoundSFX, 10f, 10f, 0, 0, 1f);
+                }
             } else {
-                timerTextView.setBackground(getResources().getDrawable(R.drawable.timer_bg_color_blue));
+                if (isSoundEnabled() && timeoutSoundSFX != 0) {
+                    soundPool.play(timeoutSoundSFX, 1f, 1f, 0, 0, 1f);
+                }
+            }
+
+            if (seconds <= 3) {
+                timeBackground.setCardBackgroundColor(getResources().getColor(R.color.wrongAnswerColor));
+                timeBackground.setStrokeWidth(0);
+            } else {
+                timeBackground.setCardBackgroundColor(getResources().getColor(R.color.secondaryColor));
+                timeBackground.setStrokeWidth(0);
             }
         }
     }
 
     private void onTimeUp() {
-        // Time's up! Handle accordingly
+
         if (selectedAnswerIndex == -1) {
-            // No answer selected, mark as wrong
             Toast.makeText(getContext(), "Time's up! No answer selected.", Toast.LENGTH_SHORT).show();
         } else {
-            // Answer was selected but time ran out, check it
             boolean isCorrect = checkAnswer(selectedAnswerIndex);
             if (isCorrect) {
                 score += 1;
                 answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.correctAnswerColor));
                 Toast.makeText(getContext(), "Time's up! Answer was correct!", Toast.LENGTH_SHORT).show();
+                if (isSoundEnabled() && correctAnswerSFX != 0) soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
             } else {
                 answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
                 Toast.makeText(getContext(), "Time's up! Answer was: " + correctAnswer_list[currentQuestionIndex], Toast.LENGTH_SHORT).show();
+                if (isSoundEnabled() && wrongAnswerSFX != 0) soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
         }
+        if (isSoundEnabled() && timeoutSoundSFX != 0) {
+            soundPool.play(timeoutSoundSFX, 1f, 1f, 0, 0, 1f);
+        }
 
-        // Move to next question after a brief delay
         new Handler().postDelayed(() -> {
             moveToNextQuestion();
         }, 1200);
@@ -256,27 +306,37 @@ public class QuizFragment extends BaseFragment {
     }
 
     private void submitAnswer() {
+
         if (countDownTimer != null) {
             countDownTimer.cancel(); // Stop the timer when answer is submitted
         }
 
         if (selectedAnswerIndex == -1) {
             Toast.makeText(getContext(), "Please select an answer", Toast.LENGTH_SHORT).show();
+            if (isSoundEnabled() && wrongAnswerSFX != 0) {
+                soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
+            }
             return;
         }
 
         boolean isCorrect = checkAnswer(selectedAnswerIndex);
 
-        if (isCorrect) {
-            score += 1;
-            answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.correctAnswerColor));
-            Toast.makeText(getContext(), "Correct!", Toast.LENGTH_SHORT).show();
-        } else {
-            answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
-            Toast.makeText(getContext(), "Wrong! Correct answer: " + correctAnswer_list[currentQuestionIndex], Toast.LENGTH_SHORT).show();
-        }
+            if (isCorrect) {
+                score += 1;
+                answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.correctAnswerColor));
+                Toast.makeText(getContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                if (isSoundEnabled() && correctAnswerSFX != 0) {
+                    soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
+                }
+            } else {
+                answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
+                Toast.makeText(getContext(), "Wrong! Correct answer: " + correctAnswer_list[currentQuestionIndex], Toast.LENGTH_SHORT).show();
+                if (isSoundEnabled() && wrongAnswerSFX != 0) {
+                    soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
+                }
+            }
 
-        // Move to next question after a brief delay
+        // delay
         new Handler().postDelayed(() -> {
             moveToNextQuestion();
         }, 1200);
@@ -291,7 +351,6 @@ public class QuizFragment extends BaseFragment {
     private void loadQuestion() {
 
         updateTimer();
-        // Update question number
         if (questionNumberTextView != null) {
             questionNumberTextView.setText("Question " + (currentQuestionIndex + 1) + " of " + img_Question_List.length);
         }
@@ -301,7 +360,6 @@ public class QuizFragment extends BaseFragment {
             questionImageView.setImageResource(img_Question_List[currentQuestionIndex]);
         }
 
-        // Load choices for current question
         if (answerTextViews != null) {
             int choicesStartIndex = currentQuestionIndex * 4;
             for (int i = 0; i < answerTextViews.length; i++) {
@@ -318,7 +376,6 @@ public class QuizFragment extends BaseFragment {
             }
         }
 
-        // Reset selection
         selectedAnswerIndex = -1;
     }
 
@@ -330,51 +387,60 @@ public class QuizFragment extends BaseFragment {
             progressViewModel.updateChapterProgress(currentChapter, currentLevel, score);
         }
 
-        // show final score
-        if (getContext() != null) {
-            Toast.makeText(getContext(), "Quiz completed!", Toast.LENGTH_SHORT).show();
-        }
-
-        if (questionNumberTextView != null) {
-            questionNumberTextView.setVisibility(View.GONE);
-        }
-        if (boldTitle_txtView != null) {
-            boldTitle_txtView.setText("Your score: ");
-            boldTitle_txtView.setTextSize(24);
-        }
-        if (regTitle_txtView != null) {
-            regTitle_txtView.setText(score + "/5");
-            regTitle_txtView.setTextSize(24);
-        }
-        if (timerTextView != null) {
-            timerTextView.setVisibility(View.GONE);
-        }
-        if (quizHeaderTextView != null) {
-            quizHeaderTextView.setVisibility(View.GONE);
-        }
-        if (quizHeaderTextView2 != null) {
-            quizHeaderTextView2.setText("Quiz Completed!");
-            quizHeaderTextView2.setTextColor(Color.BLACK);
-        }
-        if (questionImageView != null) {
-            questionImageView.setImageResource(R.drawable.img_medal);
-
-        }
-        for (MaterialCardView cardView : answerCardViews) {
-            if (cardView != null) {
-                cardView.setVisibility(View.GONE);
+            //final score
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Quiz completed!", Toast.LENGTH_SHORT).show();
+                if (isSoundEnabled() && completeSFX != 0) {
+                    soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
+                }
             }
-        }
-        // cancel timer to prevent memory leaks
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
+
+            if (questionNumberTextView != null) {
+                questionNumberTextView.setVisibility(View.GONE);
+            }
+            if (boldTitle_txtView != null) {
+                boldTitle_txtView.setText("Your score: ");
+                boldTitle_txtView.setTextSize(24);
+            }
+            if (regTitle_txtView != null) {
+                regTitle_txtView.setText(score + "/5");
+                regTitle_txtView.setTextSize(24);
+            }
+            if (timeBackground != null) {
+                timeBackground.setVisibility(View.GONE);
+            }
+            if (quizHeaderTextView != null) {
+                quizHeaderTextView.setVisibility(View.GONE);
+            }
+            if (quizHeaderTextView2 != null) {
+                quizHeaderTextView2.setText("Quiz Completed!");
+                quizHeaderTextView2.setTextColor(Color.BLACK);
+            }
+            if (questionImageView != null) {
+                questionImageView.setImageResource(R.drawable.img_medal);
+
+            }
+            for (MaterialCardView cardView : answerCardViews) {
+                if (cardView != null) {
+                    cardView.setVisibility(View.GONE);
+                }
+            }
+            // cancel timer to prevent memory leaks
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+            }
+
+            if (submitButton != null) {
+                submitButton.setText("Back to lesson");
+                submitButton.setOnClickListener(v -> navigateBack());
+            }
+
+            if (isSoundEnabled() && completeSFX != 0) {
+            soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
+            }
+
         }
 
-        if (submitButton != null) {
-            submitButton.setText("Back to lesson");
-            submitButton.setOnClickListener(v -> navigateBack());
-        }
-    }
 
     // Handle back button press
     @Override
@@ -410,6 +476,15 @@ public class QuizFragment extends BaseFragment {
         submitButton = null;
         questionNumberTextView = null;
         progressViewModel = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
     }
 
     /**

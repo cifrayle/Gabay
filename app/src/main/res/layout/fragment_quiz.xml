@@ -10,22 +10,62 @@
     tools:context=".fragments.quiz.QuizFragment">
 
 
-    <TextView
-        android:id="@+id/timerTextView"
-        android:layout_width="0dp"
-        android:layout_height="42dp"
-        android:background="@drawable/timer_bg_color_blue"
-        android:elevation="5dp"
-        android:fontFamily="@font/nunito_semibold"
-        android:gravity="center"
-        android:text= "Time left: 10"
-        android:padding="8dp"
-        android:textAlignment="gravity"
-        android:textColor="@color/primaryColor"
-        android:textSize="16sp"
-        android:textStyle="normal"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/time_background"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:clickable="false"
+        android:elevation="12dp"
+        app:cardBackgroundColor="@color/secondaryColor"
+        app:cardCornerRadius="40dp"
+        app:cardElevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/transparentBackground"
+            android:clickable="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageButton
+                android:id="@+id/time_bgic"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center|end"
+                android:layout_margin="1dp"
+                android:background="@color/transparentBackground"
+                android:clickable="false"
+                android:contentDescription="Time left"
+                android:elevation="0dp"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_time_notif"
+                android:textAlignment="center"
+                app:tint="@color/primaryColor" />
+
+            <TextView
+                android:id="@+id/timerTextView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:elevation="0dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:gravity="center|start"
+                android:padding="0dp"
+                android:text=":10"
+                android:textAlignment="center"
+                android:textColor="@color/primaryColor"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/quiz_header"
@@ -40,11 +80,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Question Text -->
     <TextView
         android:id="@+id/quiz_header2"
         android:layout_width="0dp"
         android:layout_height="42dp"
+        android:fontFamily="@font/nunito_extrabold"
         android:gravity="center"
         android:text="Chapter Quiz"
         android:textColor="@color/transparentBackground"
@@ -92,7 +132,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/nunito"
             android:text="Select the correct sign."
-            android:textColor="@color/accentTextColor"
+            android:textColor="@color/buttonTextColor"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -319,6 +359,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/secondaryColor"
+        android:elevation="12dp"
         android:fontFamily="@font/nunito_bold"
         android:text="Submit Answer"
         android:textColor="@color/primaryColor"

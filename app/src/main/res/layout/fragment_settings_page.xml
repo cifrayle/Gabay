@@ -54,7 +54,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_translate"
                     android:contentDescription="Language translation"
-                    app:tint="@color/accentTextColor" />
+                    app:tint="@color/buttonTextColor" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -62,13 +62,13 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
                     android:text="Language"
-                    android:textColor="@color/accentTextColor"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito"
+                    android:fontFamily="@font/nunito_semibold"
                     android:text="English"
                     android:textColor="@color/secondaryColor"
                     android:textSize="14sp" />
@@ -102,7 +102,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_soundeffct"
                     android:contentDescription="Sound effects"
-                    app:tint="@color/accentTextColor" />
+                    app:tint="@color/buttonTextColor" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -110,7 +110,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
                     android:text="Sound effects"
-                    android:textColor="@color/accentTextColor"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
                 <Switch
@@ -164,7 +164,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_notif"
                     android:contentDescription="Daily reminder"
-                    app:tint="@color/accentTextColor"/>
+                    app:tint="@color/buttonTextColor"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -172,7 +172,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
                     android:text="Daily reminder"
-                    android:textColor="@color/accentTextColor"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
                 <Switch
@@ -211,7 +211,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_time_notif"
                     android:contentDescription="Reminder time"
-                    app:tint="@color/accentTextColor"/>
+                    app:tint="@color/buttonTextColor"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -219,13 +219,13 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
                     android:text="Reminder time"
-                    android:textColor="@color/accentTextColor"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito"
+                    android:fontFamily="@font/nunito_semibold"
                     android:text="9:00 AM"
                     android:textColor="@color/secondaryColor"
                     android:textSize="14sp" />
@@ -273,7 +273,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_aboutus"
                     android:contentDescription="About us"
-                    app:tint="@color/accentTextColor"/>
+                    app:tint="@color/buttonTextColor"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -281,7 +281,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
                     android:text="About Us"
-                    android:textColor="@color/accentTextColor"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
                 <ImageView
@@ -320,7 +320,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_terms"
                     android:contentDescription="Terms and conditions"
-                    app:tint="@color/accentTextColor"/>
+                    app:tint="@color/buttonTextColor"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -328,7 +328,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
                     android:text="Terms and Conditions"
-                    android:textColor="@color/accentTextColor"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
                 <ImageView
