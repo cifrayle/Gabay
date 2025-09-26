@@ -2,6 +2,8 @@ package com.example.gabay.activities;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
@@ -13,16 +15,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.gabay.R;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level1;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level2;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level3;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level4;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level5;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level6;
-import com.example.gabay.fragments.chapters.chapter1.Chapter1_Level7;
+import com.example.gabay.fragments.LessonFragment;
 
 public class LessonActivity extends AppCompatActivity {
-    private ImageButton toMainActivity;
+
     private int currentLevel = 1;
     private int currentChapter = 1;
     private TextView actionBarTitle;
@@ -31,34 +27,24 @@ public class LessonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Gabay);
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        //EdgeToEdge.enable(this);
         setContentView(R.layout.activity_lesson);
 
-        // Get parameters from intent if available
+        ImageButton backButton = findViewById(R.id.levels_back_button);
+        backButton.setOnClickListener(v -> onBackPressed());
+
         currentLevel = getIntent().getIntExtra("level", 1);
         currentChapter = getIntent().getIntExtra("chapter", 1);
+        String levelTitle = getIntent().getStringExtra("levelTitle");
 
-        // Initialize action bar title view
         actionBarTitle = findViewById(R.id.action_bar_title);
-        updateActionBarTitle();
+        if (levelTitle != null) {
+            actionBarTitle.setText(levelTitle);
+        } else {
+            updateActionBarTitle();
+        }
 
-        // Initialize back button from lesson to Journey page
-        toMainActivity = findViewById(R.id.levels_back_button);
-        toMainActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                returnToJourneyPage();
-            }
-        });
-
-        // Load the appropriate fragment based on the level
-        loadLevelFragment(currentLevel);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        loadLevelFragment(currentLevel, levelTitle);
     }
 
     private void updateActionBarTitle() {
@@ -67,45 +53,18 @@ public class LessonActivity extends AppCompatActivity {
             actionBarTitle.setText(title);
         }
     }
-
-    private void loadLevelFragment(int level) {
-        Fragment fragment = null;
-
-        // Select the appropriate fragment based on level
-        switch (level) {
-            case 1:
-                fragment = new Chapter1_Level1();
-                break;
-            case 2:
-                fragment = new Chapter1_Level2();
-                break;
-            case 3:
-                fragment = new Chapter1_Level3();
-                break;
-            case 4:
-                fragment = new Chapter1_Level4();
-                break;
-            case 5:
-                fragment = new Chapter1_Level5();
-                break;
-            case 6:
-                fragment = new Chapter1_Level6();
-                break;
-            case 7:
-                fragment = new Chapter1_Level7();
-                break;
-            default:
-                fragment = new Chapter1_Level1(); // Default to level 1
-                break;
+    public void updateLessonTitle(String newTitle) {
+        if (actionBarTitle != null) {
+            actionBarTitle.setText(newTitle);
         }
+    }
 
-        // Replace the current fragment with the selected one
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
+    private void loadLevelFragment(int chapter, String levelTitle) {
+        Fragment fragment = LessonFragment.newInstance("chapter1", currentLevel);
 
-        // Ensure title reflects the current level
-        updateActionBarTitle();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
     private void returnToJourneyPage() {

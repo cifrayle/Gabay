@@ -460,7 +460,6 @@ public class QuizFragment extends BaseFragment {
     }
 
     private void navigateBack() {
-        // navigate back to the lesson
         if (getActivity() != null) {
             getActivity().onBackPressed();
         }
