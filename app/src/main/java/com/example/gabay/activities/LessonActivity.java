@@ -1,16 +1,14 @@
 package com.example.gabay.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.*;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,7 +25,6 @@ public class LessonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Gabay);
         super.onCreate(savedInstanceState);
-        //EdgeToEdge.enable(this);
         setContentView(R.layout.activity_lesson);
 
         ImageButton backButton = findViewById(R.id.levels_back_button);
@@ -67,8 +64,11 @@ public class LessonActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void returnToJourneyPage() {
-        finish();
 
+    @Override
+    public void onBackPressed() {
+        // When going back to Chapter1, make sure we set the result
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 }

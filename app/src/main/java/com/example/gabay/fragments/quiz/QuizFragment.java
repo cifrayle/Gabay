@@ -384,7 +384,7 @@ public class QuizFragment extends BaseFragment {
 
         if (progressViewModel != null) {
             progressViewModel.markQuizCompleted(currentChapter, currentLevel);
-            progressViewModel.updateChapterProgress(currentChapter, currentLevel, score);
+            progressViewModel.updateChapterProgress(currentChapter, currentLevel);
         }
 
             //final score
@@ -441,8 +441,6 @@ public class QuizFragment extends BaseFragment {
 
         }
 
-
-    // Handle back button press
     @Override
     public void onResume() {
         super.onResume();

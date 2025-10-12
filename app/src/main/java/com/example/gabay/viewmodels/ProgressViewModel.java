@@ -1,30 +1,40 @@
 package com.example.gabay.viewmodels;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.example.gabay.services.SupabaseJavaService;
+import com.example.gabay.services.SupabaseService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * ViewModel for managing user progress across chapters and levels
- * Supports future features: quizzes, progress tracking, achievements
+ * Now with Supabase integration for persistent storage
  */
 public class ProgressViewModel extends ViewModel {
 
-    // Chapter progress tracking
-    private final MutableLiveData<Map<Integer, ChapterProgress>> chapterProgress;
-    
+    // Chapter progress tracking - using simple integer counts instead of ChapterProgress objects
+    private final MutableLiveData<Map<Integer, Integer>> chapterProgress;
+
     // Quiz completion tracking
     private final MutableLiveData<Map<String, Boolean>> quizCompletion;
-    
+
     // User profile data
     private final MutableLiveData<UserProfile> userProfile;
-    
+
     // Current active chapter and level
     private final MutableLiveData<Integer> currentChapter;
     private final MutableLiveData<Integer> currentLevel;
+
+    // Total progress
+    private final MutableLiveData<Integer> totalProgress;
 
     public ProgressViewModel() {
         chapterProgress = new MutableLiveData<>(new HashMap<>());
@@ -32,52 +42,175 @@ public class ProgressViewModel extends ViewModel {
         userProfile = new MutableLiveData<>(new UserProfile());
         currentChapter = new MutableLiveData<>(1);
         currentLevel = new MutableLiveData<>(1);
-        
+        totalProgress = new MutableLiveData<>(0);
+
         initializeDefaultProgress();
+
+        // Load progress from Supabase when ViewModel is created
+        refreshProgressFromSupabase();
     }
 
     /**
      * Initialize default progress for all chapters
      */
     private void initializeDefaultProgress() {
-        Map<Integer, ChapterProgress> progress = new HashMap<>();
-        
+        Map<Integer, Integer> progress = new HashMap<>();
+
         // Initialize progress for 5 chapters
         for (int i = 1; i <= 5; i++) {
-            progress.put(i, new ChapterProgress(i, 0, 0));
+            progress.put(i, 0);
         }
-        
+
         chapterProgress.setValue(progress);
+        updateTotalProgress();
     }
 
     /**
      * Update progress for a specific chapter and level
      */
-    public void updateChapterProgress(int chapter, int level, int score) {
-        Map<Integer, ChapterProgress> progress = chapterProgress.getValue();
-        if (progress != null && progress.containsKey(chapter)) {
-            ChapterProgress chapterProgress = progress.get(chapter);
-            if (chapterProgress != null) {
-                chapterProgress.updateProgress(level, score);
-                this.chapterProgress.setValue(progress);
+    public void updateChapterProgress(int chapter, int level) {
+        Log.d("ProgressDebug", "=== UPDATING PROGRESS: Chapter " + chapter + ", Level " + level + " ===");
+
+        // 1. Update local state immediately for responsive UI
+        updateLocalProgress(chapter, level);
+
+        // 2. Save to Supabase in background
+        new Thread(() -> {
+            try {
+                Log.d("ProgressDebug", "Saving to Supabase...");
+                boolean success = SupabaseJavaService.updateUserProgress(chapter, level); // i am having an error here
+
+                if (success) {
+                    Log.d("ProgressDebug", "✅ Progress saved to Supabase successfully");
+
+                    // Refresh from Supabase to ensure consistency
+                    refreshProgressFromSupabase();
+                } else {
+                    Log.e("ProgressDebug", "❌ Failed to save progress to Supabase");
+                }
+            } catch (Exception e) {
+                Log.e("ProgressDebug", "❌ Error updating progress in Supabase: " + e.getMessage());
             }
+        }).start();
+    }
+
+    /**
+     * Update local progress state
+     */
+    private void updateLocalProgress(int chapter, int level) {
+        Map<Integer, Integer> currentProgress = chapterProgress.getValue();
+        if (currentProgress != null) {
+            // Update the completed levels for this chapter
+            int currentCompleted = Math.max(currentProgress.getOrDefault(chapter, 0), level);
+            currentProgress.put(chapter, currentCompleted);
+            chapterProgress.setValue(currentProgress);
+
+            Log.d("ProgressDebug", "📊 Local progress updated - Chapter " + chapter + ": " + currentCompleted + " levels");
+
+            // Update total progress
+            updateTotalProgress();
         }
+    }
+
+    /**
+     * Calculate total progress percentage
+     */
+    private void updateTotalProgress() {
+        Map<Integer, Integer> progress = chapterProgress.getValue();
+        if (progress == null) return;
+
+        int totalCompleted = 0;
+        int totalPossible = 0;
+
+        for (int chapter = 1; chapter <= 5; chapter++) {
+            int completed = progress.getOrDefault(chapter, 0);
+            int maxLevels = getMaxLevelsForChapter(chapter);
+
+            totalCompleted += completed;
+            totalPossible += maxLevels;
+
+            Log.d("ProgressDebug", "Chapter " + chapter + ": " + completed + "/" + maxLevels + " levels");
+        }
+
+        int percentage = totalPossible > 0 ? (totalCompleted * 100) / totalPossible : 0;
+        totalProgress.setValue(percentage);
+
+        Log.d("ProgressDebug", "🎯 Total progress: " + percentage + "% (" + totalCompleted + "/" + totalPossible + " levels)");
+    }
+
+    private int getMaxLevelsForChapter(int chapter) {
+        switch (chapter) {
+            case 1: return 27;
+            case 2: return 30;
+            case 3: return 30;
+            case 4: return 30;
+            case 5: return 30;
+            default: return 30;
+        }
+    }
+
+    /**
+     * Refresh progress from Supabase
+     */
+    public void refreshProgressFromSupabase() {
+        Log.d("ProgressDebug", "🔄 Refreshing progress from Supabase...");
+
+        new Thread(() -> {
+            try {
+                Map<Integer, Integer> supabaseProgress = new HashMap<>();
+
+                // Fetch progress for each chapter from Supabase
+                for (int chapter = 1; chapter <= 5; chapter++) {
+                    int completedLevels = SupabaseJavaService.getCompletedLevelsCount(chapter); // i am having an error here
+                    supabaseProgress.put(chapter, completedLevels);
+                    Log.d("ProgressDebug", "📥 Chapter " + chapter + " from Supabase: " + completedLevels + " levels");
+                }
+
+                // Update LiveData on main thread
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    chapterProgress.setValue(supabaseProgress);
+                    updateTotalProgress();
+                    Log.d("ProgressDebug", "✅ Progress refreshed from Supabase");
+                });
+
+            } catch (Exception e) {
+                Log.e("ProgressDebug", "❌ Error refreshing progress from Supabase: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    /**
+     * Get total progress as LiveData
+     */
+    public LiveData<Integer> getTotalProgress() {
+        return totalProgress;
+    }
+
+    /**
+     * Get all chapter progress as LiveData
+     */
+    public LiveData<Map<Integer, Integer>> getAllChapterProgress() {
+        return chapterProgress;
     }
 
     /**
      * Get progress for a specific chapter
      */
-    public ChapterProgress getChapterProgress(int chapter) {
-        Map<Integer, ChapterProgress> progress = chapterProgress.getValue();
-        return progress != null ? progress.get(chapter) : null;
+    public int getChapterProgress(int chapter) {
+        Map<Integer, Integer> progress = chapterProgress.getValue();
+        return progress != null ? progress.getOrDefault(chapter, 0) : 0;
     }
 
     /**
-     * Get all chapter progress
+     * Get ChapterProgress object (for backward compatibility)
      */
-    public LiveData<Map<Integer, ChapterProgress>> getAllChapterProgress() {
-        return chapterProgress;
+    public ChapterProgress getChapterProgressObject(int chapter) {
+        int completedLevels = getChapterProgress(chapter);
+        int maxLevels = getMaxLevelsForChapter(chapter);
+        return new ChapterProgress(chapter, completedLevels, maxLevels);
     }
+
+    // === KEEP ALL YOUR EXISTING METHODS FOR BACKWARD COMPATIBILITY ===
 
     /**
      * Mark quiz as completed for a specific chapter and level
@@ -144,23 +277,6 @@ public class ProgressViewModel extends ViewModel {
     }
 
     /**
-     * Get total progress across all chapters
-     */
-    public int getTotalProgress() {
-        Map<Integer, ChapterProgress> progress = chapterProgress.getValue();
-        if (progress == null) return 0;
-        
-        int totalProgress = 0;
-        int totalChapters = progress.size();
-        
-        for (ChapterProgress chapter : progress.values()) {
-            totalProgress += chapter.getProgressPercentage();
-        }
-        
-        return totalChapters > 0 ? totalProgress / totalChapters : 0;
-    }
-
-    /**
      * Check if user should take a quiz (every 5 levels)
      */
     public boolean shouldTakeQuiz(int chapter, int level) {
@@ -171,10 +287,11 @@ public class ProgressViewModel extends ViewModel {
      * Reset progress for a specific chapter
      */
     public void resetChapterProgress(int chapter) {
-        Map<Integer, ChapterProgress> progress = chapterProgress.getValue();
-        if (progress != null && progress.containsKey(chapter)) {
-            progress.put(chapter, new ChapterProgress(chapter, 0, 0));
+        Map<Integer, Integer> progress = chapterProgress.getValue();
+        if (progress != null) {
+            progress.put(chapter, 0);
             chapterProgress.setValue(progress);
+            updateTotalProgress();
         }
     }
 
@@ -189,34 +306,31 @@ public class ProgressViewModel extends ViewModel {
     }
 
     /**
-     * Inner class for chapter progress
+     * Inner class for chapter progress (for backward compatibility)
      */
     public static class ChapterProgress {
         private final int chapterNumber;
         private int completedLevels;
-        private int totalScore;
-        private final int maxLevels = 15; // Assuming 15 levels per chapter
+        private final int maxLevels;
 
-        public ChapterProgress(int chapterNumber, int completedLevels, int totalScore) {
+        public ChapterProgress(int chapterNumber, int completedLevels, int maxLevels) {
             this.chapterNumber = chapterNumber;
             this.completedLevels = completedLevels;
-            this.totalScore = totalScore;
+            this.maxLevels = maxLevels;
         }
 
-        public void updateProgress(int level, int score) {
+        public void updateProgress(int level) {
             if (level > completedLevels) {
                 completedLevels = level;
             }
-            totalScore += score;
         }
 
         public int getProgressPercentage() {
-            return (completedLevels * 100) / maxLevels;
+            return maxLevels > 0 ? (completedLevels * 100) / maxLevels : 0;
         }
 
         public int getChapterNumber() { return chapterNumber; }
         public int getCompletedLevels() { return completedLevels; }
-        public int getTotalScore() { return totalScore; }
         public int getMaxLevels() { return maxLevels; }
     }
 
@@ -233,18 +347,17 @@ public class ProgressViewModel extends ViewModel {
         // Getters and setters
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
-        
+
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
-        
+
         public int getTotalChaptersCompleted() { return totalChaptersCompleted; }
         public void setTotalChaptersCompleted(int totalChaptersCompleted) { this.totalChaptersCompleted = totalChaptersCompleted; }
-        
+
         public int getTotalQuizzesPassed() { return totalQuizzesPassed; }
         public void setTotalQuizzesPassed(int totalQuizzesPassed) { this.totalQuizzesPassed = totalQuizzesPassed; }
-        
+
         public long getJoinDate() { return joinDate; }
         public void setJoinDate(long joinDate) { this.joinDate = joinDate; }
     }
 }
-

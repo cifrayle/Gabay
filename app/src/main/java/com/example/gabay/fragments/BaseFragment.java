@@ -2,6 +2,7 @@ package com.example.gabay.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -112,7 +113,9 @@ public abstract class BaseFragment extends Fragment {
      * Check if fragment view is created and safe to use
      */
     protected boolean isFragmentActive() {
-        return isViewCreated && isAdded() && !isDetached() && isFragmentActive;
+        boolean isActive = isAdded() && !isDetached() && getActivity() != null && !getActivity().isFinishing();
+        Log.d("ProgressDebug", "HomePage: isFragmentActive() = " + isActive);
+        return isActive;
     }
 
     /**

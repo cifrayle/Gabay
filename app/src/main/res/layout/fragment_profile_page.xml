@@ -162,7 +162,7 @@
                         android:layout_height="8dp"
                         android:layout_marginTop="15dp"
                         android:max="100"
-                        android:progress="30"
+                        android:progress="0"
                         android:progressTint="@color/secondaryColor"
                         android:indeterminate="false"/>
 
@@ -270,7 +270,7 @@
 
         <!-- Chapter 1 Progress -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/chapter1_progress_card"
+            android:id="@+id/chapter_progress_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -288,7 +288,7 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/chapter_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_bold"
@@ -300,15 +300,16 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/chapter_progress_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="5/15 levels completed"
+                    android:text="0/28 levels completed"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    app:layout_constraintTop_toBottomOf="@+id/chapter_subtitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,8 +8,6 @@
     android:layout_height="match_parent"
     android:background="#D8E6F8"
     tools:context=".fragments.pages.HomePage">
-
-    
 
     <!-- User title -->
     <TextView
@@ -53,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nunito_bold"
-                android:text="Today's To-Do"
+                android:text="Learn Filipino Sign Language"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -66,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/nunito_semibold"
-                android:text="Complete Chapter 1"
+                android:text="Overall Progress: "
                 android:textColor="@color/accentTextColor"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:max="100"
-                android:progress="30"
+                android:progress="0"
                 android:progressTint="@color/secondaryColor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

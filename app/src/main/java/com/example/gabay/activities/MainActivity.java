@@ -1,6 +1,9 @@
 package com.example.gabay.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -12,9 +15,12 @@ import com.example.gabay.fragments.pages.HomePage;
 import com.example.gabay.fragments.pages.SettingsPage;
 import com.example.gabay.fragments.pages.ProfilePage;
 import com.example.gabay.fragments.pages.DictionaryPage;
+import com.example.gabay.services.SupabaseJavaService;
 import com.example.gabay.utils.FragmentStateManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.Theme_Gabay);
         setContentView(R.layout.activity_main);
 
+        restoreSupabaseAuthentication();
+
         fragmentManager = getSupportFragmentManager();
         fragmentCache = new HashMap<>();
         fragmentStateManager = new FragmentStateManager(fragmentManager);
@@ -54,6 +62,38 @@ public class MainActivity extends AppCompatActivity {
 
         // default page
         bottomNavView.setSelectedItemId(R.id.nav_Home);
+    }
+
+    private void restoreSupabaseAuthentication() {
+        SharedPreferences prefs = getSharedPreferences("AuthPrefs", MODE_PRIVATE);
+        String accessToken = prefs.getString("access_token", null);
+
+        if (accessToken != null && !accessToken.isEmpty()) {
+            // Parse the JWT to get user ID
+            try {
+                String userId = parseUserIdFromToken(accessToken);
+                SupabaseJavaService.setAccessToken(accessToken, userId);
+                Log.d("MainActivity", "✅ SupabaseService restored with saved token");
+            } catch (Exception e) {
+                Log.e("MainActivity", "Failed to restore SupabaseService: " + e.getMessage());
+            }
+        }
+    }
+
+    private String parseUserIdFromToken(String token) {
+        try {
+            // JWT format: header.payload.signature
+            String[] parts = token.split("\\.");
+            if (parts.length >= 2) {
+                // Decode the payload (second part)
+                String payload = new String(android.util.Base64.decode(parts[1], android.util.Base64.URL_SAFE));
+                JSONObject json = new JSONObject(payload);
+                return json.getString("sub"); // "sub" claim contains user ID
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error parsing token: " + e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -89,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         // Create new fragment if not cached
         Fragment newFragment = null;
         String tag = getFragmentTag(itemId);
-        
+
         if (itemId == R.id.nav_Home) {
             newFragment = fragmentStateManager.getOrCreateFragment(HomePage.class, tag);
         } else if (itemId == R.id.nav_GabAI) {
@@ -117,13 +157,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchFragment(Fragment fragment) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        
+
         // Use setCustomAnimations for smooth transitions
         transaction.setCustomAnimations(
-            R.anim.fade_in,
-            R.anim.fade_out,
-            R.anim.fade_in,
-            R.anim.fade_out
+                R.anim.fade_in,
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.fade_out
         );
 
         // Check if fragment is already added
@@ -197,13 +237,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Navigate to quiz fragment (for future implementation)
-     */
-    public void navigateToQuiz(int chapter, int level) {
-        // This will be implemented when quiz navigation is needed
-        android.util.Log.d("MainActivity", "Navigate to quiz for Chapter " + chapter + " Level " + level);
-    }
 
     @Override
     protected void onDestroy() {
@@ -217,4 +250,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-

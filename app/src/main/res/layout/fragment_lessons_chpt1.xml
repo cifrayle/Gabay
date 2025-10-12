@@ -82,7 +82,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/circular_button"
+                android:background="@drawable/circular_button_locked"
                 android:elevation="12dp"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
@@ -134,7 +134,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/circular_button"
+                android:background="@drawable/circular_button_locked"
                 android:elevation="12dp"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
@@ -186,7 +186,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/circular_button"
+                android:background="@drawable/circular_button_locked"
                 android:elevation="12dp"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
@@ -1489,9 +1489,26 @@ tools:context=".fragments.pages.JourneyPage">
                 android:background="@drawable/circular_button"
                 android:elevation="12dp"
                 android:fontFamily="@font/nunito_bold"
-                android:text="Quiz"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/quiz_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chapter quiz"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/reset_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

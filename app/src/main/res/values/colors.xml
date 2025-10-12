@@ -8,6 +8,7 @@
     <color name="buttonTextColor">#000000</color>
     <color name="buttonBackground">#FFFFFF</color>
     <color name="accentTextColor">#454545</color>
+    <color name="accentBackgroundColor">#D8E6F8</color>
     <color name="accentButtonColor">#6196C7</color>
     <color name="subtitleTextColor">#DCDCDC</color>
     <color name="transparentBackground">@android:color/transparent</color>
