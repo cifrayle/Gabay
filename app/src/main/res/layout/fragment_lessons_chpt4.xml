@@ -39,7 +39,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lightning"
+                android:text="What"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
@@ -91,7 +91,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wind"
+                android:text="When"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
@@ -143,7 +143,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hot"
+                android:text="Where"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
@@ -195,7 +195,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cold"
+                android:text="Which"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
@@ -247,7 +247,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Humid"
+                android:text="Who"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
@@ -299,7 +299,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sunny"
+                android:text="Why"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
@@ -351,12 +351,40 @@ tools:context=".fragments.pages.JourneyPage">
                 android:id="@+id/levelTitle7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dry"
+                android:text="How"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/dot_divider7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

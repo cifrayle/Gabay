@@ -11,7 +11,7 @@
 
     <!-- User title -->
     <TextView
-        android:id="@+id/user_title"
+        android:id="@+id/user_greet"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginStart="16dp"
@@ -19,7 +19,7 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/nunito_extrabold"
         android:gravity="start|center"
-        android:text="Hello, Cian!"
+        android:text="Hello, User!"
         android:textColor="@color/buttonTextColor"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -40,7 +40,7 @@
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_title">
+        app:layout_constraintTop_toBottomOf="@id/user_greet">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/nunito_semibold"
-                        android:text="Alphabet"
+                        android:text="Filipino Alphabet"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -204,7 +204,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/nunito_semibold"
-                        android:text="Greetings and Family Signs"
+                        android:text="Basic Greetings"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -250,7 +250,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/nunito_semibold"
-                        android:text="Numbers and Ordinal Numbers"
+                        android:text="Numbers"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -296,7 +296,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/nunito_semibold"
-                        android:text="Weather"
+                        android:text="Questions"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -343,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/nunito_semibold"
-                        android:text="Color"
+                        android:text="Days of the week    "
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 

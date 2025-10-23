@@ -24,7 +24,7 @@ import com.example.gabay.R;
 import com.example.gabay.activities.AuthActivity;
 import com.example.gabay.activities.MainActivity;
 import com.example.gabay.services.SupabaseJavaService;
-import com.example.gabay.utils.SupabaseHelper;
+import com.example.gabay.services.SupabaseHelper;
 
 import org.json.JSONObject;
 

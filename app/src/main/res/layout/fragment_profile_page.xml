@@ -39,8 +39,8 @@
             android:contentDescription="Settings"
             android:elevation="2dp"
             android:padding="6dp"
-            android:src="@drawable/ic_settings"
             android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,8 +51,8 @@
             android:layout_height="120dp"
             android:layout_marginTop="16dp"
             android:padding="10dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/settings_button">
 
             <ImageView
@@ -60,10 +60,10 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:src="@drawable/avatar"
+                android:background="@drawable/circular_button"
                 android:contentDescription="Profile picture"
                 android:scaleType="centerCrop"
-                android:background="@drawable/circular_button" />
+                android:src="@drawable/avatar" />
 
             <ImageButton
                 android:id="@+id/change_picture_button"
@@ -71,26 +71,25 @@
                 android:layout_height="24dp"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="1dp"
-                android:elevation="2dp"
-                android:scaleType="fitCenter"
                 android:background="@drawable/circular_button"
                 android:contentDescription="Change picture"
+                android:elevation="2dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_editpfp"/>
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_editpfp" />
         </FrameLayout>
 
         <TextView
             android:id="@+id/edit_username"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_height="40dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/nunito_bold"
+            android:clickable="true"
+            android:fontFamily="@font/nunito_extrabold"
             android:gravity="center"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:text="Cian Bernales"
+            android:text="John Doe"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -98,21 +97,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_picture_container" />
 
-        
 
         <!-- Rest of the layout remains the same -->
         <TextView
             android:id="@+id/learning_progress_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="78dp"
             android:fontFamily="@font/nunito_extrabold"
             android:text="Learning Progress"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_username" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_picture_container" />
 
         <!-- Horizontal Progress Cards Row -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -120,9 +118,9 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_marginTop="0dp"
-            app:layout_constraintTop_toBottomOf="@id/learning_progress_title"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/learning_progress_title">
 
             <!-- Overall Progress Card -->
             <androidx.cardview.widget.CardView
@@ -133,11 +131,11 @@
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/card_chapters"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_chainStyle="spread">
+                app:layout_constraintEnd_toStartOf="@id/card_chapters"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -161,10 +159,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
                         android:layout_marginTop="15dp"
+                        android:indeterminate="false"
                         android:max="100"
                         android:progress="0"
-                        android:progressTint="@color/secondaryColor"
-                        android:indeterminate="false"/>
+                        android:progressTint="@color/secondaryColor" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -178,10 +176,10 @@
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toEndOf="@id/card_overall"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/card_quizzes"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toEndOf="@id/card_overall"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -219,10 +217,10 @@
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toEndOf="@id/card_chapters"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toEndOf="@id/card_chapters"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -261,7 +259,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:fontFamily="@font/nunito_extrabold"
-            android:text="Chapter Progress"
+            android:text="Level Progress"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -292,7 +290,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_bold"
-                    android:text="Chapter 1"
+                    android:text="All chapters"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -314,7 +312,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

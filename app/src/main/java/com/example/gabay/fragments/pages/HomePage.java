@@ -53,7 +53,7 @@ public class HomePage extends BaseFragment {
         mainContentContainer = view.findViewById(R.id.chapters_container);
 
         progressCardView = view.findViewById(R.id.todo_card);
-        userTitleTextView = view.findViewById(R.id.user_title);
+        userTitleTextView = view.findViewById(R.id.user_greet);
         lessonsTitleTextView = view.findViewById(R.id.lessons_title);
         todoDescTextView = view.findViewById(R.id.todo_desc);
         progressBar = view.findViewById(R.id.progress_bar);
@@ -70,18 +70,16 @@ public class HomePage extends BaseFragment {
         initializeChapterCards();
         setupProgressObservers();
 
-        // ADD THIS: Verify the instance
         verifyViewModelInstance();
 
-        //addTestButton();
+        loadUserProfile();
 
-        // layout perf
+        // layout performanmce
         if (rootView != null) {
             LayoutPerformanceMonitor.analyzeLayout(rootView);
         }
     }
 
-    // ADD THIS METHOD
     private void verifyViewModelInstance() {
         if (progressViewModel != null) {
             Log.d("ProgressDebug", "HomePage: ViewModel instance = " + progressViewModel.toString());
@@ -100,7 +98,6 @@ public class HomePage extends BaseFragment {
 
     @Override
     protected void setupProgressTracking() {
-        // Update progress display when fragment becomes active
         updateProgressDisplay();
     }
 
@@ -112,8 +109,8 @@ public class HomePage extends BaseFragment {
             ((MainActivity) getActivity()).hideActionBar();
         }
 
-        // Force refresh when returning to HomePage
         updateProgressDisplay();
+        loadUserProfile(); //reload profile data
     }
 
     @Override
@@ -133,7 +130,14 @@ public class HomePage extends BaseFragment {
         super.onStop();
         Log.d("ProgressDebug", "HomePage: onStop() called");
     }
-
+    private void loadUserProfile() {
+        if (progressViewModel != null) {
+            progressViewModel.loadUserProfileFromSupabase();
+            Log.d("ProgressDebug", "HomePage: Loading user profile from Supabase");
+        } else {
+            Log.e("ProgressDebug", "HomePage: ProgressViewModel is null, cannot load profile");
+        }
+    }
     @Override
     protected void updateProgressDisplay() {
         if (!isFragmentActive() || progressViewModel == null) return;
@@ -141,16 +145,16 @@ public class HomePage extends BaseFragment {
         // Update user title with profile data
         ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
         if (profile != null && userTitleTextView != null) {
-            userTitleTextView.setText("Hello, Cian!");
-            // will be implemented when database is all good
-            //userTitleTextView.setText("Hello, " + profile.getUsername() + "!");
+            userTitleTextView.setText("Hello, " + profile.getUsername() + "!");
+            Log.d("ProgressDebug", "HomePage: Updated greeting with username: " + profile.getUsername());
+        } else {
+            // Fallback if profile not loaded yet
+            userTitleTextView.setText("Hello!");
+            Log.d("ProgressDebug", "HomePage: Using fallback greeting");
         }
 
-        // Update progress card with current progress
         updateProgressCard();
-
-        // Update chapter cards with progress indicators
-        updateChapterCardsProgress(); // Changed method name
+        updateChapterCardsProgress();
     }
 
     private void setupProgressObservers() {
@@ -161,7 +165,6 @@ public class HomePage extends BaseFragment {
 
         Log.d("ProgressDebug", "HomePage: Setting up progress observers");
 
-        // OBSERVE TOTAL PROGRESS CHANGES
         progressViewModel.getTotalProgress().observe(getViewLifecycleOwner(), totalProgress -> {
             Log.d("ProgressDebug", "HomePage: Total progress changed to " + totalProgress + "%");
             if (isFragmentActive() && progressBar != null && todoDescTextView != null) {
@@ -170,7 +173,6 @@ public class HomePage extends BaseFragment {
             }
         });
 
-        // OBSERVE CHAPTER PROGRESS CHANGES
         progressViewModel.getAllChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
             Log.d("ProgressDebug", "HomePage: Chapter progress map updated");
             if (progressMap != null) {
@@ -185,14 +187,13 @@ public class HomePage extends BaseFragment {
             }
         });
 
-        // OBSERVE USER PROFILE CHANGES
         progressViewModel.getUserProfile().observe(getViewLifecycleOwner(), profile -> {
             Log.d("ProgressDebug", "HomePage: UserProfile LiveData triggered");
             if (isFragmentActive() && userTitleTextView != null) {
                 if (profile != null && profile.getUsername() != null && !profile.getUsername().isEmpty()) {
                     userTitleTextView.setText("Hello, " + profile.getUsername() + "!");
                 } else {
-                    userTitleTextView.setText("Hello, Cian!");
+                    userTitleTextView.setText("Hello!");
                 }
             }
         });
@@ -216,13 +217,11 @@ public class HomePage extends BaseFragment {
             return;
         }
 
-        // FIX: Get progress from LiveData properly
         Integer totalProgressValue = progressViewModel.getTotalProgress().getValue();
         int totalProgress = (totalProgressValue != null) ? totalProgressValue : 0;
 
         Log.d("ProgressDebug", "HomePage: Total progress = " + totalProgress + "%");
 
-        // Update progress description
         todoDescTextView.setText("Overall Progress: " + totalProgress + "%");
 
         // Update progress bar
@@ -232,71 +231,6 @@ public class HomePage extends BaseFragment {
         // Force UI refresh
         progressBar.invalidate();
     }
-
-//    private void addTestButton() {
-//        // Create a test button
-//        Button testButton = new Button(requireContext());
-//        testButton.setText("TEST PROGRESS");
-//        testButton.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
-//        testButton.setTextColor(getResources().getColor(android.R.color.white));
-//
-//        // Set layout parameters
-//        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//        );
-//        params.setMargins(0, 20, 0, 0);
-//        testButton.setLayoutParams(params);
-//
-//        // Add click listener
-//        testButton.setOnClickListener(v -> testProgressManually());
-//
-//        // Find a layout to add the button to (use your main container)
-//        if (rootView != null) {
-//            ViewGroup mainContainer = rootView.findViewById(R.id.chapters_container);
-//            if (mainContainer != null) {
-//                mainContainer.addView(testButton);
-//            } else {
-//                // Fallback: add to whatever container you have
-//                LinearLayout layout = rootView.findViewById(R.id.reset_progress);
-//                if (layout != null) {
-//                    layout.addView(testButton);
-//                }
-//            }
-//        }
-//    }
-
-//    private void testProgressManually() {
-//        if (progressViewModel != null) {
-//            Log.d("ProgressDebug", "=== MANUAL TEST STARTED ===");
-//
-//            // Test 1: Check current progress
-//            int currentProgress = progressViewModel.getTotalProgress();
-//            Log.d("ProgressDebug", "Current progress before update: " + currentProgress + "%");
-//
-//            // Test 2: Manually update progress for Chapter 1
-//            progressViewModel.updateChapterProgress(1, 5); // Complete level 5
-//            progressViewModel.updateChapterProgress(1, 10); // Complete level 10
-//
-//            // Test 3: Check progress after update
-//            int newProgress = progressViewModel.getTotalProgress();
-//            Log.d("ProgressDebug", "Progress after manual update: " + newProgress + "%");
-//
-//            // Test 4: Force UI update
-//            updateProgressCard();
-//
-//            // Show visual feedback
-//            Toast.makeText(getContext(),
-//                    "Test: Progress was " + currentProgress + "%, now " + newProgress + "%",
-//                    Toast.LENGTH_LONG).show();
-//
-//            Log.d("ProgressDebug", "=== MANUAL TEST COMPLETED ===");
-//
-//        } else {
-//            Log.d("ProgressDebug", "Cannot run manual test - ProgressViewModel is NULL");
-//            Toast.makeText(getContext(), "ProgressViewModel is NULL!", Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     private void updateChapterCardsProgress() {
         if (progressViewModel == null || chapterCards == null) return;

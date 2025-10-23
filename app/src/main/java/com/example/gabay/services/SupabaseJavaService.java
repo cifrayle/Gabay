@@ -11,6 +11,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,39 +29,223 @@ public class SupabaseJavaService {
     private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    // Store the access token after user signs in
     private static String accessToken = null;
     private static String userId = null;
 
-    /**
-     * Set the access token after successful authentication
-     * Call this after user signs in/up
-     */
     public static void setAccessToken(String token, String uid) {
         accessToken = token;
         userId = uid;
         Log.d("SupabaseService", "Access token set for user: " + uid);
     }
 
-    /**
-     * Clear authentication (for logout)
-     */
+    public static JSONObject getUserProfile() {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return null;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<JSONObject> profileRef = new AtomicReference<>();
+
+        try {
+            String profileUrl = REST_URL + "/user_profiles?id=eq." + userId;
+
+            Request request = new Request.Builder()
+                    .url(profileUrl)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .addHeader("Content-Type", "application/json")
+                    .get()
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to fetch user profile: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseBody = response.body().string();
+                            JSONArray jsonArray = new JSONArray(responseBody);
+                            if (jsonArray.length() > 0) {
+                                profileRef.set(jsonArray.getJSONObject(0));
+                            }
+                        } catch (Exception e) {
+                            Log.e("SupabaseService", "Error parsing profile: " + e.getMessage());
+                        }
+                    } else {
+                        Log.e("SupabaseService", "Failed to fetch profile: " + response.body().string());
+                    }
+                    latch.countDown();
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return profileRef.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error fetching user profile: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static boolean updateUsername(String newUsername) {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return false;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean success = new AtomicBoolean(false);
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("username", newUsername);
+
+            RequestBody body = RequestBody.create(json.toString(), JSON);
+            String updateUrl = REST_URL + "/user_profiles?id=eq." + userId;
+
+            Request request = new Request.Builder()
+                    .url(updateUrl)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Prefer", "return=minimal")
+                    .patch(body)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to update username: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        Log.d("SupabaseService", "Username updated successfully");
+                        success.set(true);
+                    } else {
+                        Log.e("SupabaseService", "Failed to update username: " + response.body().string());
+                    }
+                    latch.countDown();
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return success.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error updating username: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static String getAuthUserDisplayName() {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return null;
+        }
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<String> displayName = new AtomicReference<>(null);
+        try {
+            // Get user data from auth.users table
+            String url = SUPABASE_URL + "/auth/v1/user";
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .get()
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to get auth user: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            String responseBody = response.body().string();
+                            Log.d("SupabaseDebug", "Raw auth user response: " + responseBody);
+
+                            JSONObject userData = new JSONObject(responseBody);
+
+                            // Extract display name from user_metadata
+                            String name = extractDisplayNameFromMetadata(userData);
+
+                            displayName.set(name);
+                            Log.d("SupabaseService", "Auth user display name found: " + name);
+
+                        } else {
+                            String errorBody = response.body().string();
+                            Log.e("SupabaseService", "Failed to get auth user: " + response.code() + " - " + errorBody);
+                        }
+                    } catch (JSONException e) {
+                        Log.e("SupabaseService", "JSON parsing error: " + e.getMessage());
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return displayName.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error getting auth user: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private static String extractDisplayNameFromMetadata(JSONObject userData) throws JSONException {
+        String name = null;
+
+        // Check user_metadata for display_name (this is what you stored during signup)
+        if (userData.has("user_metadata")) {
+            JSONObject metadata = userData.getJSONObject("user_metadata");
+            Log.d("SupabaseDebug", "User metadata: " + metadata.toString());
+
+            if (metadata.has("display_name") && !metadata.isNull("display_name")) {
+                name = metadata.getString("display_name");
+                Log.d("SupabaseDebug", "Found display_name in metadata: " + name);
+            }
+        }
+
+        // Fallback: If no display_name found, use email username
+        if ((name == null || name.isEmpty()) && userData.has("email") && !userData.isNull("email")) {
+            String email = userData.getString("email");
+            name = email.split("@")[0]; // Use part before @ as fallback
+            Log.d("SupabaseDebug", "Using email-based name: " + name);
+        }
+
+        // Final fallback
+        if (name == null || name.isEmpty()) {
+            name = "User";
+            Log.d("SupabaseDebug", "Using default name: User");
+        }
+
+        return name;
+    }
+
     public static void clearAuth() {
         accessToken = null;
         userId = null;
     }
 
-    /**
-     * Check if user is authenticated
-     */
     public static boolean isAuthenticated() {
         return accessToken != null && userId != null;
     }
 
-    /**
-     * Update user progress for a specific chapter and level
-     * This will insert or update the progress record
-     */
     public static boolean updateUserProgress(int chapter, int level) {
         if (!isAuthenticated()) {
             Log.e("SupabaseService", "User not authenticated");
@@ -120,9 +305,6 @@ public class SupabaseJavaService {
         }
     }
 
-    /**
-     * Insert new progress record
-     */
     private static void insertNewProgress(int chapter, int level, CountDownLatch latch, AtomicBoolean success) {
         try {
             JSONObject json = new JSONObject();
@@ -165,9 +347,6 @@ public class SupabaseJavaService {
         }
     }
 
-    /**
-     * Update existing progress record
-     */
     private static void updateExistingProgress(int chapter, int level, CountDownLatch latch, AtomicBoolean success) {
         try {
             JSONObject json = new JSONObject();
@@ -212,9 +391,6 @@ public class SupabaseJavaService {
         }
     }
 
-    /**
-     * Get count of completed levels for a specific chapter
-     */
     public static int getCompletedLevelsCount(int chapter) {
         if (!isAuthenticated()) {
             Log.e("SupabaseService", "User not authenticated");
@@ -283,29 +459,19 @@ public class SupabaseJavaService {
         }
     }
 
-    /**
-     * Get user's access token
-     */
     public static String getAccessToken() {
         return accessToken;
     }
 
-    /**
-     * Get user's ID
-     */
     public static String getUserId() {
         return userId;
     }
 
-    /**
-     * Create initial user profile after signup
-     */
     public static boolean createUserProfile(String username) {
         if (!isAuthenticated()) {
             Log.e("SupabaseService", "User not authenticated");
             return false;
         }
-
         CountDownLatch latch = new CountDownLatch(1);
         AtomicBoolean success = new AtomicBoolean(false);
 

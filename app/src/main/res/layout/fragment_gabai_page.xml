@@ -8,44 +8,162 @@
     android:background="#D8E6F8"
     tools:context=".fragments.pages.GabAIPage">
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.camera.view.PreviewView
+        android:id="@+id/cameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/boundingBoxOverlay"
+        android:layout_width="250dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bounding_box_border"
+        app:layout_constraintBottom_toBottomOf="@+id/cameraPreview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Semi-transparent background for top info -->
+    <View
+        android:id="@+id/topInfoBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#CC000000"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/boundingBoxOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/predictionText"
+        android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:background="@color/transparentBackground"
+        android:fontFamily="@font/nunito_bold"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="MAHAL KITA"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/boundingBoxOverlay"
+        app:layout_constraintTop_toTopOf="@+id/boundingBoxOverlay" />
+    <!--        android:background="#66000000" -->
+
+
+    <!-- Semi-transparent background for bottom prediction -->
+    <View
+        android:id="@+id/bottomPredictionBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#CC000000"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/boundingBoxOverlay" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#CC000000"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/boundingBoxOverlay"
+        app:layout_constraintEnd_toStartOf="@+id/boundingBoxOverlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/boundingBoxOverlay" />
 
-            <androidx.camera.view.PreviewView
-                android:id="@+id/cameraPreview"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#CC000000"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/boundingBoxOverlay"
+        app:layout_constraintEnd_toEndOf="@+id/cameraPreview"
+        app:layout_constraintStart_toEndOf="@+id/boundingBoxOverlay"
+        app:layout_constraintTop_toTopOf="@+id/boundingBoxOverlay" />
 
-            <TextView
-                android:id="@+id/predictionText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#66000000"
-                android:padding="8dp"
-                android:text=""
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/modelIndicatorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/transparentBackground"
+        android:fontFamily="@font/nunito_extrabold"
+        android:padding="8dp"
+        android:shadowColor="@color/secondaryColor"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="30"
+        android:text="Alphabet Mode"
+        android:textColor="@color/primaryColor"
+        android:textSize="21sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/instructionText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/nunito_bold"
+        android:gravity="center"
+        android:text="Place your hand in the center box and show a basic sign"
+        android:textColor="#FFFFFF"
+        android:background="@color/transparentBackground"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/modelIndicatorText" />
 
-    </com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:id="@+id/tipTextView"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/nunito"
+        android:gravity="center"
+        android:text="TIP: Choose a plain background and good lighting for a better response!"
+        android:textColor="#FFFFFF"
+        android:background="@color/transparentBackground"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/boundingBoxOverlay" />
+
+    <Button
+        android:id="@+id/switchModelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/secondaryColor"
+        android:elevation="12dp"
+        android:fontFamily="@font/nunito_bold"
+        android:padding="12dp"
+        android:text="Switch Model"
+        android:textColor="@color/primaryColor"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

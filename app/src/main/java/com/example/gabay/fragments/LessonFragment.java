@@ -3,9 +3,6 @@ package com.example.gabay.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -20,7 +17,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.gabay.R;
-import com.example.gabay.activities.LessonActivity;
 import com.example.gabay.data.LessonData;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
@@ -54,29 +50,8 @@ public class LessonFragment extends Fragment {
             levelNumber = getArguments().getInt(ARG_LEVEL_NUMBER, 1);
         }
 
-        // FIX: Use requireActivity() instead of getActivity()
         progressViewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
-        Log.d("ProgressDebug", "LessonFragment: ProgressViewModel initialized with requireActivity()");
-
-        // ADD THIS: Verify the instance
-        verifyViewModelInstance();
-    }
-
-    // ADD THIS METHOD
-    private void verifyViewModelInstance() {
-        if (progressViewModel != null) {
-            Log.d("ProgressDebug", "LessonFragment: ViewModel instance = " + progressViewModel.toString());
-            Log.d("ProgressDebug", "LessonFragment: ViewModel hashCode = " + progressViewModel.hashCode());
-
-            // FIX: Use getChapterProgressObject() instead of getChapterProgress()
-            ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(1);
-            if (progress != null) {
-                Log.d("ProgressDebug", "LessonFragment: Current Chapter 1 progress = " +
-                        progress.getCompletedLevels() + "/" + progress.getMaxLevels());
-            }
-        } else {
-            Log.e("ProgressDebug", "LessonFragment: ProgressViewModel is NULL in verifyViewModelInstance");
-        }
+        Log.d("ProgressDebug", "LessonFragment: Chapter " + chapterId + ", Level " + levelNumber);
     }
 
     @Override
@@ -122,26 +97,50 @@ public class LessonFragment extends Fragment {
             mediaController.setAnchorView(videoView);
 
             videoView.start();
+
+            Log.d("LessonDebug", "Playing video: " + lesson.title + " (Resource: " + lesson.videoRes + ")");
+        } else {
+            Log.e("LessonDebug", "Invalid lesson: Chapter " + chapterId + ", Level " + levelNumber);
         }
     }
 
     private LessonData.Lesson[] getLessonsForChapter() {
-        if ("chapter1".equals(chapterId)) {
-            return LessonData.CHAPTER1;
+        switch (chapterId) {
+            case "chapter1":
+                return LessonData.CHAPTER1;
+            case "chapter2":
+                return LessonData.CHAPTER2;
+            case "chapter3":
+                return LessonData.CHAPTER3;
+            case "chapter4":
+                return LessonData.CHAPTER4;
+            case "chapter5":
+                return LessonData.CHAPTER5;
+            default:
+                Log.e("LessonDebug", "Unknown chapter: " + chapterId);
+                return null;
         }
-        // add other chapters later
-        return null;
+    }
+
+    private int getTotalLevelsInChapter() {
+        LessonData.Lesson[] lessons = getLessonsForChapter();
+        return lessons != null ? lessons.length : 0;
     }
 
     private void goToLevel(int nextLevelNumber) {
+        int chapterNumber = extractChapterNumber(chapterId);
+        String prefName = "Chapter" + chapterNumber + "Progress";
+
         // Before going to next level, ensure it's marked as reached
         if (getActivity() != null) {
-            android.content.SharedPreferences preferences = getActivity().getSharedPreferences("Chapter1Progress", android.content.Context.MODE_PRIVATE);
+            android.content.SharedPreferences preferences = getActivity().getSharedPreferences(prefName, android.content.Context.MODE_PRIVATE);
             android.content.SharedPreferences.Editor editor = preferences.edit();
 
             // Mark that the user has reached this level
             editor.putBoolean("level_" + nextLevelNumber + "_reached", true);
             editor.apply();
+
+            Log.d("ProgressDebug", "Marked level " + nextLevelNumber + " as reached in " + prefName);
         }
 
         LessonData.Lesson[] lessons = getLessonsForChapter();
@@ -176,8 +175,11 @@ public class LessonFragment extends Fragment {
             Log.d("ProgressDebug", "=== LESSONFRAGMENT: markLevelsUpToCurrent START ===");
             Log.d("ProgressDebug", "Chapter: " + chapterId + ", Level: " + levelNumber);
 
+            int chapterNumber = extractChapterNumber(chapterId);
+            String prefName = "Chapter" + chapterNumber + "Progress";
+
             // 1. Update SharedPreferences
-            android.content.SharedPreferences preferences = getActivity().getSharedPreferences("Chapter1Progress", android.content.Context.MODE_PRIVATE);
+            android.content.SharedPreferences preferences = getActivity().getSharedPreferences(prefName, android.content.Context.MODE_PRIVATE);
             android.content.SharedPreferences.Editor editor = preferences.edit();
 
             editor.putBoolean("level_" + levelNumber + "_finished", true);
@@ -185,17 +187,16 @@ public class LessonFragment extends Fragment {
                 editor.putBoolean("level_" + i + "_reached", true);
             }
             editor.apply();
-            Log.d("ProgressDebug", "SharedPreferences updated for levels 1-" + levelNumber);
+            Log.d("ProgressDebug", "SharedPreferences updated for " + prefName + " levels 1-" + levelNumber);
 
-            // 2. CRITICAL: UPDATE PROGRESSVIEW MODEL
+            // 2. UPDATE PROGRESSVIEW MODEL - This is what triggers profile updates
             if (progressViewModel != null) {
-                int chapterNumber = extractChapterNumber(chapterId);
                 Log.d("ProgressDebug", "Calling progressViewModel.updateChapterProgress(" + chapterNumber + ", " + levelNumber + ")");
 
-                // THIS IS THE KEY LINE THAT'S PROBABLY NOT BEING CALLED
+                // THIS IS THE KEY CALL THAT UPDATES THE PROFILE
                 progressViewModel.updateChapterProgress(chapterNumber, levelNumber);
 
-                // FIX: Verify the update worked - Use getChapterProgressObject()
+                // Verify the update worked
                 ProgressViewModel.ChapterProgress updatedProgress = progressViewModel.getChapterProgressObject(chapterNumber);
                 if (updatedProgress != null) {
                     Log.d("ProgressDebug", "VERIFIED: Chapter " + chapterNumber + " now has " +
@@ -206,12 +207,6 @@ public class LessonFragment extends Fragment {
 
             } else {
                 Log.e("ProgressDebug", "ERROR: ProgressViewModel is NULL in LessonFragment!");
-                // Let's see why - check if activity exists
-                if (getActivity() == null) {
-                    Log.e("ProgressDebug", "Activity is also NULL!");
-                } else {
-                    Log.e("ProgressDebug", "Activity exists: " + getActivity().getClass().getSimpleName());
-                }
             }
 
             Toast.makeText(getActivity(), "Level " + levelNumber + " completed!", Toast.LENGTH_SHORT).show();
@@ -225,28 +220,31 @@ public class LessonFragment extends Fragment {
     private int extractChapterNumber(String chapterId) {
         try {
             if (chapterId != null && chapterId.startsWith("chapter")) {
-                int chapterNum = Integer.parseInt(chapterId.replace("chapter", ""));
+                String numberStr = chapterId.replace("chapter", "");
+                int chapterNum = Integer.parseInt(numberStr);
                 Log.d("ProgressDebug", "Extracted chapter number: " + chapterNum + " from " + chapterId);
                 return chapterNum;
             }
         } catch (NumberFormatException e) {
             Log.e("ProgressDebug", "Error parsing chapter number from: " + chapterId);
         }
-        return 1; // Default
+        return 1; // Default fallback
     }
 
     private void updateUserAchievements(int chapterNumber, int levelNumber) {
         ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
         if (profile != null) {
-            // FIX: Check if chapter completed (all levels finished) - Use getChapterProgressObject()
+            // Check if chapter completed (all levels finished)
             ProgressViewModel.ChapterProgress chapterProgress = progressViewModel.getChapterProgressObject(chapterNumber);
             if (chapterProgress != null) {
-                LessonData.Lesson[] lessons = getLessonsForChapter();
-                int totalLevelsInChapter = lessons != null ? lessons.length : 28; // Default to 28 for chapter 1
+                int totalLevelsInChapter = getTotalLevelsInChapter();
 
                 if (chapterProgress.getCompletedLevels() >= totalLevelsInChapter) {
                     profile.setTotalChaptersCompleted(profile.getTotalChaptersCompleted() + 1);
-                    Log.d("ProgressDebug", "Chapter " + chapterNumber + " completed!");
+                    Log.d("ProgressDebug", "Chapter " + chapterNumber + " completed! Total chapters: " + profile.getTotalChaptersCompleted());
+
+                    // Mark chapter quiz as completed
+                    progressViewModel.markChapterQuizCompleted(chapterNumber);
                 }
             }
 
@@ -255,7 +253,7 @@ public class LessonFragment extends Fragment {
                 profile.setTotalQuizzesPassed(profile.getTotalQuizzesPassed() + 1);
                 // Mark quiz as completed in ViewModel
                 progressViewModel.markQuizCompleted(chapterNumber, levelNumber);
-                Log.d("ProgressDebug", "Quiz completed for level " + levelNumber);
+                Log.d("ProgressDebug", "Quiz completed for chapter " + chapterNumber + " level " + levelNumber);
             }
 
             progressViewModel.updateUserProfile(profile);

@@ -28,10 +28,6 @@ import com.example.gabay.R;
 import com.example.gabay.fragments.BaseFragment;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
-/**
- * Template for quiz fragments that will be shown every 5 levels
- * This is a placeholder that will be fully implemented later
- */
 public class QuizFragment extends BaseFragment {
 
     int[] img_Question_List = {
@@ -382,64 +378,99 @@ public class QuizFragment extends BaseFragment {
     private void completeQuiz() {
         quizInProgress = false;
 
+        // Update progress
         if (progressViewModel != null) {
             progressViewModel.markQuizCompleted(currentChapter, currentLevel);
             progressViewModel.updateChapterProgress(currentChapter, currentLevel);
         }
 
-            //final score
-            if (getContext() != null) {
-                Toast.makeText(getContext(), "Quiz completed!", Toast.LENGTH_SHORT).show();
-                if (isSoundEnabled() && completeSFX != 0) {
-                    soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
-                }
-            }
+        // Show completion feedback
+        showCompletionFeedback();
 
-            if (questionNumberTextView != null) {
-                questionNumberTextView.setVisibility(View.GONE);
-            }
-            if (boldTitle_txtView != null) {
-                boldTitle_txtView.setText("Your score: ");
-                boldTitle_txtView.setTextSize(24);
-            }
-            if (regTitle_txtView != null) {
-                regTitle_txtView.setText(score + "/5");
-                regTitle_txtView.setTextSize(24);
-            }
-            if (timeBackground != null) {
-                timeBackground.setVisibility(View.GONE);
-            }
-            if (quizHeaderTextView != null) {
-                quizHeaderTextView.setVisibility(View.GONE);
-            }
-            if (quizHeaderTextView2 != null) {
-                quizHeaderTextView2.setText("Quiz Completed!");
-                quizHeaderTextView2.setTextColor(Color.BLACK);
-            }
-            if (questionImageView != null) {
-                questionImageView.setImageResource(R.drawable.img_medal);
+        // Update UI for quiz completion
+        updateUIForCompletion();
 
-            }
-            for (MaterialCardView cardView : answerCardViews) {
-                if (cardView != null) {
-                    cardView.setVisibility(View.GONE);
-                }
-            }
-            // cancel timer to prevent memory leaks
-            if (countDownTimer != null) {
-                countDownTimer.cancel();
-            }
+        // Clean up resources
+        cleanupQuizResources();
 
-            if (submitButton != null) {
-                submitButton.setText("Back to lesson");
-                submitButton.setOnClickListener(v -> navigateBack());
-            }
+        // Configure navigation
+        setupNavigation();
+    }
 
-            if (isSoundEnabled() && completeSFX != 0) {
+    private void showCompletionFeedback() {
+        if (getContext() == null) return;
+
+        Toast.makeText(getContext(), "Quiz completed!", Toast.LENGTH_SHORT).show();
+
+        if (isSoundEnabled() && completeSFX != 0) {
             soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
-            }
-
         }
+    }
+
+    private void updateUIForCompletion() {
+        setVisibility(View.GONE, questionNumberTextView, quizHeaderTextView);
+
+        if (timeBackground != null) {
+            timeBackground.setVisibility(View.GONE);
+        }
+
+        if (boldTitle_txtView != null) {
+            boldTitle_txtView.setText("Your score: ");
+            boldTitle_txtView.setTextSize(24);
+        }
+        if (regTitle_txtView != null) {
+            regTitle_txtView.setText(score + "/5");
+            regTitle_txtView.setTextSize(24);
+        }
+
+        updateQuizResult();
+
+        for (MaterialCardView cardView : answerCardViews) {
+            if (cardView != null) {
+                cardView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void updateQuizResult() {
+        if (questionImageView == null) return;
+
+        if (score == 0) {
+            questionImageView.setImageResource(R.drawable.img_fourleafclover);
+            setQuizResultText("Quiz Failed!", Color.BLACK);
+        } else {
+            questionImageView.setImageResource(R.drawable.img_medal);
+            setQuizResultText("Quiz Completed!", Color.BLACK);
+        }
+    }
+
+    private void setQuizResultText(String text, int color) {
+        if (quizHeaderTextView2 != null) {
+            quizHeaderTextView2.setText(text);
+            quizHeaderTextView2.setTextColor(color);
+        }
+    }
+
+    private void setVisibility(int visibility, TextView... views) {
+        for (TextView view : views) {
+            if (view != null) {
+                view.setVisibility(visibility);
+            }
+        }
+    }
+
+    private void cleanupQuizResources() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+
+    private void setupNavigation() {
+        if (submitButton != null) {
+            submitButton.setText("Back to lesson");
+            submitButton.setOnClickListener(v -> navigateBack());
+        }
+    }
 
     @Override
     public void onResume() {

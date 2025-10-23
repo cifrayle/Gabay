@@ -24,7 +24,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/lvl1"
+                    android:id="@+id/c2lvl1"
                     style="@style/Widget.AppCompat.Button"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
@@ -92,7 +92,7 @@ tools:context=".fragments.pages.JourneyPage">
                     android:id="@+id/levelTitle2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Good Morning"
+                    android:text="How are you"
                     android:fontFamily="@font/nunito_bold"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="18sp"
@@ -144,7 +144,7 @@ tools:context=".fragments.pages.JourneyPage">
                     android:id="@+id/levelTitle3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Good Afternoon"
+                    android:text="Sorry"
                     android:fontFamily="@font/nunito_bold"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="18sp"
@@ -196,7 +196,7 @@ tools:context=".fragments.pages.JourneyPage">
                     android:id="@+id/levelTitle4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Good Night"
+                    android:text="Thank you (Formal)"
                     android:fontFamily="@font/nunito_bold"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="18sp"
@@ -248,7 +248,7 @@ tools:context=".fragments.pages.JourneyPage">
                     android:id="@+id/levelTitle5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mama"
+                    android:text="Thank you (Informal)"
                     android:fontFamily="@font/nunito_bold"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="18sp"
@@ -282,241 +282,6 @@ tools:context=".fragments.pages.JourneyPage">
                         android:src="@drawable/dot"
                         app:tint="@color/accentButtonColor" />
                 </LinearLayout>
-
-                <Button
-                    android:id="@+id/lvl6"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Papa"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/lvl7"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ate"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/lvl8"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kuya"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/lvl9"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lolo"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/lvl10"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lola"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-
-
 
             </LinearLayout>
         </ScrollView>

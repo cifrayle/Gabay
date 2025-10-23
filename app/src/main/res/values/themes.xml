@@ -12,15 +12,26 @@
 
         <!-- Background -->
         <item name="android:colorBackground">@color/backgroundColor</item>
+
+        <!-- Add this to prevent automatic button styling -->
+        <item name="materialButtonStyle">@style/Widget.Gabay.Button</item>
+        <item name="android:buttonStyle">@style/Widget.Gabay.Button</item>
     </style>
 
     <style name="Theme.Gabay" parent="Base.Theme.Gabay" />
 
-    <style name="custom_card_view_style" parent="Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/custom_card_view</item>
-
+    <!-- Custom button style that prevents Material 3 auto-styling -->
+    <style name="Widget.Gabay.Button" parent="Widget.Material3.Button">
+        <item name="android:background">@null</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="elevation">0dp</item>
     </style>
 
+    <style name="custom_card_view_style" parent="Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/custom_card_view</item>
+    </style>
 
     <style name="custom_card_view" parent="">
         <item name="cornerFamily">rounded</item>

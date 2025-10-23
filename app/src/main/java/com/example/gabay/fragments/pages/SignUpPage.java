@@ -5,6 +5,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,9 @@ import androidx.fragment.app.Fragment;
 import com.example.gabay.R;
 import com.example.gabay.activities.AuthActivity;
 
-import com.example.gabay.R;
-import com.example.gabay.utils.SupabaseHelper;
+import com.example.gabay.services.SupabaseHelper;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -173,10 +175,11 @@ public class SignUpPage extends Fragment {
         SupabaseHelper.signUp(displayName, email, password, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("SignUpPage", "Network failure: " + e.getMessage());
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> {
                     signUp_button.setEnabled(true);
-                    signUp_button.setText("Register");
+                    signUp_button.setText("Sign Up");
                     Toast.makeText(getContext(), "Network error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
             }
@@ -184,6 +187,11 @@ public class SignUpPage extends Fragment {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseBody = response.body().string();
+                int responseCode = response.code();
+
+                // Log the full response for debugging
+                Log.d("SignUpPage", "Response Code: " + responseCode);
+                Log.d("SignUpPage", "Response Body: " + responseBody);
 
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> {
@@ -191,20 +199,64 @@ public class SignUpPage extends Fragment {
                     signUp_button.setText("Sign Up");
 
                     if (response.isSuccessful()) {
-                        Toast.makeText(getContext(), "Sign-up successful! Please check your email for verification.", Toast.LENGTH_LONG).show();
-                        // Optionally navigate back to sign-in page
-                        if (getActivity() != null) {
-                            getActivity().onBackPressed();
+                        // Check if user needs to verify email
+                        try {
+                            JSONObject jsonResponse = new JSONObject(responseBody);
+                            JSONObject user = jsonResponse.optJSONObject("user");
+
+                            if (user != null) {
+                                String confirmedAt = user.optString("confirmed_at", "");
+
+                                if (confirmedAt.isEmpty() || confirmedAt.equals("null")) {
+                                    // Email confirmation required
+                                    Toast.makeText(getContext(),
+                                            "Account created! Please check your email to verify your account.",
+                                            Toast.LENGTH_LONG).show();
+                                } else {
+                                    // Account is ready
+                                    Toast.makeText(getContext(),
+                                            "Account created successfully!",
+                                            Toast.LENGTH_LONG).show();
+                                }
+
+                                // Navigate back to sign-in page
+                                if (getActivity() != null) {
+                                    getActivity().onBackPressed();
+                                }
+                            } else {
+                                Toast.makeText(getContext(),
+                                        "Account created but response format unexpected. Check your email.",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            Log.e("SignUpPage", "Error parsing success response: " + e.getMessage());
+                            Toast.makeText(getContext(),
+                                    "Account might be created. Please check your email.",
+                                    Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        // Parse error message for better user feedback
+                        // Parse error message
                         String errorMessage = "Sign-up failed";
                         try {
-                            org.json.JSONObject errorJson = new org.json.JSONObject(responseBody);
-                            errorMessage = errorJson.optString("message", errorJson.optString("error", responseBody));
+                            JSONObject errorJson = new JSONObject(responseBody);
+
+                            // Try different error message fields
+                            if (errorJson.has("msg")) {
+                                errorMessage = errorJson.getString("msg");
+                            } else if (errorJson.has("message")) {
+                                errorMessage = errorJson.getString("message");
+                            } else if (errorJson.has("error_description")) {
+                                errorMessage = errorJson.getString("error_description");
+                            } else if (errorJson.has("error")) {
+                                errorMessage = errorJson.getString("error");
+                            }
+
+                            Log.e("SignUpPage", "Error response: " + errorMessage);
                         } catch (Exception e) {
-                            errorMessage = responseBody;
+                            Log.e("SignUpPage", "Could not parse error: " + responseBody);
+                            errorMessage = "Sign-up failed: " + responseBody;
                         }
+
                         Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });

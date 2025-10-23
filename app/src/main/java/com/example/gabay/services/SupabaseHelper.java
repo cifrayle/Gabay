@@ -1,4 +1,4 @@
-package com.example.gabay.utils;
+package com.example.gabay.services;
 
 import android.util.Log;
 
@@ -8,9 +8,12 @@ import okhttp3.RequestBody;
 import okhttp3.Callback;
 import okhttp3.MediaType;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+// supabase helper for authentication
 public class SupabaseHelper {
     private static final String SUPABASE_URL = "https://vzpjsmbpgqlanqzeiqsb.supabase.co";
     private static final String SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6cGpzbWJwZ3FsYW5xemVpcXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzI3MjUsImV4cCI6MjA3NTI0ODcyNX0.Iwz5iXkQxbACmYgJ6EB7bXuX76tLPYPJSZPF33N9k-s";
@@ -66,6 +69,7 @@ public class SupabaseHelper {
 
         client.newCall(request).enqueue(callback);
     }
+
 
     public static void exchangeGoogleToken(String idToken, Callback callback) {
         String url = SUPABASE_URL + "/auth/v1/token?grant_type=id_token";

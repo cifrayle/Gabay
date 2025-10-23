@@ -16,7 +16,7 @@ import com.example.gabay.R;
 import com.example.gabay.fragments.pages.SignInPage;
 import com.example.gabay.fragments.pages.SignUpPage;
 import com.example.gabay.services.SupabaseJavaService;
-import com.example.gabay.utils.SupabaseHelper;
+import com.example.gabay.services.SupabaseHelper;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;

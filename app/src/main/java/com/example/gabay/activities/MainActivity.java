@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.gabay.R;
 import com.example.gabay.fragments.pages.GabAIPage;
 import com.example.gabay.fragments.pages.HomePage;
-import com.example.gabay.fragments.pages.SettingsPage;
 import com.example.gabay.fragments.pages.ProfilePage;
 import com.example.gabay.fragments.pages.DictionaryPage;
 import com.example.gabay.services.SupabaseJavaService;
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.nav_GabAI) {
             newFragment = fragmentStateManager.getOrCreateFragment(GabAIPage.class, tag);
         } else if (itemId == R.id.nav_Dictionary) {
-            newFragment = fragmentStateManager.getOrCreateFragment(DictionaryPage.class, tag);
+            newFragment = fragmentStateManager.getOrCreateFragment(DictionaryPage.class, tag);// DictionaryPage.class, tag);
         } else if (itemId == R.id.nav_Profile) {
             newFragment = fragmentStateManager.getOrCreateFragment(ProfilePage.class, tag);
         }
@@ -212,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
     public void showActionBarWithTitle(String title) {
         showActionBarWithTitle(title, null);
     }
-
     public void showActionBarWithTitle(String title, String subtitle) {
         if (actionBarContainer != null) {
             actionBarContainer.setVisibility(android.view.View.VISIBLE);

@@ -36,7 +36,7 @@ public class Chapter1 extends Fragment {
             R.id.lvl6, R.id.lvl7, R.id.lvl8, R.id.lvl9, R.id.lvl10,
             R.id.lvl11, R.id.lvl12, R.id.lvl13, R.id.lvl14, R.id.lvl15,
             R.id.lvl16, R.id.lvl17, R.id.lvl18, R.id.lvl19, R.id.lvl20,
-            R.id.lvl21, R.id.lvl23, R.id.lvl24, R.id.lvl25,
+            R.id.lvl21, R.id.lvl22, R.id.lvl23, R.id.lvl24, R.id.lvl25,
             R.id.lvl26, R.id.lvl27, R.id.lvl28
     };
 
@@ -45,7 +45,7 @@ public class Chapter1 extends Fragment {
             R.id.levelTitle6, R.id.levelTitle7, R.id.levelTitle8, R.id.levelTitle9, R.id.levelTitle10,
             R.id.levelTitle11, R.id.levelTitle12, R.id.levelTitle13, R.id.levelTitle14, R.id.levelTitle15,
             R.id.levelTitle16, R.id.levelTitle17, R.id.levelTitle18, R.id.levelTitle19, R.id.levelTitle20,
-            R.id.levelTitle21,  R.id.levelTitle23, R.id.levelTitle24, R.id.levelTitle25,
+            R.id.levelTitle21, R.id.levelTitle22, R.id.levelTitle23, R.id.levelTitle24, R.id.levelTitle25,
             R.id.levelTitle26, R.id.levelTitle27, R.id.levelTitle28
     };
 
@@ -56,6 +56,9 @@ public class Chapter1 extends Fragment {
     private ProgressViewModel progressViewModel;
 
     private static final int LESSON_ACTIVITY_REQUEST = 1001;
+
+    // Add level button array for easier management
+    private Button[] levelButtons;
 
     public static Chapter1 newInstance() {
         Chapter1 fragment = new Chapter1();
@@ -74,42 +77,59 @@ public class Chapter1 extends Fragment {
 
         preferences = requireContext().getSharedPreferences(PREF_NAME, getContext().MODE_PRIVATE);
 
+        initializeLevelButtons();
         initializeQuizButton();
         updateLevelStates();
         addResetButton();
+        setupProgressObserver();
 
-        // Set up click listeners for all buttons
+        Log.d("Chapter1", "Chapter1 fragment initialized");
+    }
+
+    private void initializeLevelButtons() {
+        levelButtons = new Button[BUTTON_IDS.length];
+
         for (int i = 0; i < BUTTON_IDS.length; i++) {
             Button button = view.findViewById(BUTTON_IDS[i]);
             TextView titleView = view.findViewById(TITLE_IDS[i]);
             int levelNumber = i + 1;
 
+            levelButtons[i] = button;
+
             if (button != null && titleView != null) {
-                // For locked buttons, use OnTouchListener to capture clicks
-                if (!isLevelUnlocked(levelNumber)) {
-                    button.setOnTouchListener((v, event) -> {
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            showLockedLevelToast(levelNumber);
-                        }
-                        return true;
-                    });
-                } else {
-                    // For unlocked buttons, use normal click listener
-                    button.setOnClickListener(v -> {
-                        String levelTitle = titleView.getText().toString();
-                        Intent intent = new Intent(getActivity(), LessonActivity.class);
-                        intent.putExtra("chapter", 1);
-                        intent.putExtra("level", levelNumber);
-                        intent.putExtra("levelTitle", levelTitle);
-                        startActivityForResult(intent, LESSON_ACTIVITY_REQUEST);
-                    });
-                }
+                setupLevelButton(button, titleView, levelNumber);
             }
         }
     }
 
+    private void setupLevelButton(Button button, TextView titleView, int levelNumber) {
+        // Set level number as text if not already set
+        if (button.getText().toString().isEmpty()) {
+            button.setText(String.valueOf(levelNumber));
+        }
+
+        // For locked buttons, use OnTouchListener to capture clicks
+        if (!isLevelUnlocked(levelNumber)) {
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showLockedLevelToast(levelNumber);
+                }
+                return true;
+            });
+        } else {
+            // For unlocked buttons, use normal click listener
+            button.setOnClickListener(v -> {
+                String levelTitle = titleView.getText().toString();
+                Intent intent = new Intent(getActivity(), LessonActivity.class);
+                intent.putExtra("chapter", 1);
+                intent.putExtra("level", levelNumber);
+                intent.putExtra("levelTitle", levelTitle);
+                startActivityForResult(intent, LESSON_ACTIVITY_REQUEST);
+            });
+        }
+    }
+
     private void showLockedLevelToast(int levelNumber) {
-        // Check why the level is locked to give a helpful message
         if (levelNumber == 1) {
             Toast.makeText(getContext(), "Level 1 should be unlocked! Try resetting progress.", Toast.LENGTH_SHORT).show();
         } else {
@@ -130,6 +150,8 @@ public class Chapter1 extends Fragment {
                 boolean levelCompleted = data.getBooleanExtra("level_completed", false);
 
                 if (completedLevel != -1 && levelCompleted) {
+                    Log.d("Chapter1", "Level " + completedLevel + " completed with score: " + score);
+
                     // Update progress in both SharedPreferences and ViewModel
                     markLevelAsFinished(completedLevel, score);
 
@@ -142,6 +164,9 @@ public class Chapter1 extends Fragment {
                     if (progressViewModel.shouldTakeQuiz(1, completedLevel)) {
                         showQuizNotification(completedLevel);
                     }
+
+                    // Check if chapter is completed
+                    checkChapterCompletion();
                 }
             }
             // Update the UI
@@ -155,52 +180,88 @@ public class Chapter1 extends Fragment {
     }
 
     private void updateLevelStates() {
-        for (int i = 0; i < BUTTON_IDS.length; i++) {
-            Button button = view.findViewById(BUTTON_IDS[i]);
+        int completedLevels = progressViewModel.getChapterProgress(1);
+
+        for (int i = 0; i < levelButtons.length; i++) {
+            Button button = levelButtons[i];
             int levelNumber = i + 1;
 
             if (button != null) {
-                LevelState state = getLevelState(levelNumber);
+                // Remove any Material theme effects
+                button.setBackgroundTintList(null);
+                button.setStateListAnimator(null);
+                button.setElevation(0f);
 
-                switch (state) {
-                    case FINISHED:
-                        button.setBackgroundResource(R.drawable.circular_button);
-                        button.setEnabled(true);
-                        break;
-                    case UNLOCKED:
-                        button.setBackgroundResource(R.drawable.circular_button);
-                        button.setEnabled(true);
-                        break;
-                    case LOCKED:
-                        button.setBackgroundResource(R.drawable.circular_button_locked);
-                        break;
+                if (levelNumber <= completedLevels) {
+                    // Level completed
+                    button.setBackgroundResource(R.drawable.circular_button);
+                    button.setEnabled(true);
+                } else if (levelNumber == completedLevels + 1) {
+                    // Current level
+                    button.setBackgroundResource(R.drawable.circular_button);
+                    button.setEnabled(true);
+                } else {
+                    // Level locked
+                    button.setBackgroundResource(R.drawable.circular_button_locked);
+                    button.setEnabled(false);
                 }
+
+                // Ensure full opacity and remove any theme transparency
+                button.setAlpha(1.0f);
+
+                // Update button click behavior
+                updateButtonClickListener(button, levelNumber);
+
+                Log.d("Chapter1", "Level " + levelNumber + " state updated");
             }
         }
     }
 
-    private LevelState getLevelState(int level) {
-        // Level is unlocked if it's been reached OR if previous level is finished
-        boolean levelReached = preferences.getBoolean("level_" + level + "_reached", false);
-        boolean previousLevelFinished = level > 1 ? preferences.getBoolean("level_" + (level-1) + "_finished", false) : true;
+    private void updateButtonClickListener(Button button, int levelNumber) {
+        // Remove existing listeners
+        button.setOnClickListener(null);
+        button.setOnTouchListener(null);
 
-        if (!levelReached && !previousLevelFinished) {
+        TextView titleView = view.findViewById(TITLE_IDS[levelNumber - 1]);
+
+        if (isLevelUnlocked(levelNumber)) {
+            // For unlocked buttons, use normal click listener
+            button.setOnClickListener(v -> {
+                if (titleView != null) {
+                    String levelTitle = titleView.getText().toString();
+                    Intent intent = new Intent(getActivity(), LessonActivity.class);
+                    intent.putExtra("chapter", 1);
+                    intent.putExtra("level", levelNumber);
+                    intent.putExtra("levelTitle", levelTitle);
+                    startActivityForResult(intent, LESSON_ACTIVITY_REQUEST);
+                }
+            });
+        } else {
+            // For locked buttons, show message
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showLockedLevelToast(levelNumber);
+                }
+                return true;
+            });
+        }
+    }
+
+    private LevelState getLevelState(int level) {
+        int completedLevels = progressViewModel.getChapterProgress(1);
+
+        if (level <= completedLevels) {
+            return LevelState.FINISHED;
+        } else if (level == completedLevels + 1) {
+            return LevelState.UNLOCKED;
+        } else {
             return LevelState.LOCKED;
         }
-
-        // Check if current level is finished
-        boolean currentLevelFinished = preferences.getBoolean("level_" + level + "_finished", false);
-        return currentLevelFinished ? LevelState.FINISHED : LevelState.UNLOCKED;
     }
 
     private boolean isLevelUnlocked(int level) {
-        if (level == 1) return true;
-
-        // Level is unlocked if previous level is finished OR if user has reached it before
-        boolean previousLevelFinished = preferences.getBoolean("level_" + (level-1) + "_finished", false);
-        boolean levelReached = preferences.getBoolean("level_" + level + "_reached", false);
-
-        return previousLevelFinished || levelReached;
+        int completedLevels = progressViewModel.getChapterProgress(1);
+        return level <= completedLevels + 1; // Current level and all completed levels are unlocked
     }
 
     // Updated method to mark level as finished with score
@@ -210,28 +271,26 @@ public class Chapter1 extends Fragment {
         editor.putBoolean("level_" + level + "_reached", true);
         editor.apply();
 
-        // Update ProgressViewModel
+        // Update ProgressViewModel - this is the key change
         if (progressViewModel != null) {
             progressViewModel.updateChapterProgress(1, level);
-
-            // Update user profile achievements
-            updateUserAchievements(level);
+            Log.d("Chapter1", "Progress updated - Chapter 1, Level " + level);
         }
 
-        // Update the UI to reflect changes
-        updateLevelStates();
+        // Update user profile achievements
+        updateUserAchievements(level);
     }
 
     private void unlockLevel(int level) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("level_" + level + "_reached", true);
         editor.apply();
+        Log.d("Chapter1", "Level " + level + " unlocked");
     }
 
     private void updateUserAchievements(int level) {
         ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
         if (profile != null) {
-            // FIX: Use getChapterProgressObject() instead of getChapterProgress()
             ProgressViewModel.ChapterProgress chapterProgress = progressViewModel.getChapterProgressObject(1);
             if (chapterProgress != null) {
                 Log.d("ProgressDebug", "Chapter progress - Completed: " + chapterProgress.getCompletedLevels() +
@@ -248,9 +307,19 @@ public class Chapter1 extends Fragment {
                 profile.setTotalQuizzesPassed(profile.getTotalQuizzesPassed() + 1);
                 // Mark quiz as completed in ViewModel
                 progressViewModel.markQuizCompleted(1, level);
+                Log.d("Chapter1", "Quiz completed at level " + level);
             }
 
             progressViewModel.updateUserProfile(profile);
+        }
+    }
+
+    private void checkChapterCompletion() {
+        ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(1);
+        if (progress != null && progress.getProgressPercentage() >= 100) {
+            Toast.makeText(requireContext(), "Congratulations! Chapter 1 completed!", Toast.LENGTH_LONG).show();
+            // Mark chapter quiz as completed
+            progressViewModel.markChapterQuizCompleted(1); // Use the method that takes only chapter
         }
     }
 
@@ -258,6 +327,15 @@ public class Chapter1 extends Fragment {
         Toast.makeText(requireContext(),
                 "Quiz available! You've reached Level " + level + " - take the quiz to test your knowledge!",
                 Toast.LENGTH_LONG).show();
+    }
+
+    private void setupProgressObserver() {
+        progressViewModel.getAllChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
+            if (isAdded()) {
+                updateLevelStates();
+                Log.d("Chapter1", "Progress observer triggered - updating level states");
+            }
+        });
     }
 
     // Call this method to reset progress (for testing or in settings)
@@ -269,7 +347,9 @@ public class Chapter1 extends Fragment {
 
         // Add to your layout - adjust based on your layout structure
         LinearLayout layout = view.findViewById(R.id.reset_progress);
-        layout.addView(resetBtn);
+        if (layout != null) {
+            layout.addView(resetBtn);
+        }
 
         resetBtn.setOnClickListener(v -> {
             new AlertDialog.Builder(requireContext())
@@ -296,6 +376,7 @@ public class Chapter1 extends Fragment {
 
         updateLevelStates();
         Toast.makeText(getContext(), "Progress reset!", Toast.LENGTH_SHORT).show();
+        Log.d("Chapter1", "Chapter progress reset");
     }
 
     private void initializeQuizButton() {
@@ -335,8 +416,8 @@ public class Chapter1 extends Fragment {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 1");
         }
+        Log.d("Chapter1", "Chapter1 resumed - updating UI");
     }
-
 
     @Override
     public void onDestroy() {

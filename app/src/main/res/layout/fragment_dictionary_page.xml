@@ -1,58 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D8E6F8"
+    android:padding="16dp"
     tools:context=".fragments.pages.DictionaryPage">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="horizontal"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/dictionary_title"
-            android:layout_width="0dp"
             android:layout_height="42dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:fontFamily="@font/nunito_extrabold"
             android:gravity="start|center"
             android:text="Dictionary"
             android:textColor="@color/buttonTextColor"
             android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        tools:ignore="MissingConstraints">
 
         <LinearLayout
-            android:id="@+id/dictionary_list"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="vertical"
-            android:padding="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dictionary_title">
+            android:orientation="vertical">
 
-            <!-- Placeholder items -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -62,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/nunito"
-                        android:text="Placeholder"
+                        android:text="Hello / Kumusta"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -72,25 +78,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -100,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/nunito"
-                        android:text="Placeholder"
+                        android:text="I love you / Mahal kita"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -110,25 +113,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item3"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/nunito"
-                        android:text="Placeholder"
+                        android:text="Yes / Oo"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -148,25 +148,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item4"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -176,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/nunito"
-                        android:text="Placeholder"
+                        android:text="No / Hindi"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -186,25 +183,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item5"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -214,7 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/nunito"
-                        android:text="Placeholder"
+                        android:text="Why / Bakit"
                         android:textColor="@color/accentTextColor"
                         android:textSize="14sp" />
 
@@ -224,25 +218,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item6"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -262,25 +253,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item7"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -300,25 +288,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item8"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -338,25 +323,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item9"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -376,25 +358,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item10"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -414,25 +393,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item11"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -452,25 +428,22 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item12"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -490,25 +463,23 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dictionary_item13"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
+                android:layout_marginBottom="38dp"
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -528,52 +499,12 @@
                         android:contentDescription="Navigate to about us"
                         android:src="@drawable/ic_arrowforward"
                         app:tint="@color/secondaryColor" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/dictionary_item14"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="12dp"
-                android:backgroundTint="@android:color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_title">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/nunito"
-                        android:text="Placeholder"
-                        android:textColor="@color/accentTextColor"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="Navigate to about us"
-                        android:src="@drawable/ic_arrowforward"
-                        app:tint="@color/secondaryColor" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
+</androidx.constraintlayout.widget.ConstraintLayout>

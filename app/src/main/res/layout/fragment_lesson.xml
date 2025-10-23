@@ -31,6 +31,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nunito_bold"
                 android:textColor="@color/secondaryColor"
+                android:textSize="16sp"
+                android:padding="8dp"
                 android:backgroundTint="@color/transparentBackground"
                 android:text="Previous"
                 />
@@ -41,6 +43,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:backgroundTint="@color/secondaryColor"
+                android:textSize="16sp"
+                android:padding="8dp"
                 android:fontFamily="@font/nunito_bold"
                 android:text="Finish"
                 android:textColor="@color/primaryColor" />
