@@ -37,7 +37,7 @@ public class SignInPage extends Fragment {
 
     private EditText emailInput, passwordInput;
     private Button signInButton;
-    private ImageButton signInGoogle;
+    private ImageButton signInGoogle, passwordShowToggle;
     private TextView tvCreateAcc, forgotPass;
     private CheckBox checkBox_rememberMe;
 
@@ -64,16 +64,15 @@ public class SignInPage extends Fragment {
         signInGoogle = view.findViewById(R.id.signIn_google);
         forgotPass = view.findViewById(R.id.tv_forgotPass);
         checkBox_rememberMe = view.findViewById(R.id.checkBox_rememberMe);
+        passwordShowToggle = view.findViewById(R.id.password_toggle_show);
 
-        // Initialize SharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        // Load saved credentials if "Remember Me" was checked
         loadSavedCredentials();
+        setupPasswordToggle();
 
         signInButton.setOnClickListener(v -> handleSignIn());
 
-        // Create account
         tvCreateAcc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +109,27 @@ public class SignInPage extends Fragment {
         });
 
         return view;
+    }
+
+    private void setupPasswordToggle() {
+        passwordShowToggle.setOnClickListener(v -> togglePasswordVisibility());
+    }
+
+    private void togglePasswordVisibility() {
+        // Get the current selection position
+        int selection = passwordInput.getSelectionEnd();
+
+        if (passwordInput.getTransformationMethod() instanceof android.text.method.PasswordTransformationMethod) {
+            // Show password
+            passwordInput.setTransformationMethod(android.text.method.HideReturnsTransformationMethod.getInstance());
+            passwordShowToggle.setImageResource(R.drawable.ic_eye);
+        } else {
+            // Hide password
+            passwordInput.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
+            passwordShowToggle.setImageResource(R.drawable.ic_eyeoff);
+        }
+
+        passwordInput.setSelection(selection);
     }
 
     private void loadSavedCredentials() {
@@ -191,20 +211,16 @@ public class SignInPage extends Fragment {
                             String accessToken = jsonResponse.optString("access_token");
                             String refreshToken = jsonResponse.optString("refresh_token");
 
-                            // IMPORTANT: Extract user ID from the response
                             JSONObject user = jsonResponse.getJSONObject("user");
                             String userId = user.getString("id");
 
-                            // Save tokens to SharedPreferences
                             saveAuthTokens(accessToken, refreshToken);
 
-                            // ⭐ ADD THIS: Set the token in SupabaseService
                             SupabaseJavaService.setAccessToken(accessToken, userId);
-                            Log.d("SignIn", "✅ SupabaseService authenticated for user: " + userId);
+                            Log.d("SignIn", "SupabaseService authenticated for user: " + userId);
 
                             Toast.makeText(getContext(), "Login successful!", Toast.LENGTH_SHORT).show();
 
-                            // Navigate to MainActivity
                             navigateToMainActivity();
 
                         } catch (Exception e) {

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.LessonFragment">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,12 +13,41 @@
         android:gravity="center_horizontal"
         android:padding="16dp">
 
-        <VideoView
-            android:id="@+id/videoView"
+        <!-- Use FrameLayout to stack VideoView and Replay Button -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp">
 
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/btn_replay"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:background="@drawable/replay_button_bg"
+                android:src="@drawable/ic_replay"
+                android:visibility="gone"
+                app:tint="@android:color/white" />
+
+            <!-- Pause/Play button overlay -->
+            <ImageButton
+                android:id="@+id/btn_pause_play"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:background="@drawable/replay_button_bg"
+                android:src="@drawable/ic_pause"
+                android:visibility="gone"
+                app:tint="@color/primaryColor" />
+
+        </FrameLayout>
+
+        <!-- Navigation Buttons -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,8 +62,7 @@
                 android:textSize="16sp"
                 android:padding="8dp"
                 android:backgroundTint="@color/transparentBackground"
-                android:text="Previous"
-                />
+                android:text="Previous" />
 
             <Button
                 android:id="@+id/btn_nextLevel"
@@ -46,9 +73,10 @@
                 android:textSize="16sp"
                 android:padding="8dp"
                 android:fontFamily="@font/nunito_bold"
-                android:text="Finish"
+                android:text="Next"
                 android:textColor="@color/primaryColor" />
         </LinearLayout>
+
     </LinearLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

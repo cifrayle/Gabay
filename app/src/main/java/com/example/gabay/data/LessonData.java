@@ -56,7 +56,7 @@ public class LessonData {
 
     };
 
-    // chapter3  - Numbers
+    // chapter3  - numbers
     public static final Lesson[] CHAPTER3 = new Lesson[]{
             new Lesson("Number 1", R.raw.one),
             new Lesson("Number 2", R.raw.two),

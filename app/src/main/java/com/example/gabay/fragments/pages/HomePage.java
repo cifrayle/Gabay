@@ -1,6 +1,8 @@
 package com.example.gabay.fragments.pages;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.gabay.R;
 import com.example.gabay.activities.MainActivity;
@@ -39,7 +42,7 @@ public class HomePage extends BaseFragment {
     private TextView todoDescTextView;
     private android.widget.ProgressBar progressBar;
 
-    // Progress tracking
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressViewModel progressViewModel;
     private CardView[] chapterCards;
 
@@ -57,6 +60,21 @@ public class HomePage extends BaseFragment {
         lessonsTitleTextView = view.findViewById(R.id.lessons_title);
         todoDescTextView = view.findViewById(R.id.todo_desc);
         progressBar = view.findViewById(R.id.progress_bar);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.secondaryColor);
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.primaryColor);
+
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            Log.d("HomePage", "User swiped to refresh");
+
+            if (progressViewModel != null) {
+                progressViewModel.refreshProgressFromSupabase();
+                progressViewModel.loadUserProfileFromSupabase();
+            }
+            new Handler().postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 1500);
+        });
 
         return view;
     }
@@ -233,38 +251,57 @@ public class HomePage extends BaseFragment {
     }
 
     private void updateChapterCardsProgress() {
-        if (progressViewModel == null || chapterCards == null) return;
+        if (progressViewModel == null) return;
 
-        for (int i = 0; i < chapterCards.length; i++) {
+        // percentage TextView IDs
+        int[] percentageViewIds = {
+                R.id.chapter1Percentage, R.id.chapter2Percentage,
+                R.id.chapter3Percentage, R.id.chapter4Percentage,
+                R.id.chapter5Percentage
+        };
+
+        for (int i = 0; i < percentageViewIds.length; i++) {
             int chapterNumber = i + 1;
-
-            // FIX: Use getChapterProgressObject() instead of getChapterProgress()
             ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(chapterNumber);
 
-            if (progress != null && chapterCards[i] != null) {
+            if (progress != null) {
                 int progressPercent = progress.getProgressPercentage();
+                TextView percentageTextView = getView().findViewById(percentageViewIds[i]);
 
-                TextView titleTextView = findTitleTextViewInCard(chapterCards[i]);
-                if (titleTextView != null) {
-                    String buttonText = getString(getChapterStringResource(chapterNumber));
+                if (percentageTextView != null) {
+                    // Only show percentage if progress is greater than 0%
                     if (progressPercent > 0) {
-                        buttonText += " (" + progressPercent + "%)";
+                        percentageTextView.setText(" (" + progressPercent + "%)");
+                        // Set color based on progress
+                        setProgressColor(percentageTextView, progressPercent);
+                    } else {
+                        percentageTextView.setText(""); // Empty string
                     }
-                    titleTextView.setText(buttonText);
                 }
             }
         }
     }
 
-    private TextView findTitleTextViewInCard(CardView cardView) {
-        // Find the first TextView in the CardView (which should be the title)
-        if (cardView.getChildCount() > 0 && cardView.getChildAt(0) instanceof ViewGroup) {
-            ViewGroup linearLayout = (ViewGroup) cardView.getChildAt(0);
-            if (linearLayout.getChildCount() > 0 && linearLayout.getChildAt(0) instanceof TextView) {
-                return (TextView) linearLayout.getChildAt(0);
-            }
+    private void setProgressColor(TextView textView, int progressPercent) {
+        int colorRes;
+
+        if (progressPercent == 0) {
+            colorRes = R.color.wrongAnswerColor; // not started
+        } else if (progressPercent <= 33) {
+            colorRes = R.color.wrongAnswerColor; // just started (1-33%)
+        } else if (progressPercent <= 66) {
+            colorRes = R.color.secondaryColor; // halfway (34-66%)
+        } else if (progressPercent < 100) {
+            colorRes = R.color.secondaryColor; // almost done (67-99%)
+        } else {
+            colorRes = R.color.correctAnswerColor; // completed (100%)
         }
-        return null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            textView.setTextColor(getResources().getColor(colorRes, getContext().getTheme()));
+        } else {
+            textView.setTextColor(getResources().getColor(colorRes));
+        }
     }
 
     private int getChapterStringResource(int chapterNumber) {

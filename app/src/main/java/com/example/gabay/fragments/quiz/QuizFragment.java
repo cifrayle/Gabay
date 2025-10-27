@@ -30,21 +30,25 @@ import com.example.gabay.viewmodels.ProgressViewModel;
 
 public class QuizFragment extends BaseFragment {
 
-    int[] img_Question_List = {
-            R.drawable.letter_c,
-            R.drawable.letter_i,
-            R.drawable.letter_a,
-            R.drawable.letter_n,
-            R.drawable.letter_f
-    };
-    String[] choices_list = {
-            "HELLO/KUMUSTA", "C", "NO/HINDI", "O",
-            "A", "ONE/ISA", "I", "YOU/IKAW",
-            "FIST/KAMAO", "J", "ME/AKO", "A",
-            "N", "M", "Y", "L",
-            "OK", "G", "THREE/TATLO", "F",
-    };
-    String[] correctAnswer_list = {"C", "I", "A", "N", "F"};
+//    int[] img_Question_List = {
+//            R.drawable.letter_c,
+//            R.drawable.letter_i,
+//            R.drawable.letter_a,
+//            R.drawable.letter_n,
+//            R.drawable.letter_f
+//    };
+//    String[] choices_list = {
+//            "HELLO/KUMUSTA", "C", "NO/HINDI", "O",
+//            "A", "ONE/ISA", "I", "YOU/IKAW",
+//            "FIST/KAMAO", "J", "ME/AKO", "A",
+//            "N", "M", "Y", "L",
+//            "OK", "G", "THREE/TATLO", "F",
+//    };
+//    String[] correctAnswer_list = {"C", "I", "A", "N", "F"};
+
+    private int[][] chapterImages;
+    private String[][] chapterChoices;
+    private String[][] chapterAnswers;
 
 
     private ImageView questionImageView;
@@ -112,7 +116,7 @@ public class QuizFragment extends BaseFragment {
     @Override
     protected void initializeViews() {
         progressViewModel = getActivityViewModel(ProgressViewModel.class);
-        
+
         // Get chapter and level from arguments
         Bundle args = getArguments();
         if (args != null) {
@@ -120,8 +124,90 @@ public class QuizFragment extends BaseFragment {
             currentLevel = args.getInt("level", 1);
         }
 
+        initializeQuizData();
+
         initializeQuizUI();
         showQuizIntroduction();
+    }
+
+    private void initializeQuizData() {
+        // Chapter 1 data (your current data)
+        int[] chapter1Images = {
+                R.drawable.letter_c,
+                R.drawable.letter_i,
+                R.drawable.letter_a,
+                R.drawable.letter_n,
+                R.drawable.letter_f
+        };
+
+        String[] chapter1Choices = {
+                "HELLO/KUMUSTA", "C", "NO/HINDI", "O",
+                "A", "ONE/ISA", "I", "YOU/IKAW",
+                "FIST/KAMAO", "J", "ME/AKO", "A",
+                "N", "M", "Y", "L",
+                "OK", "G", "THREE/TATLO", "F"
+        };
+
+        String[] chapter1Answers = {"C", "I", "A", "N", "F"};
+
+        // Chapter 2 data (add your questions here)
+        int[] chapter2Images = {
+//                R.drawable.chapter2_q1,
+//                R.drawable.chapter2_q2,
+//                R.drawable.chapter2_q3,
+//                R.drawable.chapter2_q4,
+//                R.drawable.chapter2_q5
+        };
+
+        String[] chapter2Choices = {
+                "Choice1", "Answer1", "Choice2", "Choice3",
+                "Choice1", "Answer2", "Choice2", "Choice3",
+                "Choice1", "Choice2", "Answer3", "Choice3",
+                "Choice1", "Choice2", "Choice3", "Answer4",
+                "Answer5", "Choice1", "Choice2", "Choice3"
+        };
+
+        String[] chapter2Answers = {"Answer1", "Answer2", "Answer3", "Answer4", "Answer5"};
+
+        // Chapter 3, 4, 5 data (similar structure)
+        // ... add more chapters
+
+        // Organize all chapters
+        chapterImages = new int[][] {
+                chapter1Images,
+                //chapter2Images,
+                // chapter3Images,
+                // chapter4Images,
+                // chapter5Images
+        };
+
+        chapterChoices = new String[][] {
+                chapter1Choices,
+                //chapter2Choices,
+                // chapter3Choices,
+                // chapter4Choices,
+                // chapter5Choices
+        };
+
+        chapterAnswers = new String[][] {
+                chapter1Answers,
+                //chapter2Answers,
+                // chapter3Answers,
+                // chapter4Answers,
+                // chapter5Answers
+        };
+    }
+
+    private int[] getCurrentImages() {
+        return chapterImages[currentChapter - 1];
+    }
+
+    private String[] getCurrentChoices() {
+        return chapterChoices[currentChapter - 1];
+    }
+
+    private String[] getCurrentAnswers() {
+        return chapterAnswers[currentChapter - 1];
     }
 
     private void showQuizIntroduction() {
@@ -237,7 +323,6 @@ public class QuizFragment extends BaseFragment {
     }
 
     private void onTimeUp() {
-
         if (selectedAnswerIndex == -1) {
             Toast.makeText(getContext(), "Time's up! No answer selected.", Toast.LENGTH_SHORT).show();
         } else {
@@ -249,7 +334,7 @@ public class QuizFragment extends BaseFragment {
                 if (isSoundEnabled() && correctAnswerSFX != 0) soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
             } else {
                 answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
-                Toast.makeText(getContext(), "Time's up! Answer was: " + correctAnswer_list[currentQuestionIndex], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Time's up! Answer was: " + getCurrentAnswers()[currentQuestionIndex], Toast.LENGTH_SHORT).show();
                 if (isSoundEnabled() && wrongAnswerSFX != 0) soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
         }
@@ -266,7 +351,7 @@ public class QuizFragment extends BaseFragment {
         currentQuestionIndex++;
         selectedAnswerIndex = -1;
 
-        if (currentQuestionIndex < img_Question_List.length) {
+        if (currentQuestionIndex < getCurrentImages().length) {
             resetTimer();
             loadQuestion();
         } else {
@@ -304,7 +389,7 @@ public class QuizFragment extends BaseFragment {
     private void submitAnswer() {
 
         if (countDownTimer != null) {
-            countDownTimer.cancel(); // Stop the timer when answer is submitted
+            countDownTimer.cancel();
         }
 
         if (selectedAnswerIndex == -1) {
@@ -326,7 +411,7 @@ public class QuizFragment extends BaseFragment {
                 }
             } else {
                 answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
-                Toast.makeText(getContext(), "Wrong! Correct answer: " + correctAnswer_list[currentQuestionIndex], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Wrong! Correct answer: " + getCurrentAnswers()[currentQuestionIndex], Toast.LENGTH_SHORT).show();
                 if (isSoundEnabled() && wrongAnswerSFX != 0) {
                     soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
                 }
@@ -339,28 +424,28 @@ public class QuizFragment extends BaseFragment {
     }
     private boolean checkAnswer(int selectedIndex) {
         if (answerTextViews[selectedIndex] == null) return false;
-
         String selectedAnswer = answerTextViews[selectedIndex].getText().toString();
-        return selectedAnswer.equals(correctAnswer_list[currentQuestionIndex]);
+        return selectedAnswer.equals(getCurrentAnswers()[currentQuestionIndex]);
     }
 
     private void loadQuestion() {
 
         updateTimer();
         if (questionNumberTextView != null) {
-            questionNumberTextView.setText("Question " + (currentQuestionIndex + 1) + " of " + img_Question_List.length);
+            questionNumberTextView.setText("Question " + (currentQuestionIndex + 1) + " of " + getCurrentImages().length);
         }
 
         // Load question image
-        if (questionImageView != null && currentQuestionIndex < img_Question_List.length) {
-            questionImageView.setImageResource(img_Question_List[currentQuestionIndex]);
+        if (questionImageView != null && currentQuestionIndex < getCurrentImages().length) {
+            questionImageView.setImageResource(getCurrentImages()[currentQuestionIndex]);
         }
 
         if (answerTextViews != null) {
             int choicesStartIndex = currentQuestionIndex * 4;
+            String[] currentChoices = getCurrentChoices();
             for (int i = 0; i < answerTextViews.length; i++) {
-                if (answerTextViews[i] != null && (choicesStartIndex + i) < choices_list.length) {
-                    answerTextViews[i].setText(choices_list[choicesStartIndex + i]);
+                if (answerTextViews[i] != null && (choicesStartIndex + i) < currentChoices.length) {
+                    answerTextViews[i].setText(currentChoices[choicesStartIndex + i]);
 
                     // Reset CardView appearance including stroke
                     if (answerCardViews[i] != null) {
@@ -400,7 +485,6 @@ public class QuizFragment extends BaseFragment {
     private void showCompletionFeedback() {
         if (getContext() == null) return;
 
-        Toast.makeText(getContext(), "Quiz completed!", Toast.LENGTH_SHORT).show();
 
         if (isSoundEnabled() && completeSFX != 0) {
             soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
@@ -435,12 +519,22 @@ public class QuizFragment extends BaseFragment {
     private void updateQuizResult() {
         if (questionImageView == null) return;
 
-        if (score == 0) {
+        // setting up the layout programmatically for good ui
+        int topMarginDp = 200;
+        int topMarginPx = (int) (topMarginDp * getResources().getDisplayMetrics().density);
+
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) questionImageView.getLayoutParams();
+        params.topMargin = topMarginPx;
+        questionImageView.setLayoutParams(params);
+
+        if (score <= 2) {
             questionImageView.setImageResource(R.drawable.img_fourleafclover);
-            setQuizResultText("Quiz Failed!", Color.BLACK);
+            Toast.makeText(getContext(), "Quiz Failed. Nice try!", Toast.LENGTH_SHORT).show();
+            setQuizResultText("Quiz Failed", Color.BLACK);
         } else {
             questionImageView.setImageResource(R.drawable.img_medal);
-            setQuizResultText("Quiz Completed!", Color.BLACK);
+            Toast.makeText(getContext(), "Quiz Completed. Good job!", Toast.LENGTH_SHORT).show();
+            setQuizResultText("Quiz Completed", Color.BLACK);
         }
     }
 
@@ -515,14 +609,11 @@ public class QuizFragment extends BaseFragment {
         }
     }
 
-    /**
-     * Create a new instance of QuizFragment with chapter and level
-     */
-    public static QuizFragment newInstance() {
+    public static QuizFragment newInstance(int chapter, int level) {
         QuizFragment fragment = new QuizFragment();
         Bundle args = new Bundle();
-        args.putInt("chapter", 1);
-        args.putInt("level", 0);
+        args.putInt("chapter", chapter);
+        args.putInt("level", level);
         fragment.setArguments(args);
         return fragment;
     }

@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.example.gabay.R;
 import com.example.gabay.activities.AuthActivity;
 
+import com.example.gabay.services.DisposableEmailChecker;
 import com.example.gabay.services.SupabaseHelper;
 
 import org.json.JSONObject;
@@ -43,6 +44,8 @@ public class SignUpPage extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DisposableEmailChecker.initialize(requireContext());
     }
 
     @Nullable
@@ -87,13 +90,15 @@ public class SignUpPage extends Fragment {
 
         signUp_button.setOnClickListener(v -> handleSignUp());
 
+        // validations
         setupPasswordVisibility();
         setupPasswordMatching();
+        setupRealTimeValidation();
+
 
         return view;
     }
 
-    // show pass
     private void setupPasswordVisibility() {
         checkBox_showPass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -141,6 +146,92 @@ public class SignUpPage extends Fragment {
         signUp_Password.addTextChangedListener(passwordWatcher);
         signUp_confirmPassword.addTextChangedListener(passwordWatcher);
     }
+
+    private void setupRealTimeValidation() {
+        TextWatcher validationWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateFieldsRealTime();
+            }
+        };
+
+        // Apply to all input fields
+        signUp_dispName.addTextChangedListener(validationWatcher);
+        signUp_email.addTextChangedListener(validationWatcher);
+        signUp_Password.addTextChangedListener(validationWatcher);
+        signUp_confirmPassword.addTextChangedListener(validationWatcher);
+    }
+
+    private void validateFieldsRealTime() {
+        String displayName = signUp_dispName.getText().toString().trim();
+        String email = signUp_email.getText().toString().trim();
+        String password = signUp_Password.getText().toString().trim();
+        String confirmPassword = signUp_confirmPassword.getText().toString().trim();
+
+        // email validation
+        if (email.length() > 0) {
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                signUp_email.setError("Please enter a valid email address");
+            } else if (DisposableEmailChecker.isDisposable(email)) {
+                signUp_email.setError("Temporary email addresses are not allowed");
+            } else {
+                signUp_email.setError(null);
+            }
+        }
+
+        // password validations
+        if (password.length() > 0) {
+            if (password.length() < 8) {
+                signUp_Password.setError("Password must be at least 8 characters");
+            } else if (!containsUppercase(password)) {
+                signUp_Password.setError("Password must contain at least 1 uppercase letter");
+            } else {
+                signUp_Password.setError(null);
+            }
+        } else {
+            signUp_Password.setError(null);
+        }
+
+        if (displayName.isEmpty()){
+            signUp_dispName.setError("Please enter your name");
+        } else {
+            signUp_dispName.setError(null);
+        }
+
+        if (confirmPassword.length() > 0 && !confirmPassword.equals(password)) {
+            signUp_confirmPassword.setError("Passwords do not match");
+        } else {
+            signUp_confirmPassword.setError(null);
+        }
+
+        // enable/disable signup button in real-time
+        boolean allValid = !displayName.isEmpty() &&
+                !email.isEmpty() &&
+                !password.isEmpty() &&
+                !confirmPassword.isEmpty() &&
+                android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() &&
+                !DisposableEmailChecker.isDisposable(email) &&
+                password.length() >= 8 &&
+                containsUppercase(password) &&
+                password.equals(confirmPassword);
+
+        signUp_button.setEnabled(allValid);
+    }
+
+    // helper method to check for uppercase letters
+    private boolean containsUppercase(String password) {
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void handleSignUp() {
         String displayName = signUp_dispName.getText().toString().trim();
         String email = signUp_email.getText().toString().trim();
@@ -158,15 +249,18 @@ public class SignUpPage extends Fragment {
             return;
         }
 
-        if (password.length() < 8) {
+        if (DisposableEmailChecker.isDisposable(email)) {
+            Toast.makeText(getContext(),
+                    "Temporary email addresses are not allowed. Please use a permanent email address.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+            if (password.length() < 8) {
             Toast.makeText(getContext(), "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         // Show loading state
         signUp_button.setEnabled(false);

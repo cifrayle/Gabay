@@ -80,7 +80,7 @@ public class Chapter1 extends Fragment {
         initializeLevelButtons();
         initializeQuizButton();
         updateLevelStates();
-        addResetButton();
+        //addResetButton();
         setupProgressObserver();
 
         Log.d("Chapter1", "Chapter1 fragment initialized");
@@ -165,11 +165,11 @@ public class Chapter1 extends Fragment {
                         showQuizNotification(completedLevel);
                     }
 
-                    // Check if chapter is completed
+                    // Check if chapter is completed and update quiz button
                     checkChapterCompletion();
                 }
             }
-            // Update the UI
+            // Update the UI including quiz button
             updateLevelStates();
         }
     }
@@ -215,6 +215,9 @@ public class Chapter1 extends Fragment {
                 Log.d("Chapter1", "Level " + levelNumber + " state updated");
             }
         }
+
+        // Update quiz button state as well
+        updateQuizButtonState();
     }
 
     private void updateButtonClickListener(Button button, int levelNumber) {
@@ -317,9 +320,12 @@ public class Chapter1 extends Fragment {
     private void checkChapterCompletion() {
         ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(1);
         if (progress != null && progress.getProgressPercentage() >= 100) {
-            Toast.makeText(requireContext(), "Congratulations! Chapter 1 completed!", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Congratulations! Chapter 1 completed! Quiz unlocked!", Toast.LENGTH_LONG).show();
             // Mark chapter quiz as completed
-            progressViewModel.markChapterQuizCompleted(1); // Use the method that takes only chapter
+            progressViewModel.markChapterQuizCompleted(1);
+
+            // Update quiz button to be enabled
+            updateQuizButtonState();
         }
     }
 
@@ -333,6 +339,7 @@ public class Chapter1 extends Fragment {
         progressViewModel.getAllChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
             if (isAdded()) {
                 updateLevelStates();
+                updateQuizButtonState();
                 Log.d("Chapter1", "Progress observer triggered - updating level states");
             }
         });
@@ -382,12 +389,44 @@ public class Chapter1 extends Fragment {
     private void initializeQuizButton() {
         btn_chapter_quiz = view.findViewById(R.id.btn_chapter_quiz);
         if (btn_chapter_quiz != null) {
+            // Check if all levels are completed and update button state
+            updateQuizButtonState();
+
             btn_chapter_quiz.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openQuizActivity();
+                    if (isChapterCompleted()) {
+                        openQuizActivity();
+                    } else {
+                        Toast.makeText(getContext(), "Complete all levels to unlock the quiz!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
+        }
+    }
+
+    private boolean isChapterCompleted() {
+        int completedLevels = progressViewModel.getChapterProgress(1);
+        return completedLevels >= BUTTON_IDS.length;
+    }
+
+    private void updateQuizButtonState() {
+        if (btn_chapter_quiz != null) {
+            // Remove Material theme effects (apply to both states)
+            btn_chapter_quiz.setBackgroundTintList(null);
+            btn_chapter_quiz.setStateListAnimator(null);
+            btn_chapter_quiz.setElevation(0f);
+
+            if (isChapterCompleted()) {
+                // Chapter completed - enable quiz button
+                btn_chapter_quiz.setEnabled(true);
+                btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button);
+            } else {
+                // Chapter not completed - disable quiz button
+                btn_chapter_quiz.setEnabled(false);
+                btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button_locked);
+            }
+            btn_chapter_quiz.setAlpha(1.0f);
         }
     }
 

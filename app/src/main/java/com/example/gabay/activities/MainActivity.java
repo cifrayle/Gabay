@@ -2,12 +2,14 @@ package com.example.gabay.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.gabay.R;
 import com.example.gabay.fragments.pages.GabAIPage;
@@ -15,6 +17,7 @@ import com.example.gabay.fragments.pages.HomePage;
 import com.example.gabay.fragments.pages.ProfilePage;
 import com.example.gabay.fragments.pages.DictionaryPage;
 import com.example.gabay.services.SupabaseJavaService;
+import com.example.gabay.viewmodels.ProgressViewModel;
 import com.example.gabay.utils.FragmentStateManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -30,15 +33,21 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment;
     private FragmentManager fragmentManager;
     private FragmentStateManager fragmentStateManager;
+
+    private ProgressViewModel progressViewModel;
+
     private android.widget.TextView actionBarTitle;
     private android.view.View actionBarContainer;
     private android.widget.ImageButton backButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.Theme_Gabay);
         setContentView(R.layout.activity_main);
+
+        progressViewModel = new ViewModelProvider(this).get(ProgressViewModel.class);
 
         restoreSupabaseAuthentication();
 
@@ -50,9 +59,12 @@ public class MainActivity extends AppCompatActivity {
         actionBarTitle = findViewById(R.id.action_bar_title);
         backButton = findViewById(R.id.levels_back_button);
 
+
         if (backButton != null) {
             backButton.setOnClickListener(v -> onBackPressed());
         }
+
+
 
         fragmentManager.addOnBackStackChangedListener(this::updateActionBarForTopFragment);
 
@@ -157,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
     private void switchFragment(Fragment fragment) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        // Use setCustomAnimations for smooth transitions
         transaction.setCustomAnimations(
                 R.anim.fade_in,
                 R.anim.fade_out,
@@ -165,29 +176,33 @@ public class MainActivity extends AppCompatActivity {
                 R.anim.fade_out
         );
 
-        // Check if fragment is already added
-        if (fragment.isAdded()) {
-            transaction.show(fragment);
-            // Hide other fragments
-            for (Fragment cachedFragment : fragmentCache.values()) {
-                if (cachedFragment != fragment && cachedFragment.isAdded()) {
-                    transaction.hide(cachedFragment);
-                }
-            }
-        } else {
-            // Add new fragment
-            transaction.add(R.id.fragment_container, fragment);
-            // Hide current fragment if exists
-            if (currentFragment != null && currentFragment.isAdded()) {
-                transaction.hide(currentFragment);
-            }
+        // Hide current fragment if it exists
+        if (currentFragment != null && currentFragment.isAdded()) {
+            transaction.hide(currentFragment);
         }
 
-        // Use commitNow for immediate execution
-        transaction.commitNow();
+        // Show the new fragment (add if not already added)
+        if (!fragment.isAdded()) {
+            transaction.add(R.id.fragment_container, fragment, getFragmentTagFromFragment(fragment));
+        } else {
+            transaction.show(fragment);
+        }
 
-        // After switching, update action bar visibility/title for top-level tabs
+        transaction.commitNow();
+        currentFragment = fragment;
+        fragmentStateManager.setCurrentFragment(fragment);
+
+        // Update action bar
         updateActionBarForFragment(fragment);
+    }
+
+    // Helper method to get tag from fragment
+    private String getFragmentTagFromFragment(Fragment fragment) {
+        if (fragment instanceof HomePage) return "home_fragment";
+        if (fragment instanceof GabAIPage) return "gabai_fragment";
+        if (fragment instanceof DictionaryPage) return "dictionary_fragment";
+        if (fragment instanceof ProfilePage) return "profile_fragment";
+        return "unknown_fragment";
     }
 
     private void updateActionBarForFragment(Fragment fragment) {

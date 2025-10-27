@@ -298,12 +298,12 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/chapter_progress_subtitle"
+                    android:id="@+id/level_progress_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="0/28 levels completed"
+                    android:text="0/57 levels completed"
                     android:textColor="@color/accentTextColor"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"

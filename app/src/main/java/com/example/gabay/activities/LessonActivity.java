@@ -57,7 +57,9 @@ public class LessonActivity extends AppCompatActivity {
     }
 
     private void loadLevelFragment(int chapter, String levelTitle) {
-        Fragment fragment = LessonFragment.newInstance("chapter1", currentLevel);
+        String chapterId = "chapter" + currentChapter;
+
+        Fragment fragment = LessonFragment.newInstance(chapterId, currentLevel);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)

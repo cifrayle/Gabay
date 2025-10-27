@@ -21,6 +21,8 @@ import com.example.gabay.R;
 import com.example.gabay.fragments.BaseFragment;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
+import java.util.Map;
+
 public class ProfilePage extends BaseFragment {
 
     private TextView usernameTextView;
@@ -31,7 +33,7 @@ public class ProfilePage extends BaseFragment {
 
     private ProgressViewModel progressViewModel;
     private HomePage homePage;
-    private TextView chapterProgressSubtitle;
+    private TextView levelProgressSubtitle;
 
     // State tracking for inline editing
     private boolean isEditing = false;
@@ -64,7 +66,7 @@ public class ProfilePage extends BaseFragment {
         overallProgressBar = rootView.findViewById(R.id.progress_overall);
         settingsButton = rootView.findViewById(R.id.settings_button);
         View changePictureButton = rootView.findViewById(R.id.change_picture_button);
-        chapterProgressSubtitle = rootView.findViewById(R.id.chapter_progress_subtitle);
+        levelProgressSubtitle = rootView.findViewById(R.id.level_progress_subtitle);
 
         // Setup advanced inline editing
         setupInlineEditing();
@@ -305,6 +307,35 @@ public class ProfilePage extends BaseFragment {
         progressViewModel.getTotalProgress().observe(getViewLifecycleOwner(), totalProgress -> {
             if (isFragmentActive()) {
                 updateProgressDisplay();
+            }
+        });
+
+        progressViewModel.getAllChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
+            if (levelProgressSubtitle == null) return;
+
+            if (progressMap != null && !progressMap.isEmpty()) {
+                int totalCompleted = 0;
+                int totalLevels = 0;
+
+                // Loop through each chapter and calculate completed + total levels
+                for (Map.Entry<Integer, Integer> entry : progressMap.entrySet()) {
+                    int chapter = entry.getKey();
+                    int completed = entry.getValue();
+                    int maxLevels = progressViewModel.getChapterProgressObject(chapter).getMaxLevels();
+
+                    totalCompleted += completed;
+                    totalLevels += maxLevels;
+                }
+
+                // Fallback if something goes wrong
+                if (totalLevels == 0) totalLevels = 57;
+
+                String progressText = totalCompleted + "/" + totalLevels + " levels completed";
+                levelProgressSubtitle.setText(progressText);
+
+            } else {
+                // When no progress data available yet
+                levelProgressSubtitle.setText("0/57 levels completed");
             }
         });
     }

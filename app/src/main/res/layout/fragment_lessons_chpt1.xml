@@ -1501,7 +1501,7 @@ tools:context=".fragments.pages.JourneyPage">
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="12dp"/>
 
             <LinearLayout
                 android:id="@+id/reset_progress"

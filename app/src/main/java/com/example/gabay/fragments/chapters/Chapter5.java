@@ -1,32 +1,56 @@
 package com.example.gabay.fragments.chapters;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gabay.R;
-import com.example.gabay.activities.LessonActivity;
 import com.example.gabay.activities.MainActivity;
+import com.example.gabay.activities.LessonActivity;
+import com.example.gabay.activities.QuizActivity;
+import com.example.gabay.viewmodels.ProgressViewModel;
 
-public class Chapter5 extends Fragment implements View.OnClickListener {
+public class Chapter5 extends Fragment {
+
+    Button btn_chapter_quiz;
+    // Update BUTTON_IDS and TITLE_IDS based on your layout
     private static final int[] BUTTON_IDS = {
-            R.id.lvl1, R.id.lvl2, R.id.lvl3, R.id.lvl4, R.id.lvl5, R.id.lvl6, R.id.lvl7
+            R.id.lvl1, R.id.lvl2, R.id.lvl3, R.id.lvl4, R.id.lvl5,
+            R.id.lvl6, R.id.lvl7,
     };
 
-    private static int currentLessonLevel = -1;
+    private static final int[] TITLE_IDS = {
+            R.id.levelTitle1, R.id.levelTitle2, R.id.levelTitle3, R.id.levelTitle4, R.id.levelTitle5,
+            R.id.levelTitle6, R.id.levelTitle7,
+    };
+
     private View view;
+    private SharedPreferences preferences;
+    private static final String PREF_NAME = "Chapter5Progress";
+    private ProgressViewModel progressViewModel;
+    private static final int LESSON_ACTIVITY_REQUEST = 1001;
+    private Button[] levelButtons;
 
     public static Chapter5 newInstance() {
         Chapter5 fragment = new Chapter5();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -34,7 +58,15 @@ public class Chapter5 extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
-        initializeButtons();
+
+        progressViewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
+        preferences = requireContext().getSharedPreferences(PREF_NAME, getContext().MODE_PRIVATE);
+
+        initializeLevelButtons();
+        initializeQuizButton();
+        updateLevelStates();
+        addResetButton();
+        setupProgressObserver();
     }
 
     @Override
@@ -42,57 +74,279 @@ public class Chapter5 extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_lessons_chpt5, container, false);
     }
 
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        int level = getLevelFromId(id);
-
-        Intent intent = new Intent(getActivity(), LessonActivity.class);
-        intent.putExtra("level", level);
-        intent.putExtra("fragment_to_load", "level_" + level);
-        intent.putExtra("chapter", 5);
-
-        if (currentLessonLevel != level) {
-            if (currentLessonLevel != -1) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    private void initializeLevelButtons() {
+        levelButtons = new Button[BUTTON_IDS.length];
+        for (int i = 0; i < BUTTON_IDS.length; i++) {
+            Button button = view.findViewById(BUTTON_IDS[i]);
+            TextView titleView = view.findViewById(TITLE_IDS[i]);
+            int levelNumber = i + 1;
+            levelButtons[i] = button;
+            if (button != null && titleView != null) {
+                setupLevelButton(button, titleView, levelNumber);
             }
-            startActivity(intent);
-            currentLessonLevel = level;
+        }
+    }
+
+    private void setupLevelButton(Button button, TextView titleView, int levelNumber) {
+        if (button.getText().toString().isEmpty()) {
+            button.setText(String.valueOf(levelNumber));
+        }
+        if (!isLevelUnlocked(levelNumber)) {
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showLockedLevelToast(levelNumber);
+                }
+                return true;
+            });
         } else {
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            button.setOnClickListener(v -> {
+                String levelTitle = titleView.getText().toString();
+                Intent intent = new Intent(getActivity(), LessonActivity.class);
+                intent.putExtra("chapter", 5);
+                intent.putExtra("level", levelNumber);
+                intent.putExtra("levelTitle", levelTitle);
+                startActivityForResult(intent, LESSON_ACTIVITY_REQUEST);
+            });
+        }
+    }
+
+    private void showLockedLevelToast(int levelNumber) {
+        if (levelNumber == 1) {
+            Toast.makeText(getContext(), "Level 1 should be unlocked! Try resetting progress.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Level " + levelNumber + " is locked! Complete Level " + (levelNumber - 1) + " first.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LESSON_ACTIVITY_REQUEST && resultCode == RESULT_OK) {
+            if (data != null) {
+                int completedLevel = data.getIntExtra("completed_level", -1);
+                int score = data.getIntExtra("score", 0);
+                boolean levelCompleted = data.getBooleanExtra("level_completed", false);
+                if (completedLevel != -1 && levelCompleted) {
+                    markLevelAsFinished(completedLevel, score);
+                    if (completedLevel < BUTTON_IDS.length) {
+                        unlockLevel(completedLevel + 1);
+                    }
+                    if (progressViewModel.shouldTakeQuiz(5, completedLevel)) {
+                        showQuizNotification(completedLevel);
+                    }
+                    checkChapterCompletion();
+                }
+            }
+            updateLevelStates();
+        }
+    }
+
+    private void updateLevelStates() {
+        int completedLevels = progressViewModel.getChapterProgress(5);
+        for (int i = 0; i < levelButtons.length; i++) {
+            Button button = levelButtons[i];
+            int levelNumber = i + 1;
+            if (button != null) {
+                button.setBackgroundTintList(null);
+                button.setStateListAnimator(null);
+                button.setElevation(0f);
+                if (levelNumber <= completedLevels) {
+                    button.setBackgroundResource(R.drawable.circular_button);
+                    button.setEnabled(true);
+                } else if (levelNumber == completedLevels + 1) {
+                    button.setBackgroundResource(R.drawable.circular_button);
+                    button.setEnabled(true);
+                } else {
+                    button.setBackgroundResource(R.drawable.circular_button_locked);
+                    button.setEnabled(false);
+                }
+                button.setAlpha(1.0f);
+                updateButtonClickListener(button, levelNumber);
+            }
+        }
+    }
+
+    private boolean isChapterCompleted() {
+        int completedLevels = progressViewModel.getChapterProgress(2);
+        return completedLevels >= BUTTON_IDS.length;
+    }
+
+    private void updateQuizButtonState() {
+        if (btn_chapter_quiz != null) {
+            // Remove Material theme effects (apply to both states)
+            btn_chapter_quiz.setBackgroundTintList(null);
+            btn_chapter_quiz.setStateListAnimator(null);
+            btn_chapter_quiz.setElevation(0f);
+
+            if (isChapterCompleted()) {
+                // Chapter completed - enable quiz button
+                btn_chapter_quiz.setEnabled(true);
+                btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button);
+            } else {
+                // Chapter not completed - disable quiz button
+                btn_chapter_quiz.setEnabled(false);
+                btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button_locked);
+            }
+            btn_chapter_quiz.setAlpha(1.0f);
+        }
+    }
+
+    private void checkChapterCompletion() {
+        ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(1);
+        if (progress != null && progress.getProgressPercentage() >= 100) {
+            Toast.makeText(requireContext(), "Congratulations! Chapter 2 completed! Quiz unlocked!", Toast.LENGTH_LONG).show();
+            // Mark chapter quiz as completed
+            progressViewModel.markChapterQuizCompleted(2);
+
+            // Update quiz button to be enabled
+            updateQuizButtonState();
+        }
+    }
+
+    private void setupProgressObserver() {
+        progressViewModel.getAllChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
+            if (isAdded()) {
+                updateQuizButtonState();
+                updateLevelStates();
+                Log.d("Chapter2", "Progress observer triggered - updating level states");
+            }
+        });
+    }
+
+    private void initializeQuizButton() {
+        btn_chapter_quiz = view.findViewById(R.id.btn_chapter_quiz);
+        if (btn_chapter_quiz != null) {
+            // Check if all levels are completed and update button state
+            updateQuizButtonState();
+
+            btn_chapter_quiz.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isChapterCompleted()) {
+                        openQuizActivity();
+                    } else {
+                        Toast.makeText(getContext(), "Complete all levels to unlock the quiz!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void updateButtonClickListener(Button button, int levelNumber) {
+        button.setOnClickListener(null);
+        button.setOnTouchListener(null);
+        TextView titleView = view.findViewById(TITLE_IDS[levelNumber - 1]);
+        if (isLevelUnlocked(levelNumber)) {
+            button.setOnClickListener(v -> {
+                if (titleView != null) {
+                    String levelTitle = titleView.getText().toString();
+                    Intent intent = new Intent(getActivity(), LessonActivity.class);
+                    intent.putExtra("chapter", 5);
+                    intent.putExtra("level", levelNumber);
+                    intent.putExtra("levelTitle", levelTitle);
+                    startActivityForResult(intent, LESSON_ACTIVITY_REQUEST);
+                }
+            });
+        } else {
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showLockedLevelToast(levelNumber);
+                }
+                return true;
+            });
+        }
+    }
+
+    private boolean isLevelUnlocked(int level) {
+        int completedLevels = progressViewModel.getChapterProgress(5);
+        return level <= completedLevels + 1;
+    }
+
+    public void markLevelAsFinished(int level, int score) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("level_" + level + "_finished", true);
+        editor.putBoolean("level_" + level + "_reached", true);
+        editor.apply();
+        if (progressViewModel != null) {
+            progressViewModel.updateChapterProgress(5, level);
+        }
+        updateUserAchievements(level);
+    }
+
+    private void unlockLevel(int level) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("level_" + level + "_reached", true);
+        editor.apply();
+    }
+
+    private void updateUserAchievements(int level) {
+        ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
+        if (profile != null) {
+            ProgressViewModel.ChapterProgress chapterProgress = progressViewModel.getChapterProgressObject(5);
+            if (chapterProgress != null && chapterProgress.getCompletedLevels() >= BUTTON_IDS.length) {
+                profile.setTotalChaptersCompleted(profile.getTotalChaptersCompleted() + 1);
+            }
+            if (level % 5 == 0) {
+                profile.setTotalQuizzesPassed(profile.getTotalQuizzesPassed() + 1);
+                progressViewModel.markQuizCompleted(4, level);
+            }
+            progressViewModel.updateUserProfile(profile);
+        }
+    }
+
+    private void showQuizNotification(int level) {
+        Toast.makeText(requireContext(), "Quiz available! Take the quiz to test your knowledge!", Toast.LENGTH_LONG).show();
+    }
+
+    private void addResetButton() {
+        Button resetBtn = new Button(requireContext());
+        resetBtn.setText("Reset Progress");
+        resetBtn.setBackgroundColor(getResources().getColor(R.color.transparentBackground));
+        resetBtn.setTextColor(getResources().getColor(R.color.secondaryColor));
+        LinearLayout layout = view.findViewById(R.id.reset_progress);
+        if (layout != null) {
+            layout.addView(resetBtn);
+        }
+        resetBtn.setOnClickListener(v -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Reset Progress")
+                    .setMessage("Reset all progress and start from level 1?")
+                    .setPositiveButton("Reset", (dialog, which) -> resetChapterProgress())
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+    }
+
+    private void resetChapterProgress() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+        if (progressViewModel != null) {
+            progressViewModel.resetChapterProgress(5);
+        }
+        updateLevelStates();
+        Toast.makeText(getContext(), "Progress reset!", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void openQuizActivity() {
+        try {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("chapter_number", 5);
             startActivity(intent);
+        } catch (Exception e) {
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        updateLevelStates();
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 5");
-        }
-    }
-
-    private int getLevelFromId(int id) {
-        for (int i = 0; i < BUTTON_IDS.length; i++) {
-            if (id == BUTTON_IDS[i]) {
-                return i + 1; // Level numbers start from 1
-            }
-        }
-        return -1; // Invalid ID
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        currentLessonLevel = -1;
-    }
-
-    private void initializeButtons() {
-        for (int buttonId : BUTTON_IDS) {
-            Button button = view.findViewById(buttonId);
-            if (button != null) {
-                button.setOnClickListener(this);
-            }
         }
     }
 }

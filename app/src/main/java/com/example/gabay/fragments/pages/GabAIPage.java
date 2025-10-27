@@ -61,12 +61,11 @@ public class GabAIPage extends Fragment {
     private TextView predictionText, modelIndicatorText, instructionText;
     private Interpreter tfliteBasicSigns, tfliteFSLAlphabet, tfliteNumbers10;
     private Interpreter currentModel;
-    private final String[] FSL_BasicSigns_labels = {"A", "C", "I", "MAHAL KITA", "N"};
+    private final String[] FSL_BasicSigns_labels = {"A", "C", "I", "MAHAL KITA", "N"}; //
     private final String[] FSL_alphabet_labels = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "J", "Z"};
     private final String[] FSL_numbers10_labels = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-    private int currentModelIndex = 0; // 0=Basic, 1=Alphabet, 2=Numbers
+    private int currentModelIndex = 0; // 0=Basic, 1=alphabet, 2=numbers
     private String[] currentLabels;
-    private boolean useModel1 = true;
     private Button switchModelButton;
 
     // Frame rate limiting
@@ -75,7 +74,7 @@ public class GabAIPage extends Fragment {
     private static final float CONFIDENCE_THRESHOLD = 0.6f;
 
     // Bounding box configuration
-    private static final float CROP_PERCENTAGE = 0.5f; // Use center 50% of the image
+    private static final float CROP_PERCENTAGE = 0.5f; // use center 50% of the image
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -123,11 +122,11 @@ public class GabAIPage extends Fragment {
             Interpreter.Options options = new Interpreter.Options();
             tfliteBasicSigns = new Interpreter(loadModelFile("model_unquant.tflite"), options);
             tfliteFSLAlphabet = new Interpreter(loadModelFile("fsl_alphabet_model.tflite"), options);
-            tfliteNumbers10 = new Interpreter(loadModelFile("fsl_numbers10_model.tflite"), options); // Fixed: use tfliteNumbers
+            tfliteNumbers10 = new Interpreter(loadModelFile("fsl_numbers10_model.tflite"), options);
 
             debugModelInfo(tfliteBasicSigns, "Model 1 (Basic Signs)");
             debugModelInfo(tfliteFSLAlphabet, "Model 2 (Alphabet)");
-            debugModelInfo(tfliteNumbers10, "Model 3 (Numbers)"); // Fixed: debug numbers model
+            debugModelInfo(tfliteNumbers10, "Model 3 (Numbers)");
 
             if (tfliteBasicSigns != null && tfliteFSLAlphabet != null && tfliteNumbers10 != null) {
                 switchToNextModel(); // Use the new 3-model method
@@ -149,7 +148,7 @@ public class GabAIPage extends Fragment {
                 return;
             }
 
-            switchToNextModel(); // Use the new 3-model switching method
+            switchToNextModel();
         });
 
         return view;
@@ -311,7 +310,7 @@ public class GabAIPage extends Fragment {
         currentModelIndex = (currentModelIndex + 1) % 3;
 
         switch (currentModelIndex) {
-            case 0: // Basic Signs
+            case 0: // basic signs
                 currentModel = tfliteBasicSigns;
                 currentLabels = FSL_BasicSigns_labels;
                 currentImageSize = 224;
@@ -321,7 +320,7 @@ public class GabAIPage extends Fragment {
                 Log.d("ModelSwitch", "Switched to Basic Signs - " + FSL_BasicSigns_labels.length + " labels");
                 break;
 
-            case 1: // Alphabet
+            case 1: // fsl alphabet
                 currentModel = tfliteFSLAlphabet;
                 currentLabels = FSL_alphabet_labels;
                 currentImageSize = 224;
@@ -331,7 +330,7 @@ public class GabAIPage extends Fragment {
                 Log.d("ModelSwitch", "Switched to Alphabet - " + FSL_alphabet_labels.length + " labels");
                 break;
 
-            case 2: // Numbers
+            case 2: // numbers 1-10
                 currentModel = tfliteNumbers10;
                 currentLabels = FSL_numbers10_labels;
                 currentImageSize = 224;

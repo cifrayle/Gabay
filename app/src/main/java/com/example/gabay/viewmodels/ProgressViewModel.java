@@ -149,12 +149,12 @@ public class ProgressViewModel extends ViewModel {
 
     private int getMaxLevelsForChapter(int chapter) {
         switch (chapter) {
-            case 1: return 29;
-            case 2: return 10;
-            case 3: return 11;
-            case 4: return 10;
-            case 5: return 10;
-            default: return 30;
+            case 1: return 28;
+            case 2: return 5;
+            case 3: return 10;
+            case 4: return 7;
+            case 5: return 7;
+            default: return 28;
         }
     }
 

@@ -8,9 +8,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,8 @@ public class LessonFragment extends Fragment {
     private int levelNumber;
     private VideoView videoView;
     private Button btnNext, btnPrev;
+    private ImageButton btnReplay, btnPausePlay;
+
     private ProgressViewModel progressViewModel;
 
     public LessonFragment() {}
@@ -62,6 +66,8 @@ public class LessonFragment extends Fragment {
         videoView = view.findViewById(R.id.videoView);
         btnNext = view.findViewById(R.id.btn_nextLevel);
         btnPrev = view.findViewById(R.id.btn_prevLevel);
+        btnReplay = view.findViewById(R.id.btn_replay);
+        btnPausePlay = view.findViewById(R.id.btn_pause_play);
 
         showLesson();
 
@@ -80,23 +86,88 @@ public class LessonFragment extends Fragment {
         if (lessons != null && levelNumber >= 1 && levelNumber <= lessons.length) {
             LessonData.Lesson lesson = lessons[levelNumber - 1];
 
+            // Set title
             if (getActivity() != null) {
                 TextView actionBarTitle = getActivity().findViewById(R.id.action_bar_title);
-                if (actionBarTitle != null) {
-                    actionBarTitle.setText(lesson.title);
-                }
+                if (actionBarTitle != null) actionBarTitle.setText(lesson.title);
             }
 
-            // Play video
+            // Prepare video
             String path = "android.resource://" + getContext().getPackageName() + "/" + lesson.videoRes;
             Uri uri = Uri.parse(path);
             videoView.setVideoURI(uri);
 
             MediaController mediaController = new MediaController(getContext());
-            videoView.setMediaController(mediaController);
-            mediaController.setAnchorView(videoView);
+            //videoView.setMediaController(mediaController);
+            //mediaController.setAnchorView(videoView);
 
+            btnReplay.setVisibility(View.GONE);
+            btnPausePlay.setVisibility(View.GONE);
+
+            // Start video
             videoView.start();
+
+            // Show pause/play when ready
+            videoView.setOnPreparedListener(mp -> {
+                btnPausePlay.setVisibility(View.VISIBLE);
+                btnPausePlay.setImageResource(R.drawable.ic_pause);
+
+                // Auto-hide animation
+                btnPausePlay.animate()
+                        .alpha(0f)
+                        .setDuration(300)
+                        .setStartDelay(2500)
+                        .withEndAction(() -> btnPausePlay.setVisibility(View.GONE))
+                        .start();
+
+                // Tap to toggle play/pause
+                videoView.setOnTouchListener((v, event) -> {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                        // 🔹 Cancel any ongoing fade animations
+                        btnPausePlay.animate().cancel();
+
+                        // 🔹 Reset alpha & make sure it's visible
+                        btnPausePlay.setAlpha(1f);
+                        btnPausePlay.setVisibility(View.VISIBLE);
+
+                        // 🔹 Toggle play/pause
+                        if (videoView.isPlaying()) {
+                            videoView.pause();
+                            btnPausePlay.setImageResource(R.drawable.ic_play);
+                        } else {
+                            videoView.start();
+                            btnPausePlay.setImageResource(R.drawable.ic_pause);
+                        }
+
+                        // 🔹 Reapply fade-out animation after 2.5s
+                        btnPausePlay.animate()
+                                .alpha(0f)
+                                .setDuration(300)
+                                .setStartDelay(500)
+                                .withEndAction(() -> btnPausePlay.setVisibility(View.GONE))
+                                .start();
+                    }
+                    return true; // consume the touch
+                });
+            });
+
+            // Replay button (for when video ends)
+            videoView.setOnCompletionListener(mp -> {
+                btnPausePlay.setVisibility(View.GONE);
+                btnReplay.setVisibility(View.VISIBLE);
+                btnReplay.setAlpha(0f);
+                btnReplay.animate().alpha(1f).setDuration(300).start();
+            });
+
+            // Replay click handler
+            btnReplay.setOnClickListener(v -> {
+                btnReplay.setVisibility(View.GONE);
+                videoView.seekTo(0);
+                videoView.start();
+                btnPausePlay.setImageResource(R.drawable.ic_pause);
+                btnPausePlay.setVisibility(View.VISIBLE);
+            });
 
             Log.d("LessonDebug", "Playing video: " + lesson.title + " (Resource: " + lesson.videoRes + ")");
         } else {
