@@ -52,13 +52,16 @@ public class HomePage extends BaseFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_home_page, container, false);
-        mainContentContainer = view.findViewById(R.id.chapters_container);
 
-        progressCardView = view.findViewById(R.id.todo_card);
+        View view = inflater.inflate(R.layout.fragment_home_page, container, false);
+        mainContentContainer = view.findViewById(R.id.main);
+        ConstraintLayout mainLayout = view.findViewById(R.id.main); // ✅ inner layout
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        progressCardView = view.findViewById(R.id.progress_card);
         userTitleTextView = view.findViewById(R.id.user_greet);
         lessonsTitleTextView = view.findViewById(R.id.lessons_title);
-        todoDescTextView = view.findViewById(R.id.todo_desc);
+        todoDescTextView = view.findViewById(R.id.progress_percentage);
         progressBar = view.findViewById(R.id.progress_bar);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
@@ -187,7 +190,7 @@ public class HomePage extends BaseFragment {
             Log.d("ProgressDebug", "HomePage: Total progress changed to " + totalProgress + "%");
             if (isFragmentActive() && progressBar != null && todoDescTextView != null) {
                 progressBar.setProgress(totalProgress != null ? totalProgress : 0);
-                todoDescTextView.setText("Overall Progress: " + (totalProgress != null ? totalProgress : 0) + "%");
+                todoDescTextView.setText((totalProgress != null ? totalProgress : 0) + "%");
             }
         });
 
@@ -240,7 +243,7 @@ public class HomePage extends BaseFragment {
 
         Log.d("ProgressDebug", "HomePage: Total progress = " + totalProgress + "%");
 
-        todoDescTextView.setText("Overall Progress: " + totalProgress + "%");
+        todoDescTextView.setText(totalProgress + "%");
 
         // Update progress bar
         progressBar.setProgress(totalProgress);
@@ -251,31 +254,27 @@ public class HomePage extends BaseFragment {
     }
 
     private void updateChapterCardsProgress() {
-        if (progressViewModel == null) return;
+        if (progressViewModel == null || getView() == null) return;
 
-        // percentage TextView IDs
-        int[] percentageViewIds = {
-                R.id.chapter1Percentage, R.id.chapter2Percentage,
-                R.id.chapter3Percentage, R.id.chapter4Percentage,
-                R.id.chapter5Percentage
+        int[] chapterCardIds = {
+                R.id.chpt1, R.id.chpt2, R.id.chpt3, R.id.chpt4, R.id.chpt5
         };
 
-        for (int i = 0; i < percentageViewIds.length; i++) {
+        for (int i = 0; i < chapterCardIds.length; i++) {
             int chapterNumber = i + 1;
             ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(chapterNumber);
+            CardView chapterCard = getView().findViewById(chapterCardIds[i]);
 
-            if (progress != null) {
-                int progressPercent = progress.getProgressPercentage();
-                TextView percentageTextView = getView().findViewById(percentageViewIds[i]);
+            if (chapterCard != null) {
+                TextView percentageTextView = chapterCard.findViewById(R.id.chapter_progress);
+                if (progress != null && percentageTextView != null) {
+                    int progressPercent = progress.getProgressPercentage();
 
-                if (percentageTextView != null) {
-                    // Only show percentage if progress is greater than 0%
                     if (progressPercent > 0) {
-                        percentageTextView.setText(" (" + progressPercent + "%)");
-                        // Set color based on progress
+                        percentageTextView.setText(progressPercent + "%");
                         setProgressColor(percentageTextView, progressPercent);
                     } else {
-                        percentageTextView.setText(""); // Empty string
+                        percentageTextView.setText("0%");
                     }
                 }
             }
@@ -319,14 +318,29 @@ public class HomePage extends BaseFragment {
         int[] cardIds = {R.id.chpt1, R.id.chpt2, R.id.chpt3, R.id.chpt4, R.id.chpt5};
         chapterCards = new CardView[cardIds.length];
 
+        String[] subtitles = {
+                "FSL Alphabet",
+                "Basic Greetings",
+                "Numbers (1-10)",
+                "WH Questions",
+                "Days of the week"
+        };
+
         for (int i = 0; i < cardIds.length; i++) {
             chapterCards[i] = rootView.findViewById(cardIds[i]);
             if (chapterCards[i] != null) {
+                TextView titleView = chapterCards[i].findViewById(R.id.chapter_title);
+                TextView subtitleView = chapterCards[i].findViewById(R.id.chapter_subtitle);
+
+                if (titleView != null) titleView.setText("Chapter " + (i + 1));
+                if (subtitleView != null) subtitleView.setText(subtitles[i]);
+
                 final int chapterNumber = i + 1;
                 chapterCards[i].setOnClickListener(v -> loadChapter(chapterNumber));
             }
         }
     }
+
 
     private void loadChapter(int chapterNumber) {
         if (!isFragmentActive()) return;
@@ -335,64 +349,33 @@ public class HomePage extends BaseFragment {
             progressViewModel.setCurrentProgress(chapterNumber, 1);
         }
 
-        // Hide views before loading chapter
-        if (progressCardView != null) progressCardView.setVisibility(View.GONE);
-        if (userTitleTextView != null) userTitleTextView.setVisibility(View.GONE);
-        if (lessonsTitleTextView != null) lessonsTitleTextView.setVisibility(View.GONE);
-
-        // Load chapter content
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity == null || mainContentContainer == null) return;
+        if (activity == null) return;
 
-        mainContentContainer.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View chapterView;
         Fragment selectedChapter = null;
 
-        // Load the appropriate chapter fragment based on the chapter number
         switch (chapterNumber) {
-            case 1:
-                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt1, mainContentContainer, false);
-                mainContentContainer.addView(chapterView);
-                selectedChapter = new Chapter1();
-                break;
-            case 2:
-                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt2, mainContentContainer, false);
-                mainContentContainer.addView(chapterView);
-                selectedChapter = new Chapter2();
-                break;
-            case 3:
-                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt3, mainContentContainer, false);
-                mainContentContainer.addView(chapterView);
-                selectedChapter = new Chapter3();
-                break;
-            case 4:
-                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt4, mainContentContainer, false);
-                mainContentContainer.addView(chapterView);
-                selectedChapter = new Chapter4();
-                break;
-            case 5:
-                chapterView = inflater.inflate(R.layout.fragment_lessons_chpt5, mainContentContainer, false);
-                mainContentContainer.addView(chapterView);
-                selectedChapter = new Chapter5();
-                break;
-            default:
-                return;
+            case 1: selectedChapter = new Chapter1(); break;
+            case 2: selectedChapter = new Chapter2(); break;
+            case 3: selectedChapter = new Chapter3(); break;
+            case 4: selectedChapter = new Chapter4(); break;
+            case 5: selectedChapter = new Chapter5(); break;
+            default: return;
         }
 
-        // Load the selected chapter fragment
         if (selectedChapter != null) {
-            // Show action bar with chapter title in MainActivity
             if (activity instanceof MainActivity) {
                 String title = getString(getChapterStringResource(chapterNumber));
                 ((MainActivity) activity).showActionBarWithTitle(title);
             }
+
             activity.getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, selectedChapter)
                     .addToBackStack(null)
                     .commit();
         }
     }
+
 
     @Override
     protected void cleanupResources() {

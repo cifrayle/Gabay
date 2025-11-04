@@ -65,14 +65,26 @@ public class SettingsPage extends BaseFragment {
 
     private void logout() {
         if (getActivity() != null) {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(getActivity())
                     .setTitle("Logout")
                     .setMessage("Are you sure you want to logout?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
+                    .setPositiveButton("Yes", (dialogInterface, which) -> {
                         performLogout();
                     })
                     .setNegativeButton("No", null)
-                    .show();
+                    .create();
+
+            dialog.setOnShowListener(dialogInterface -> {
+                // Set PositiveButton color to blue
+                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                        .setTextColor(getResources().getColor(R.color.secondaryColor)); // Use your blue color
+
+                // Set NegativeButton color to black
+                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
+                        .setTextColor(getResources().getColor(R.color.buttonTextColor));
+            });
+
+            dialog.show();
         }
     }
 

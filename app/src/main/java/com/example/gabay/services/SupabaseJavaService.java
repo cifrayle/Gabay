@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -89,6 +91,71 @@ public class SupabaseJavaService {
 
         } catch (Exception e) {
             Log.e("SupabaseService", "Error fetching user profile: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static String getAuthUserEmail() {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return null;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<String> userEmail = new AtomicReference<>(null);
+
+        try {
+            // Get user data from auth.users table
+            String url = SUPABASE_URL + "/auth/v1/user";
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .get()
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to get auth user email: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            String responseBody = response.body().string();
+                            Log.d("SupabaseDebug", "Raw auth user response for email: " + responseBody);
+
+                            JSONObject userData = new JSONObject(responseBody);
+
+                            // Extract email directly from the user object
+                            if (userData.has("email") && !userData.isNull("email")) {
+                                String email = userData.getString("email");
+                                userEmail.set(email);
+                                Log.d("SupabaseService", "Auth user email found: " + email);
+                            } else {
+                                Log.e("SupabaseService", "No email found in auth user data");
+                            }
+                        } else {
+                            String errorBody = response.body().string();
+                            Log.e("SupabaseService", "Failed to get auth user email: " + response.code() + " - " + errorBody);
+                        }
+                    } catch (JSONException e) {
+                        Log.e("SupabaseService", "JSON parsing error for email: " + e.getMessage());
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return userEmail.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error getting auth user email: " + e.getMessage());
             return null;
         }
     }
@@ -458,6 +525,174 @@ public class SupabaseJavaService {
             return 0;
         }
     }
+
+
+    public static boolean updateQuizCompletion(int chapter, boolean completed) {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return false;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean success = new AtomicBoolean(false);
+
+        try {
+            JSONObject updates = new JSONObject();
+            updates.put("chapter_" + chapter + "_quiz_completed", completed);
+            updates.put("updated_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date()));
+
+            RequestBody body = RequestBody.create(updates.toString(), JSON);
+            String updateUrl = REST_URL + "/user_profiles?id=eq." + userId;
+
+            Request request = new Request.Builder()
+                    .url(updateUrl)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Prefer", "return=minimal")
+                    .patch(body)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to update quiz completion: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        Log.d("SupabaseService", "Quiz completion updated successfully for chapter " + chapter);
+                        success.set(true);
+                    } else {
+                        Log.e("SupabaseService", "Failed to update quiz completion: " + response.code() + " - " + response.body().string());
+                    }
+                    latch.countDown();
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return success.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error updating quiz completion: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean updateTotalQuizzesPassed(int totalQuizzes) {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return false;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean success = new AtomicBoolean(false);
+
+        try {
+            JSONObject updates = new JSONObject();
+            updates.put("total_quizzes_passed", totalQuizzes);
+            updates.put("updated_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date()));
+
+            RequestBody body = RequestBody.create(updates.toString(), JSON);
+            String updateUrl = REST_URL + "/user_profiles?id=eq." + userId;
+
+            Request request = new Request.Builder()
+                    .url(updateUrl)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Prefer", "return=minimal")
+                    .patch(body)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to update total quizzes passed: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        Log.d("SupabaseService", "Total quizzes passed updated successfully: " + totalQuizzes);
+                        success.set(true);
+                    } else {
+                        Log.e("SupabaseService", "Failed to update total quizzes passed: " + response.code() + " - " + response.body().string());
+                    }
+                    latch.countDown();
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return success.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error updating total quizzes passed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean isQuizCompleted(int chapter) {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return false;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean isCompleted = new AtomicBoolean(false);
+
+        try {
+            String profileUrl = REST_URL + "/user_profiles?id=eq." + userId;
+
+            Request request = new Request.Builder()
+                    .url(profileUrl)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .addHeader("Content-Type", "application/json")
+                    .get()
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to fetch user profile for quiz completion: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseBody = response.body().string();
+                            JSONArray jsonArray = new JSONArray(responseBody);
+                            if (jsonArray.length() > 0) {
+                                JSONObject profile = jsonArray.getJSONObject(0);
+                                boolean completed = profile.optBoolean("chapter_" + chapter + "_quiz_completed", false);
+                                isCompleted.set(completed);
+                                Log.d("SupabaseService", "Quiz completion check for chapter " + chapter + ": " + completed);
+                            }
+                        } catch (Exception e) {
+                            Log.e("SupabaseService", "Error parsing profile for quiz completion: " + e.getMessage());
+                        }
+                    } else {
+                        Log.e("SupabaseService", "Failed to fetch profile for quiz completion: " + response.code());
+                    }
+                    latch.countDown();
+                }
+            });
+
+            latch.await(10, TimeUnit.SECONDS);
+            return isCompleted.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error checking quiz completion: " + e.getMessage());
+            return false;
+        }
+    }
+
 
     public static String getAccessToken() {
         return accessToken;

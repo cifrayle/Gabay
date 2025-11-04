@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:layout_marginBottom="24dp"
+    android:elevation="6dp">
+
+    <Button
+        android:id="@+id/btnLevel"
+        style="@style/Widget.Gabay.Button.White"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/circular_button"
+        android:elevation="8dp"
+        android:textSize="18sp"
+        android:fontFamily="@font/nunito_bold" />
+
+    <TextView
+        android:id="@+id/tvLevelTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/buttonTextColor"
+        android:fontFamily="@font/nunito_bold"
+        android:textSize="18sp"
+        android:text="Sample Level" />
+
+</LinearLayout>

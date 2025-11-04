@@ -56,7 +56,32 @@ public class ProgressViewModel extends ViewModel {
 
         // Load progress from Supabase when ViewModel is created
         refreshProgressFromSupabase();
-        loadUserProfileFromSupabase(); // Add this line
+        loadUserProfileFromSupabase();
+        loadQuizCompletionFromSupabase();// Add this line
+    }
+
+    public void loadQuizCompletionFromSupabase() {
+        backgroundExecutor.execute(() -> {
+            try {
+                Map<String, Boolean> quizStates = new HashMap<>();
+
+                // Load quiz completion for all chapters from Supabase
+                for (int chapter = 1; chapter <= 5; chapter++) {
+                    boolean completed = SupabaseJavaService.isQuizCompleted(chapter);
+                    quizStates.put("chapter_" + chapter + "_quiz", completed);
+                    Log.d("QuizDebug", "Loaded quiz state for chapter " + chapter + ": " + completed);
+                }
+
+                // Update LiveData on main thread
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    quizCompletion.setValue(quizStates);
+                    Log.d("QuizDebug", "Quiz completion states loaded from Supabase: " + quizStates.toString());
+                });
+
+            } catch (Exception e) {
+                Log.e("ProgressViewModel", "Error loading quiz completion: " + e.getMessage());
+            }
+        });
     }
 
     private void initializeDefaultProgress() {
@@ -79,7 +104,7 @@ public class ProgressViewModel extends ViewModel {
 
         // 2. Check if chapter is completed (all levels done) and mark quiz as passed
         if (isChapterCompleted(chapter)) {
-            markQuizCompleted(chapter, level);
+            markChapterQuizCompleted(chapter);
             Log.d("ProgressDebug", "Chapter " + chapter + " completed - quiz auto-marked as passed");
         }
 
@@ -105,18 +130,23 @@ public class ProgressViewModel extends ViewModel {
 
     private void updateLocalProgress(int chapter, int level) {
         Map<Integer, Integer> currentProgress = chapterProgress.getValue();
-        if (currentProgress != null) {
-            // Update the completed levels for this chapter
-            int currentCompleted = Math.max(currentProgress.getOrDefault(chapter, 0), level);
-            currentProgress.put(chapter, currentCompleted);
-            chapterProgress.setValue(currentProgress);
+        if (currentProgress == null) currentProgress = new HashMap<>();
 
-            Log.d("ProgressDebug", "📊 Local progress updated - Chapter " + chapter + ": " + currentCompleted + " levels");
+        // Copy the map to ensure LiveData detects the change
+        Map<Integer, Integer> updatedProgress = new HashMap<>(currentProgress);
 
-            // Update total progress
-            updateTotalProgress();
-        }
+        int currentCompleted = Math.max(updatedProgress.getOrDefault(chapter, 0), level);
+        updatedProgress.put(chapter, currentCompleted);
+
+        // ✅ Post updated map to notify observers
+        chapterProgress.setValue(updatedProgress);
+
+        Log.d("ProgressDebug", "📊 Local progress updated - Chapter " + chapter + ": " + currentCompleted + " levels");
+
+        // Still call total progress updater (optional but safe)
+        updateTotalProgress();
     }
+
 
     private void updateTotalProgress() {
         Map<Integer, Integer> progress = chapterProgress.getValue();
@@ -147,7 +177,7 @@ public class ProgressViewModel extends ViewModel {
         return progress != null && progress.getProgressPercentage() >= 100;
     }
 
-    private int getMaxLevelsForChapter(int chapter) {
+    public int getMaxLevelsForChapter(int chapter) {
         switch (chapter) {
             case 1: return 28;
             case 2: return 5;
@@ -195,10 +225,16 @@ public class ProgressViewModel extends ViewModel {
         }
 
         backgroundExecutor.execute(() -> {
-            // Get profile data from user_profiles table (where you're updating the username)
+            // Get profile data from user_profiles table
             JSONObject profile = SupabaseJavaService.getUserProfile();
 
-            String finalUsername = "User"; // default
+            String finalUsername = "User";
+            String userEmail = SupabaseJavaService.getAuthUserEmail(); // GET EMAIL HERE
+
+            if (userEmail == null || userEmail.isEmpty()) {
+                userEmail = "user@example.com"; // fallback
+                Log.w("ProgressViewModel", "Using fallback email");
+            }
 
             if (profile != null) {
                 try {
@@ -220,23 +256,50 @@ public class ProgressViewModel extends ViewModel {
 
                     final UserProfile finalProfile = new UserProfile();
                     finalProfile.setUsername(finalUsername);
+                    finalProfile.setEmail(userEmail); // SET THE EMAIL
                     finalProfile.setTotalChaptersCompleted(totalChaptersCompleted);
                     finalProfile.setTotalQuizzesPassed(totalQuizzesPassed);
 
                     // Update LiveData on main thread
+                    String finalUsername1 = finalUsername;
+                    String finalUserEmail = userEmail;
                     new Handler(Looper.getMainLooper()).post(() -> {
                         userProfile.setValue(finalProfile);
-                        Log.d("ProgressViewModel", "User profile loaded with username: ");
+                        Log.d("ProgressViewModel", "User profile loaded - username: " + finalUsername1 + ", email: " + finalUserEmail);
                     });
 
                 } catch (Exception e) {
                     Log.e("ProgressViewModel", "Error parsing profile data: " + e.getMessage());
-                    setDefaultUserProfile();
+                    setUserProfileFromAuth(finalUsername, userEmail);
                 }
             } else {
-                Log.e("ProgressViewModel", "No profile data found");
-                setDefaultUserProfile();
+                Log.w("ProgressViewModel", "No profile data found, using auth data");
+                setUserProfileFromAuth(finalUsername, userEmail);
             }
+        });
+    }
+
+    // NEW METHOD: Set profile from authentication data
+    private void setUserProfileFromAuth(String username, String email) {
+        final UserProfile finalProfile = new UserProfile();
+        finalProfile.setUsername(username);
+        finalProfile.setEmail(email);
+        finalProfile.setTotalChaptersCompleted(0);
+        finalProfile.setTotalQuizzesPassed(0);
+
+        new Handler(Looper.getMainLooper()).post(() -> {
+            userProfile.setValue(finalProfile);
+            Log.d("ProgressViewModel", "User profile set from auth - username: " + username + ", email: " + email);
+        });
+    }
+
+    private void setDefaultUserProfile() {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            UserProfile defaultProfile = new UserProfile();
+            defaultProfile.setUsername("User");
+            defaultProfile.setEmail("user@example.com");
+            userProfile.setValue(defaultProfile);
+            Log.d("ProgressViewModel", "Default user profile set");
         });
     }
 
@@ -264,11 +327,11 @@ public class ProgressViewModel extends ViewModel {
         });
     }
 
-    private void setDefaultUserProfile() {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            userProfile.setValue(new UserProfile());
-        });
-    }
+//    private void setDefaultUserProfile() {
+//        new Handler(Looper.getMainLooper()).post(() -> {
+//            userProfile.setValue(new UserProfile());
+//        });
+//    }
 
     // === KEEP ALL YOUR EXISTING METHODS ===
 
@@ -293,28 +356,86 @@ public class ProgressViewModel extends ViewModel {
 
     public void markChapterQuizCompleted(int chapter) {
         String quizKey = "chapter_" + chapter + "_quiz";
-        Map<String, Boolean> completion = quizCompletion.getValue();
-        if (completion != null) {
-            completion.put(quizKey, true);
-            quizCompletion.setValue(completion);
-            Log.d("ProgressDebug", "Chapter " + chapter + " quiz marked as completed");
-        }
+
+        Map<String, Boolean> currentMap = quizCompletion.getValue();
+        if (currentMap == null) currentMap = new HashMap<>();
+
+        // Copy and modify (important for LiveData to trigger observers)
+        Map<String, Boolean> updatedMap = new HashMap<>(currentMap);
+        updatedMap.put(quizKey, true);
+
+        quizCompletion.setValue(updatedMap); // notify observers
+        Log.d("ProgressDebug", "Chapter " + chapter + " quiz marked as completed");
     }
 
-    public void markQuizCompleted(int chapter, int level) {
+
+    public void markQuizCompleted(int chapter) {
+        String quizKey = "chapter_" + chapter + "_quiz";
+        Map<String, Boolean> currentMap = quizCompletion.getValue();
+        if (currentMap == null) currentMap = new HashMap<>();
+
+        // Create a new map to ensure LiveData triggers observers
+        Map<String, Boolean> updatedMap = new HashMap<>(currentMap);
+        updatedMap.put(quizKey, true);
+
+        quizCompletion.setValue(updatedMap);
+        Log.d("QuizDebug", "✅ Quiz marked completed for chapter " + chapter + " - Key: " + quizKey);
+        Log.d("QuizDebug", "Current quiz states: " + updatedMap.toString());
+
+        // Save to Supabase if needed
+        saveQuizCompletionToSupabase(chapter);
+    }
+    private void saveQuizCompletionToSupabase(int chapter) {
+        backgroundExecutor.execute(() -> {
+            try {
+                // Update user profile in Supabase
+                boolean success = SupabaseJavaService.updateQuizCompletion(chapter, true);
+                if (success) {
+                    Log.d("QuizDebug", "Quiz completion saved to Supabase for chapter " + chapter);
+
+                    // Also update total quizzes passed
+                    updateTotalQuizzesPassed();
+                } else {
+                    Log.e("QuizDebug", "Failed to save quiz completion to Supabase");
+                }
+            } catch (Exception e) {
+                Log.e("QuizDebug", "Error saving quiz completion: " + e.getMessage());
+            }
+        });
+    }
+
+    private void updateTotalQuizzesPassed() {
+        backgroundExecutor.execute(() -> {
+            try {
+                int totalQuizzes = calculateTotalQuizzesPassed();
+                boolean success = SupabaseJavaService.updateTotalQuizzesPassed(totalQuizzes);
+                if (success) {
+                    Log.d("QuizDebug", "Total quizzes passed updated: " + totalQuizzes);
+                }
+            } catch (Exception e) {
+                Log.e("QuizDebug", "Error updating total quizzes passed: " + e.getMessage());
+            }
+        });
+    }
+
+    private int calculateTotalQuizzesPassed() {
+        int total = 0;
+        Map<String, Boolean> quizMap = quizCompletion.getValue();
+        if (quizMap != null) {
+            for (boolean completed : quizMap.values()) {
+                if (completed) total++;
+            }
+        }
+        return total;
+    }
+
+
+    public boolean isQuizCompleted(int chapter) {
         String quizKey = "chapter_" + chapter + "_quiz";
         Map<String, Boolean> completion = quizCompletion.getValue();
-        if (completion != null) {
-            completion.put(quizKey, true);
-            quizCompletion.setValue(completion);
-            Log.d("ProgressDebug", "Chapter " + chapter + " quiz marked as completed");
-        }
-    }
-
-    public boolean isQuizCompleted(int chapter, int level) {
-        String quizKey = "quiz_" + chapter + "_" + level;
-        Map<String, Boolean> completion = quizCompletion.getValue();
-        return completion != null && Boolean.TRUE.equals(completion.get(quizKey));
+        boolean completed = completion != null && Boolean.TRUE.equals(completion.get(quizKey));
+        Log.d("QuizDebug", "Chapter " + chapter + " quiz completed: " + completed);
+        return completed;
     }
 
     public LiveData<Map<String, Boolean>> getQuizCompletion() {
@@ -325,7 +446,9 @@ public class ProgressViewModel extends ViewModel {
         currentChapter.setValue(chapter);
         currentLevel.setValue(level);
     }
-
+    public LiveData<Map<Integer, Integer>> getChapterProgress() {
+        return chapterProgress;
+    }
     public LiveData<Integer> getCurrentChapter() {
         return currentChapter;
     }
@@ -351,7 +474,7 @@ public class ProgressViewModel extends ViewModel {
     }
 
     public boolean shouldTakeQuiz(int chapter, int level) {
-        return level % 5 == 0 && !isQuizCompleted(chapter, level);
+        return level % 5 == 0 && !isQuizCompleted(chapter);
     }
 
     public void resetChapterProgress(int chapter) {

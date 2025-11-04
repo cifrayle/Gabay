@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primaryColor"
+        android:background="#E6FFFFFF"
         android:elevation="4dp">
 
         <!-- Back Button -->
@@ -40,7 +40,7 @@
                 android:fontFamily="@font/nunito_bold"
                 android:text="Default Title"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <!-- Action Bar Subtitle -->

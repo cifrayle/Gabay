@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setTheme(R.style.Theme_Gabay);
         setContentView(R.layout.activity_main);
@@ -131,6 +134,20 @@ public class MainActivity extends AppCompatActivity {
         return true;
     };
 
+    public void hideBottomNav() {
+        BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+        if (bottomNavView != null) {
+            bottomNavView.setVisibility(android.view.View.GONE);
+        }
+    }
+
+    public void showBottomNav() {
+        BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+        if (bottomNavView != null) {
+            bottomNavView.setVisibility(android.view.View.VISIBLE);
+        }
+    }
+
     private Fragment getOrCreateFragment(int itemId) {
         // Check if fragment exists in cache
         if (fragmentCache.containsKey(itemId)) {
@@ -207,19 +224,35 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateActionBarForFragment(Fragment fragment) {
         if (actionBarContainer == null) return;
-        // Hide action bar by default for bottom tabs
-        actionBarContainer.setVisibility(android.view.View.GONE);
 
         if (fragment instanceof com.example.gabay.fragments.chapters.Chapter1) {
-            showActionBarWithTitle("Chapter 1");
+            showActionBarWithTitleAndBackButton("Chapter 1");
         } else if (fragment instanceof com.example.gabay.fragments.chapters.Chapter2) {
-            showActionBarWithTitle("Chapter 2");
+            showActionBarWithTitleAndBackButton("Chapter 2");
         } else if (fragment instanceof com.example.gabay.fragments.chapters.Chapter3) {
-            showActionBarWithTitle("Chapter 3");
+            showActionBarWithTitleAndBackButton("Chapter 3");
         } else if (fragment instanceof com.example.gabay.fragments.chapters.Chapter4) {
-            showActionBarWithTitle("Chapter 4");
+            showActionBarWithTitleAndBackButton("Chapter 4");
         } else if (fragment instanceof com.example.gabay.fragments.chapters.Chapter5) {
-            showActionBarWithTitle("Chapter 5");
+            showActionBarWithTitleAndBackButton("Chapter 5");
+        } else if (fragment instanceof HomePage ||
+                fragment instanceof GabAIPage ||
+                fragment instanceof ProfilePage) {
+            // Hide action bar for main bottom nav pages
+            hideActionBar();
+        } else {
+            // For any other fragments, hide action bar by default
+            hideActionBar();
+        }
+    }
+
+    public void showActionBarWithTitleAndBackButton(String title) {
+        showActionBarWithTitle(title, null);
+
+        // Ensure back button is visible and functional
+        if (backButton != null) {
+            backButton.setVisibility(View.VISIBLE);
+            // The click listener is already set in onCreate, so we don't need to set it again
         }
     }
 
@@ -238,6 +271,11 @@ public class MainActivity extends AppCompatActivity {
     public void hideActionBar() {
         if (actionBarContainer != null) {
             actionBarContainer.setVisibility(android.view.View.GONE);
+        }
+    }
+    public void showActionBar() {
+        if (actionBarContainer != null) {
+            actionBarContainer.setVisibility(View.VISIBLE);
         }
     }
 

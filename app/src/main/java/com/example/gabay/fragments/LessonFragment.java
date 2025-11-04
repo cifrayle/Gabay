@@ -2,10 +2,9 @@ package com.example.gabay.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,13 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.gabay.R;
 import com.example.gabay.data.LessonData;
+import com.example.gabay.services.SupabaseJavaService;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
 public class LessonFragment extends Fragment {
@@ -31,9 +30,11 @@ public class LessonFragment extends Fragment {
     private int levelNumber;
     private VideoView videoView;
     private Button btnNext, btnPrev;
+    private android.widget.ProgressBar video_progressBar;
     private ImageButton btnReplay, btnPausePlay;
 
     private ProgressViewModel progressViewModel;
+    private Handler progressHandler = new Handler();
 
     public LessonFragment() {}
 
@@ -68,10 +69,10 @@ public class LessonFragment extends Fragment {
         btnPrev = view.findViewById(R.id.btn_prevLevel);
         btnReplay = view.findViewById(R.id.btn_replay);
         btnPausePlay = view.findViewById(R.id.btn_pause_play);
+        video_progressBar = view.findViewById(R.id.progressBar);
 
         showLesson();
 
-        // When Finish button is clicked: complete current level AND go to next level
         btnNext.setOnClickListener(v -> completeAndGoToNext());
         btnPrev.setOnClickListener(v -> {
             if (levelNumber > 1) goToLevel(levelNumber - 1);
@@ -83,113 +84,260 @@ public class LessonFragment extends Fragment {
     private void showLesson() {
         LessonData.Lesson[] lessons = getLessonsForChapter();
 
-        if (lessons != null && levelNumber >= 1 && levelNumber <= lessons.length) {
-            LessonData.Lesson lesson = lessons[levelNumber - 1];
+        if (lessons == null || levelNumber < 1 || levelNumber > lessons.length) {
+            Log.e("LessonDebug", "Invalid lesson: Chapter " + chapterId + ", Level " + levelNumber);
+            return;
+        }
 
-            // Set title
-            if (getActivity() != null) {
-                TextView actionBarTitle = getActivity().findViewById(R.id.action_bar_title);
-                if (actionBarTitle != null) actionBarTitle.setText(lesson.title);
-            }
+        LessonData.Lesson lesson = lessons[levelNumber - 1];
 
-            // Prepare video
-            String path = "android.resource://" + getContext().getPackageName() + "/" + lesson.videoRes;
-            Uri uri = Uri.parse(path);
-            videoView.setVideoURI(uri);
+        // Set title
+        if (getActivity() != null) {
+            TextView actionBarTitle = getActivity().findViewById(R.id.action_bar_title);
+            if (actionBarTitle != null) actionBarTitle.setText(lesson.title);
+        }
 
-            MediaController mediaController = new MediaController(getContext());
-            //videoView.setMediaController(mediaController);
-            //mediaController.setAnchorView(videoView);
+        // ✅ Prepare video correctly
+        String path = "android.resource://" + requireContext().getPackageName() + "/" + lesson.videoRes;
+        Uri uri = Uri.parse(path);
+        videoView.setVideoURI(uri);
 
-            btnReplay.setVisibility(View.GONE);
-            btnPausePlay.setVisibility(View.GONE);
+        btnReplay.setVisibility(View.GONE);
+        btnPausePlay.setVisibility(View.GONE);
+        video_progressBar.setProgress(0);
+        btnNext.setEnabled(false); // lock initially
 
-            // Start video
+        int chapterNumber = extractChapterNumber(chapterId);
+
+        // ✅ Wait for the video to be ready before checking Supabase
+        videoView.setOnPreparedListener(mp -> {
+            mp.setLooping(false);
             videoView.start();
 
-            // Show pause/play when ready
-            videoView.setOnPreparedListener(mp -> {
-                btnPausePlay.setVisibility(View.VISIBLE);
-                btnPausePlay.setImageResource(R.drawable.ic_pause);
+            // Start progress handler (paused initially)
+            Log.d("LessonDebug", "Video prepared successfully: " + lesson.title);
 
-                // Auto-hide animation
+            // 🔹 Now check Supabase asynchronously (video is already playing)
+            new Thread(() -> {
+                int completedCount = SupabaseJavaService.getCompletedLevelsCount(chapterNumber);
+                boolean alreadyCompleted = completedCount >= levelNumber;
+
+                requireActivity().runOnUiThread(() -> {
+                    setupVideoPlayback(lesson, alreadyCompleted, chapterNumber);
+                    btnNext.setEnabled(alreadyCompleted);
+
+                    if (alreadyCompleted) {
+                        Log.d("LessonDebug", "Level " + levelNumber + " already completed — Next enabled.");
+                    }
+                });
+            }).start();
+        });
+
+        videoView.setOnErrorListener((mp, what, extra) -> {
+            Toast.makeText(getContext(), "Error playing video", Toast.LENGTH_SHORT).show();
+            Log.e("LessonDebug", "Video playback error: what=" + what + ", extra=" + extra);
+            return true;
+        });
+    }
+
+
+    private void setupVideoPlayback(LessonData.Lesson lesson, boolean alreadyCompleted, int chapterNumber) {
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (videoView != null && videoView.isPlaying()) {
+                    int position = videoView.getCurrentPosition();
+                    int duration = videoView.getDuration();
+                    if (duration > 0) {
+                        int progress = (int) (((float) position / duration) * 100);
+                        video_progressBar.setProgress(progress);
+
+                        if (progress >= 90 && !btnNext.isEnabled() && !alreadyCompleted) {
+                            btnNext.setEnabled(true);
+                            Toast.makeText(getContext(), "You can now proceed to the next level!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                progressHandler.postDelayed(this, 10);
+            }
+        };
+
+        // ✅ Ensure handler starts after video begins
+        progressHandler.postDelayed(progressRunnable, 10);
+
+        btnPausePlay.setVisibility(View.VISIBLE);
+        btnPausePlay.setImageResource(R.drawable.ic_pause);
+
+        // Auto-hide play/pause button
+        btnPausePlay.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .setStartDelay(2500)
+                .withEndAction(() -> btnPausePlay.setVisibility(View.GONE))
+                .start();
+
+        videoView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                btnPausePlay.animate().cancel();
+                btnPausePlay.setAlpha(1f);
+                btnPausePlay.setVisibility(View.VISIBLE);
+
+                if (videoView.isPlaying()) {
+                    videoView.pause();
+                    btnPausePlay.setImageResource(R.drawable.ic_play);
+                } else {
+                    videoView.start();
+                    btnPausePlay.setImageResource(R.drawable.ic_pause);
+                }
+
                 btnPausePlay.animate()
                         .alpha(0f)
                         .setDuration(300)
-                        .setStartDelay(2500)
+                        .setStartDelay(500)
                         .withEndAction(() -> btnPausePlay.setVisibility(View.GONE))
                         .start();
+            }
+            return true;
+        });
 
-                // Tap to toggle play/pause
-                videoView.setOnTouchListener((v, event) -> {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        videoView.setOnCompletionListener(mp -> {
+            btnPausePlay.setVisibility(View.GONE);
+            btnReplay.setVisibility(View.VISIBLE);
+            video_progressBar.setProgress(100);
+            progressHandler.removeCallbacks(progressRunnable);
+            btnNext.setEnabled(true);
 
-                        // 🔹 Cancel any ongoing fade animations
-                        btnPausePlay.animate().cancel();
+            btnReplay.setAlpha(0f);
+            btnReplay.animate().alpha(1f).setDuration(300).start();
+        });
 
-                        // 🔹 Reset alpha & make sure it's visible
-                        btnPausePlay.setAlpha(1f);
-                        btnPausePlay.setVisibility(View.VISIBLE);
+        btnReplay.setOnClickListener(v -> {
+            btnReplay.setVisibility(View.GONE);
+            video_progressBar.setProgress(0);
+            videoView.seekTo(0);
+            videoView.start();
+            btnPausePlay.setImageResource(R.drawable.ic_pause);
+            btnPausePlay.setVisibility(View.VISIBLE);
+            progressHandler.post(progressRunnable);
+        });
+    }
 
-                        // 🔹 Toggle play/pause
-                        if (videoView.isPlaying()) {
-                            videoView.pause();
-                            btnPausePlay.setImageResource(R.drawable.ic_play);
-                        } else {
-                            videoView.start();
-                            btnPausePlay.setImageResource(R.drawable.ic_pause);
-                        }
 
-                        // 🔹 Reapply fade-out animation after 2.5s
-                        btnPausePlay.animate()
-                                .alpha(0f)
-                                .setDuration(300)
-                                .setStartDelay(500)
-                                .withEndAction(() -> btnPausePlay.setVisibility(View.GONE))
-                                .start();
+    private void completeAndGoToNext() {
+        markLevelsUpToCurrent();
+
+        new Handler().postDelayed(() -> {
+            LessonData.Lesson[] lessons = getLessonsForChapter();
+            if (lessons != null && (levelNumber + 1) <= lessons.length) {
+                goToLevel(levelNumber + 1);
+            } else if (getActivity() != null)  {
+                Toast.makeText(getActivity(), "All levels completed! Great job!", Toast.LENGTH_LONG).show();
+                getActivity().setResult(android.app.Activity.RESULT_OK);
+                getActivity().finish();
+            }
+        }, 800); // 0.8-second delay prevents overlap crash
+    }
+
+    private void markLevelsUpToCurrent() {
+        if (getActivity() == null) return;
+
+        int chapterNumber = extractChapterNumber(chapterId);
+
+        new Thread(() -> {
+            try {
+                int completedCount = SupabaseJavaService.getCompletedLevelsCount(chapterNumber);
+                if (completedCount >= levelNumber) {
+                    Log.d("ProgressDebug", "Level " + levelNumber + " already completed — skipping update.");
+                    return;
+                }
+
+                boolean success = SupabaseJavaService.updateUserProgress(chapterNumber, levelNumber);
+
+                // ✅ Check again before updating UI
+                if (!isAdded()) {
+                    Log.w("ProgressDebug", "Fragment detached — skipping UI update for level " + levelNumber);
+                    return;
+                }
+
+                requireActivity().runOnUiThread(() -> {
+                    // ✅ Double-check in case activity was destroyed mid-call
+                    if (!isAdded() || getActivity() == null) {
+                        Log.w("ProgressDebug", "Fragment not attached during UI update — safely skipped.");
+                        return;
                     }
-                    return true; // consume the touch
+
+                    if (success) {
+                        Toast.makeText(getActivity(), "Level " + levelNumber + " completed!", Toast.LENGTH_SHORT).show();
+
+                        if (progressViewModel != null) {
+                            progressViewModel.updateChapterProgress(chapterNumber, levelNumber);
+                            updateUserAchievements(chapterNumber, levelNumber);
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "Failed to update progress online.", Toast.LENGTH_SHORT).show();
+                    }
+
+                    // Safe result set
+                    if (getActivity() != null) {
+                        getActivity().setResult(android.app.Activity.RESULT_OK);
+                    }
                 });
-            });
 
-            // Replay button (for when video ends)
-            videoView.setOnCompletionListener(mp -> {
-                btnPausePlay.setVisibility(View.GONE);
-                btnReplay.setVisibility(View.VISIBLE);
-                btnReplay.setAlpha(0f);
-                btnReplay.animate().alpha(1f).setDuration(300).start();
-            });
+            } catch (Exception e) {
+                Log.e("ProgressDebug", "Error in markLevelsUpToCurrent: " + e.getMessage());
+            }
+        }).start();
+    }
 
-            // Replay click handler
-            btnReplay.setOnClickListener(v -> {
-                btnReplay.setVisibility(View.GONE);
-                videoView.seekTo(0);
-                videoView.start();
-                btnPausePlay.setImageResource(R.drawable.ic_pause);
-                btnPausePlay.setVisibility(View.VISIBLE);
-            });
 
-            Log.d("LessonDebug", "Playing video: " + lesson.title + " (Resource: " + lesson.videoRes + ")");
-        } else {
-            Log.e("LessonDebug", "Invalid lesson: Chapter " + chapterId + ", Level " + levelNumber);
+    private void goToLevel(int nextLevelNumber) {
+        Fragment fragment = LessonFragment.newInstance(chapterId, nextLevelNumber);
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
+    }
+
+    private int extractChapterNumber(String chapterId) {
+        try {
+            if (chapterId != null && chapterId.startsWith("chapter")) {
+                return Integer.parseInt(chapterId.replace("chapter", ""));
+            }
+        } catch (NumberFormatException e) {
+            Log.e("LessonDebug", "Error parsing chapter number from " + chapterId);
         }
+        return 1;
     }
 
     private LessonData.Lesson[] getLessonsForChapter() {
         switch (chapterId) {
-            case "chapter1":
-                return LessonData.CHAPTER1;
-            case "chapter2":
-                return LessonData.CHAPTER2;
-            case "chapter3":
-                return LessonData.CHAPTER3;
-            case "chapter4":
-                return LessonData.CHAPTER4;
-            case "chapter5":
-                return LessonData.CHAPTER5;
+            case "chapter1": return LessonData.CHAPTER1;
+            case "chapter2": return LessonData.CHAPTER2;
+            case "chapter3": return LessonData.CHAPTER3;
+            case "chapter4": return LessonData.CHAPTER4;
+            case "chapter5": return LessonData.CHAPTER5;
             default:
                 Log.e("LessonDebug", "Unknown chapter: " + chapterId);
                 return null;
+        }
+    }
+
+    private void updateUserAchievements(int chapterNumber, int levelNumber) {
+        if (progressViewModel == null) return;
+
+        ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
+        if (profile != null) {
+            ProgressViewModel.ChapterProgress chapterProgress = progressViewModel.getChapterProgressObject(chapterNumber);
+            if (chapterProgress != null && chapterProgress.getCompletedLevels() >= getTotalLevelsInChapter()) {
+                profile.setTotalChaptersCompleted(profile.getTotalChaptersCompleted() + 1);
+                progressViewModel.markChapterQuizCompleted(chapterNumber);
+            }
+
+            if (levelNumber % 5 == 0) {
+                profile.setTotalQuizzesPassed(profile.getTotalQuizzesPassed() + 1);
+                progressViewModel.markQuizCompleted(chapterNumber);
+            }
+
+            progressViewModel.updateUserProfile(profile);
         }
     }
 
@@ -198,136 +346,9 @@ public class LessonFragment extends Fragment {
         return lessons != null ? lessons.length : 0;
     }
 
-    private void goToLevel(int nextLevelNumber) {
-        int chapterNumber = extractChapterNumber(chapterId);
-        String prefName = "Chapter" + chapterNumber + "Progress";
-
-        // Before going to next level, ensure it's marked as reached
-        if (getActivity() != null) {
-            android.content.SharedPreferences preferences = getActivity().getSharedPreferences(prefName, android.content.Context.MODE_PRIVATE);
-            android.content.SharedPreferences.Editor editor = preferences.edit();
-
-            // Mark that the user has reached this level
-            editor.putBoolean("level_" + nextLevelNumber + "_reached", true);
-            editor.apply();
-
-            Log.d("ProgressDebug", "Marked level " + nextLevelNumber + " as reached in " + prefName);
-        }
-
-        LessonData.Lesson[] lessons = getLessonsForChapter();
-        if (lessons != null && nextLevelNumber >= 1 && nextLevelNumber <= lessons.length) {
-            Fragment fragment = LessonFragment.newInstance(chapterId, nextLevelNumber);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-        }
-    }
-
-    private void completeAndGoToNext() {
-        // Mark ALL levels up to and including current as completed/reached
-        markLevelsUpToCurrent();
-
-        // Then navigate to next level
-        LessonData.Lesson[] lessons = getLessonsForChapter();
-        if (lessons != null && (levelNumber + 1) <= lessons.length) {
-            goToLevel(levelNumber + 1);
-        } else {
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "All levels completed! Great job!", Toast.LENGTH_LONG).show();
-                // Set result to indicate completion
-                getActivity().setResult(android.app.Activity.RESULT_OK);
-                getActivity().finish();
-            }
-        }
-    }
-
-    private void markLevelsUpToCurrent() {
-        if (getActivity() != null) {
-            Log.d("ProgressDebug", "=== LESSONFRAGMENT: markLevelsUpToCurrent START ===");
-            Log.d("ProgressDebug", "Chapter: " + chapterId + ", Level: " + levelNumber);
-
-            int chapterNumber = extractChapterNumber(chapterId);
-            String prefName = "Chapter" + chapterNumber + "Progress";
-
-            // 1. Update SharedPreferences
-            android.content.SharedPreferences preferences = getActivity().getSharedPreferences(prefName, android.content.Context.MODE_PRIVATE);
-            android.content.SharedPreferences.Editor editor = preferences.edit();
-
-            editor.putBoolean("level_" + levelNumber + "_finished", true);
-            for (int i = 1; i <= levelNumber; i++) {
-                editor.putBoolean("level_" + i + "_reached", true);
-            }
-            editor.apply();
-            Log.d("ProgressDebug", "SharedPreferences updated for " + prefName + " levels 1-" + levelNumber);
-
-            // 2. UPDATE PROGRESSVIEW MODEL - This is what triggers profile updates
-            if (progressViewModel != null) {
-                Log.d("ProgressDebug", "Calling progressViewModel.updateChapterProgress(" + chapterNumber + ", " + levelNumber + ")");
-
-                // THIS IS THE KEY CALL THAT UPDATES THE PROFILE
-                progressViewModel.updateChapterProgress(chapterNumber, levelNumber);
-
-                // Verify the update worked
-                ProgressViewModel.ChapterProgress updatedProgress = progressViewModel.getChapterProgressObject(chapterNumber);
-                if (updatedProgress != null) {
-                    Log.d("ProgressDebug", "VERIFIED: Chapter " + chapterNumber + " now has " +
-                            updatedProgress.getCompletedLevels() + "/" + updatedProgress.getMaxLevels() + " levels completed");
-                }
-
-                updateUserAchievements(chapterNumber, levelNumber);
-
-            } else {
-                Log.e("ProgressDebug", "ERROR: ProgressViewModel is NULL in LessonFragment!");
-            }
-
-            Toast.makeText(getActivity(), "Level " + levelNumber + " completed!", Toast.LENGTH_SHORT).show();
-            getActivity().setResult(android.app.Activity.RESULT_OK);
-            Log.d("ProgressDebug", "=== LESSONFRAGMENT: markLevelsUpToCurrent END ===");
-        } else {
-            Log.e("ProgressDebug", "ERROR: Activity is NULL in markLevelsUpToCurrent");
-        }
-    }
-
-    private int extractChapterNumber(String chapterId) {
-        try {
-            if (chapterId != null && chapterId.startsWith("chapter")) {
-                String numberStr = chapterId.replace("chapter", "");
-                int chapterNum = Integer.parseInt(numberStr);
-                Log.d("ProgressDebug", "Extracted chapter number: " + chapterNum + " from " + chapterId);
-                return chapterNum;
-            }
-        } catch (NumberFormatException e) {
-            Log.e("ProgressDebug", "Error parsing chapter number from: " + chapterId);
-        }
-        return 1; // Default fallback
-    }
-
-    private void updateUserAchievements(int chapterNumber, int levelNumber) {
-        ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
-        if (profile != null) {
-            // Check if chapter completed (all levels finished)
-            ProgressViewModel.ChapterProgress chapterProgress = progressViewModel.getChapterProgressObject(chapterNumber);
-            if (chapterProgress != null) {
-                int totalLevelsInChapter = getTotalLevelsInChapter();
-
-                if (chapterProgress.getCompletedLevels() >= totalLevelsInChapter) {
-                    profile.setTotalChaptersCompleted(profile.getTotalChaptersCompleted() + 1);
-                    Log.d("ProgressDebug", "Chapter " + chapterNumber + " completed! Total chapters: " + profile.getTotalChaptersCompleted());
-
-                    // Mark chapter quiz as completed
-                    progressViewModel.markChapterQuizCompleted(chapterNumber);
-                }
-            }
-
-            // Update quizzes passed if this was a quiz level (every 5 levels)
-            if (levelNumber % 5 == 0) {
-                profile.setTotalQuizzesPassed(profile.getTotalQuizzesPassed() + 1);
-                // Mark quiz as completed in ViewModel
-                progressViewModel.markQuizCompleted(chapterNumber, levelNumber);
-                Log.d("ProgressDebug", "Quiz completed for chapter " + chapterNumber + " level " + levelNumber);
-            }
-
-            progressViewModel.updateUserProfile(profile);
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        progressHandler.removeCallbacksAndMessages(null);
     }
 }

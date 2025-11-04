@@ -1,7 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Base application theme -->
     <style name="Base.Theme.Gabay" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+        <!-- Lock the theme to light mode -->
+        <item name="android:statusBarColor">@color/secondaryColor</item>
+        <item name="android:navigationBarColor">@color/backgroundColor</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
         <!-- Primary colors -->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">#0074B3</item>
@@ -9,35 +15,46 @@
 
         <!-- Secondary colors -->
         <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/primaryColor</item>
 
         <!-- Background -->
         <item name="android:colorBackground">@color/backgroundColor</item>
 
-        <!-- Add this to prevent automatic button styling -->
+        <!-- Prevent Material3 from overriding button colors -->
         <item name="materialButtonStyle">@style/Widget.Gabay.Button</item>
         <item name="android:buttonStyle">@style/Widget.Gabay.Button</item>
     </style>
 
     <style name="Theme.Gabay" parent="Base.Theme.Gabay" />
 
-    <!-- Custom button style that prevents Material 3 auto-styling -->
+    <!-- Custom button style -->
     <style name="Widget.Gabay.Button" parent="Widget.Material3.Button">
-        <item name="android:background">@null</item>
-        <item name="backgroundTint">@null</item>
-        <item name="android:stateListAnimator">@null</item>
-        <item name="cornerRadius">0dp</item>
-        <item name="elevation">0dp</item>
+        <!-- Background tint controls the button fill color -->
+        <item name="backgroundTint">@color/secondaryColor</item>
+        <!-- Text color -->
+        <item name="android:textColor">@color/primaryColor</item>
+        <!-- Rounded corners -->
+        <item name="cornerRadius">12dp</item>
+        <!-- Slight shadow -->
+        <item name="android:elevation">8dp</item>
     </style>
 
+    <style name="Widget.Gabay.Button.White" parent="Widget.Gabay.Button">
+        <item name="android:background">@drawable/circular_button_selector</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <!-- CardView corner customization -->
     <style name="custom_card_view_style" parent="Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/custom_card_view</item>
     </style>
 
-    <style name="custom_card_view" parent="">
+    <style name="custom_card_view">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">48dp</item>
         <item name="cornerSizeTopLeft">48dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
+
 </resources>

@@ -1,314 +1,312 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/main"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="#D8E6F8"
-tools:context=".fragments.pages.JourneyPage">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    tools:context=".fragments.pages.HomePage">
 
+    <ScrollView
+        android:id="@+id/lvl_scrl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        android:fillViewport="false">
 
-        <ScrollView
-            android:id="@+id/lvl_scrl"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="0dp"
-            android:fillViewport="false">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/c2lvl1"
+                style="@style/Widget.Gabay.Button.White"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/circular_button"
+                android:elevation="12dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/levelTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/dot_divider"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/c2lvl1"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
 
-                <TextView
-                    android:id="@+id/levelTitle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hello"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
 
-                <LinearLayout
-                    android:id="@+id/dot_divider"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/c2lvl2"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="How are you"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/c2lvl3"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sorry"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/c2lvl4"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thank you (Formal)"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/c2lvl5"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/levelTitle5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thank you (Informal)"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:id="@+id/dot_divider5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_weight="0"
-                        android:src="@drawable/dot"
-                        app:tint="@color/accentButtonColor" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_chapter_quiz"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/circular_button"
-                    android:elevation="12dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/quiz_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chapter quiz"
-                    android:fontFamily="@font/nunito_bold"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="18sp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="12dp"/>
-
-
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
             </LinearLayout>
-        </ScrollView>
+
+            <Button
+                android:id="@+id/c2lvl2"
+                style="@style/Widget.Gabay.Button.White"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/circular_button"
+                android:elevation="12dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/levelTitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="How are you"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/dot_divider2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/c2lvl3"
+                style="@style/Widget.Gabay.Button.White"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/circular_button"
+                android:elevation="12dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/levelTitle3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sorry"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/dot_divider3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/c2lvl4"
+                style="@style/Widget.Gabay.Button.White"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/circular_button"
+                android:elevation="12dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/levelTitle4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thank you (Formal)"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/dot_divider4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/c2lvl5"
+                style="@style/Widget.Gabay.Button.White"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/circular_button"
+                android:elevation="12dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/levelTitle5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thank you (Informal)"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/dot_divider5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_weight="0"
+                    android:src="@drawable/dot"
+                    app:tint="@color/accentButtonColor" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_chapter_quiz"
+                style="@style/Widget.Gabay.Button.White"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/circular_button"
+                android:elevation="12dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/quiz_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chapter quiz"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/buttonTextColor"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"/>
+
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

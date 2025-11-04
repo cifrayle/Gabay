@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D8E6F8"
+    android:background="@drawable/bg_gradient"
+    android:animateLayoutChanges="true"
+    android:fitsSystemWindows="false"
     tools:context=".activities.MainActivity">
 
     <!-- Custom Action Bar -->
@@ -38,14 +39,20 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/primaryColor"
-        android:elevation="8dp"
+        android:background="#E6FFFFFF"
+        android:elevation="12dp"
+        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        android:clipToPadding="false"
+        app:itemActiveIndicatorStyle="@color/transparentBackground"
+        app:itemBackground="@color/transparentBackground"
+        app:itemRippleColor="@color/transparentBackground"
         app:itemIconTint="@color/bottom_nav_selector"
         app:itemTextColor="@color/bottom_nav_selector"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:menu="@menu/bottom_nav" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

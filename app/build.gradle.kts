@@ -59,6 +59,10 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
 
+    // glide
+    implementation ("com.github.bumptech.glide:glide:4.14.2")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
+
     // google auth
     implementation ("com.google.android.gms:play-services-auth:21.3.0")
     implementation ("com.google.android.gms:play-services-auth-api-phone:18.0.1")

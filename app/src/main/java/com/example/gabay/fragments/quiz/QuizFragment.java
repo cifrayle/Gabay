@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,22 +30,6 @@ import com.example.gabay.fragments.BaseFragment;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
 public class QuizFragment extends BaseFragment {
-
-//    int[] img_Question_List = {
-//            R.drawable.letter_c,
-//            R.drawable.letter_i,
-//            R.drawable.letter_a,
-//            R.drawable.letter_n,
-//            R.drawable.letter_f
-//    };
-//    String[] choices_list = {
-//            "HELLO/KUMUSTA", "C", "NO/HINDI", "O",
-//            "A", "ONE/ISA", "I", "YOU/IKAW",
-//            "FIST/KAMAO", "J", "ME/AKO", "A",
-//            "N", "M", "Y", "L",
-//            "OK", "G", "THREE/TATLO", "F",
-//    };
-//    String[] correctAnswer_list = {"C", "I", "A", "N", "F"};
 
     private int[][] chapterImages;
     private String[][] chapterChoices;
@@ -77,6 +62,7 @@ public class QuizFragment extends BaseFragment {
     private int score = 0;
     private int selectedAnswerIndex = -1;
     private boolean quizInProgress = false;
+    private boolean isSubmitting = false;
     private boolean isSoundEnabled() {
         SharedPreferences prefs = requireContext().getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
         return prefs.getBoolean("sound_enabled", true);
@@ -351,10 +337,13 @@ public class QuizFragment extends BaseFragment {
         currentQuestionIndex++;
         selectedAnswerIndex = -1;
 
+        Log.d("QuizDebug", "Moving to question: " + currentQuestionIndex + " of " + getCurrentImages().length);
+
         if (currentQuestionIndex < getCurrentImages().length) {
             resetTimer();
             loadQuestion();
         } else {
+            Log.d("QuizDebug", "🎯 ALL QUESTIONS COMPLETED - Calling completeQuiz()");
             completeQuiz();
         }
     }
@@ -387,41 +376,58 @@ public class QuizFragment extends BaseFragment {
     }
 
     private void submitAnswer() {
-
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+        if (isSubmitting) return; // block spam taps
+        isSubmitting = true;      // lock the button
 
         if (selectedAnswerIndex == -1) {
             Toast.makeText(getContext(), "Please select an answer", Toast.LENGTH_SHORT).show();
             if (isSoundEnabled() && wrongAnswerSFX != 0) {
                 soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
+            // FIX: Don't cancel timer here, just unlock after delay
+            new Handler().postDelayed(() -> {
+                isSubmitting = false; // unlock after a short delay
+            }, 3000);
             return;
+        }
+
+        // Only cancel the timer when we have a valid answer submission
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
         }
 
         boolean isCorrect = checkAnswer(selectedAnswerIndex);
 
-            if (isCorrect) {
-                score += 1;
-                answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.correctAnswerColor));
-                Toast.makeText(getContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                if (isSoundEnabled() && correctAnswerSFX != 0) {
-                    soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
-                }
-            } else {
-                answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
-                Toast.makeText(getContext(), "Wrong! Correct answer: " + getCurrentAnswers()[currentQuestionIndex], Toast.LENGTH_SHORT).show();
-                if (isSoundEnabled() && wrongAnswerSFX != 0) {
-                    soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
-                }
+        if (isCorrect) {
+            score += 1;
+            answerCardViews[selectedAnswerIndex].setStrokeColor(
+                    getResources().getColor(R.color.correctAnswerColor)
+            );
+            Toast.makeText(getContext(), "Correct!", Toast.LENGTH_SHORT).show();
+            if (isSoundEnabled() && correctAnswerSFX != 0) {
+                soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
+        } else {
+            answerCardViews[selectedAnswerIndex].setStrokeColor(
+                    getResources().getColor(R.color.wrongAnswerColor)
+            );
+            Toast.makeText(
+                    getContext(),
+                    "Wrong! Correct answer: " + getCurrentAnswers()[currentQuestionIndex],
+                    Toast.LENGTH_SHORT
+            ).show();
+            if (isSoundEnabled() && wrongAnswerSFX != 0) {
+                soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
+            }
+        }
 
-        // delay
+        // delay before going to next question
         new Handler().postDelayed(() -> {
             moveToNextQuestion();
+            isSubmitting = false; // unlock again for the next question
         }, 1200);
     }
+
     private boolean checkAnswer(int selectedIndex) {
         if (answerTextViews[selectedIndex] == null) return false;
         String selectedAnswer = answerTextViews[selectedIndex].getText().toString();
@@ -463,28 +469,43 @@ public class QuizFragment extends BaseFragment {
     private void completeQuiz() {
         quizInProgress = false;
 
-        // Update progress
-        if (progressViewModel != null) {
-            progressViewModel.markQuizCompleted(currentChapter, currentLevel);
+        // Only mark as completed if score is passing (3/5 or more)
+        boolean quizPassed = score >= 3;
+
+        Log.d("QuizDebug", "=== QUIZ COMPLETION ===");
+        Log.d("QuizDebug", "Chapter: " + currentChapter);
+        Log.d("QuizDebug", "Score: " + score + "/5");
+        Log.d("QuizDebug", "Quiz Passed: " + quizPassed);
+
+        if (progressViewModel != null && quizPassed) {
+            Log.d("QuizDebug", "✅ Quiz passed - marking as completed");
+            progressViewModel.markQuizCompleted(currentChapter);
+
+            // Also update chapter progress
             progressViewModel.updateChapterProgress(currentChapter, currentLevel);
+
+            // Verify after delay
+            new Handler().postDelayed(() -> {
+                boolean isComplete = progressViewModel.isQuizCompleted(currentChapter);
+                Log.d("QuizDebug", "Verification - Quiz completed: " + isComplete);
+                progressViewModel.loadQuizCompletionFromSupabase();
+            }, 1500);
+
+        } else if (!quizPassed) {
+            Log.d("QuizDebug", "❌ Quiz failed - not marking as completed");
+            Toast.makeText(getContext(), "Quiz failed. Score: " + score + "/5. Need 3/5 to pass.", Toast.LENGTH_LONG).show();
+        } else {
+            Log.e("QuizDebug", "❌ ProgressViewModel is null");
         }
 
-        // Show completion feedback
         showCompletionFeedback();
-
-        // Update UI for quiz completion
         updateUIForCompletion();
-
-        // Clean up resources
         cleanupQuizResources();
-
-        // Configure navigation
         setupNavigation();
     }
 
     private void showCompletionFeedback() {
         if (getContext() == null) return;
-
 
         if (isSoundEnabled() && completeSFX != 0) {
             soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
@@ -499,11 +520,11 @@ public class QuizFragment extends BaseFragment {
         }
 
         if (boldTitle_txtView != null) {
-            boldTitle_txtView.setText("Your score: ");
+            boldTitle_txtView.setText("Your score: " + score + "/5");
             boldTitle_txtView.setTextSize(24);
         }
         if (regTitle_txtView != null) {
-            regTitle_txtView.setText(score + "/5");
+            regTitle_txtView.setText("");
             regTitle_txtView.setTextSize(24);
         }
 
