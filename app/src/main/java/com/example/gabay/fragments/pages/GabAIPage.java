@@ -16,6 +16,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,11 +68,14 @@ public class GabAIPage extends Fragment {
     private int currentModelIndex = 0; // 0=Basic, 1=alphabet, 2=numbers
     private String[] currentLabels;
     private Button switchModelButton;
+    private ImageButton switchCameraButton;
+    private int currentLensFacing = CameraSelector.LENS_FACING_FRONT;
+    private ProcessCameraProvider cameraProvider;
 
     // Frame rate limiting
     private long lastAnalysisTime = 0;
     private static final long MIN_TIME_BETWEEN_FRAMES = 200; // 5 FPS max
-    private static final float CONFIDENCE_THRESHOLD = 0.6f;
+    private static final float CONFIDENCE_THRESHOLD = 0.8f;
 
     // Bounding box configuration
     private static final float CROP_PERCENTAGE = 0.5f; // use center 50% of the image
@@ -116,6 +120,7 @@ public class GabAIPage extends Fragment {
         modelIndicatorText = view.findViewById(R.id.modelIndicatorText);
         instructionText = view.findViewById(R.id.instructionText);
         switchModelButton = view.findViewById(R.id.switchModelButton);
+        switchCameraButton = view.findViewById(R.id.switchCameraButton);
         cameraExecutor = Executors.newSingleThreadExecutor();
 
         try {
@@ -151,7 +156,28 @@ public class GabAIPage extends Fragment {
             switchToNextModel();
         });
 
+        // Add this for the switch camera button
+        switchCameraButton.setOnClickListener(v -> {
+            switchCamera();
+        });
+
         return view;
+    }
+
+    private void switchCamera() {
+        if (cameraProvider == null) {
+            Toast.makeText(requireContext(), "Camera not initialized", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Toggle between front and back camera
+        currentLensFacing = (currentLensFacing == CameraSelector.LENS_FACING_FRONT)
+                ? CameraSelector.LENS_FACING_BACK
+                : CameraSelector.LENS_FACING_FRONT;
+
+        // Restart camera with new lens facing
+        startCamera();
+
     }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
@@ -206,10 +232,17 @@ public class GabAIPage extends Fragment {
         // Scale to model input size
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, imageSize, imageSize, true);
 
-        // Apply transformations (rotation and flip for front camera)
+        // Apply transformations based on which camera is active
         Matrix matrix = new Matrix();
-        matrix.postRotate(270);
-        matrix.postScale(-1, 1);
+
+        if (currentLensFacing == CameraSelector.LENS_FACING_FRONT) {
+            // Front camera: rotate 270° and flip horizontally (mirror effect)
+            matrix.postRotate(270);
+            matrix.postScale(-1, 1);
+        } else {
+            // Back camera: just rotate 90° (no flip)
+            matrix.postRotate(90);
+        }
 
         Bitmap processedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                 scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
@@ -414,12 +447,14 @@ public class GabAIPage extends Fragment {
 
         cameraProviderFuture.addListener(() -> {
             try {
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                cameraProvider = cameraProviderFuture.get();
                 cameraProvider.unbindAll();
 
                 Preview preview = new Preview.Builder().build();
+
+                // Use currentLensFacing instead of hardcoded front camera
                 CameraSelector cameraSelector = new CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+                        .requireLensFacing(currentLensFacing)
                         .build();
 
                 ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
@@ -431,7 +466,7 @@ public class GabAIPage extends Fragment {
                 preview.setSurfaceProvider(cameraPreview.getSurfaceProvider());
                 cameraProvider.bindToLifecycle(getViewLifecycleOwner(), cameraSelector, preview, imageAnalysis);
 
-                Log.d("CameraX", "Camera started successfully");
+                Log.d("CameraX", "Camera started successfully with lens facing: " + currentLensFacing);
 
             } catch (Exception e) {
                 Log.e("CameraX", "Error starting camera: " + e.getMessage(), e);

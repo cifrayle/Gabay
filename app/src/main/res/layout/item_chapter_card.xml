@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="100dp"
     android:layout_marginTop="12dp"
     android:layout_marginHorizontal="0dp"
     android:clickable="true"
@@ -11,10 +11,10 @@
     android:foreground="?attr/selectableItemBackground"
     android:backgroundTint="@color/primaryColor"
     app:cardCornerRadius="20dp"
-    app:cardElevation="4dp"
+    app:cardElevation="5dp"
     app:strokeColor="@color/secondaryColor"
-    app:strokeWidth="1dp"
-    app:rippleColor="@color/accentButtonColor">
+    app:strokeWidth="0dp"
+    app:rippleColor="#87A6C3">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,13 +23,22 @@
         android:gravity="center_vertical"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/chapter_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_book"
-            android:contentDescription="Chapter Icon"
-            app:tint="@color/secondaryColor" />
+        <LinearLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/rounded_bg_layout">
+
+            <ImageView
+                android:id="@+id/chapter_icon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:elevation="2dp"
+                android:layout_weight="1"
+                android:contentDescription="Chapter Icon"
+                android:src="@drawable/ic_book"
+                app:tint="@color/secondaryColor" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -63,6 +72,7 @@
             android:layout_height="wrap_content"
             android:text="0%"
             android:textColor="@color/secondaryColor"
+            android:padding="3dp"
             android:textSize="16sp"
             android:fontFamily="@font/nunito_bold" />
     </LinearLayout>

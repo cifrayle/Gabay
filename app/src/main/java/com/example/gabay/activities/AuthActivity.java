@@ -61,17 +61,14 @@ public class AuthActivity extends AppCompatActivity {
 
         loadSignInFragment();
 
-        // Initialize Google One-Tap Sign-In
+        // google onetap
         oneTapClient = Identity.getSignInClient(this);
         signInRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
-                        // Use your WEB CLIENT ID (not Android client ID)
-                        .setServerClientId("640293016127-s87ko9ho8to4j79accn3i6hrt2pt9cvm.apps.googleusercontent.com")
-                        // Show all accounts, not just previously authorized ones
+                        .setServerClientId("640293016127-s87ko9ho8to4j79accn3i6hrt2pt9cvm.apps.googleusercontent.com") //  WEB CLIENT ID
                         .setFilterByAuthorizedAccounts(false)
                         .build())
-                // Automatically sign in when exactly one credential is retrieved
                 .setAutoSelectEnabled(true)
                 .build();
     }
@@ -145,7 +142,6 @@ public class AuthActivity extends AppCompatActivity {
                 Log.d(TAG, "Google sign-out completed");
             });
         }
-
         // Also clear any local Google sign-in state
         try {
             GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this,
@@ -190,7 +186,6 @@ public class AuthActivity extends AppCompatActivity {
                     Toast.makeText(AuthActivity.this, "Network error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
-
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseBody = response.body().string();
@@ -204,22 +199,20 @@ public class AuthActivity extends AppCompatActivity {
                             String accessToken = jsonResponse.optString("access_token");
                             String refreshToken = jsonResponse.optString("refresh_token");
 
-                            // IMPORTANT: Extract user ID from the response
+                            // Extract user ID from the response
                             JSONObject user = jsonResponse.getJSONObject("user");
                             String userId = user.getString("id");
 
                             // Save tokens to SharedPreferences
                             saveAuthTokens(accessToken, refreshToken);
 
-                            // ⭐ ADD THIS: Set the token in SupabaseService
+                            // Set the token in SupabaseService
                             SupabaseJavaService.setAccessToken(accessToken, userId);
-                            Log.d(TAG, "✅ SupabaseService authenticated for user: " + userId);
+                            Log.d(TAG, "SupabaseService authenticated for user: " + userId);
 
-                            // Optional: Create user profile if it doesn't exist
+
                             createUserProfileIfNeeded(user);
-
-                            Toast.makeText(AuthActivity.this, "Signed in with Google!", Toast.LENGTH_SHORT).show();
-
+                            Toast.makeText(AuthActivity.this, "Signed in successfully!", Toast.LENGTH_SHORT).show();
                             // Navigate to MainActivity
                             navigateToMainActivity();
 

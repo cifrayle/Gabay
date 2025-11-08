@@ -66,9 +66,7 @@ public class MainActivity extends AppCompatActivity {
         if (backButton != null) {
             backButton.setOnClickListener(v -> onBackPressed());
         }
-
-
-
+        
         fragmentManager.addOnBackStackChangedListener(this::updateActionBarForTopFragment);
 
         BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
@@ -162,8 +160,6 @@ public class MainActivity extends AppCompatActivity {
             newFragment = fragmentStateManager.getOrCreateFragment(HomePage.class, tag);
         } else if (itemId == R.id.nav_GabAI) {
             newFragment = fragmentStateManager.getOrCreateFragment(GabAIPage.class, tag);
-        } else if (itemId == R.id.nav_Dictionary) {
-            newFragment = fragmentStateManager.getOrCreateFragment(DictionaryPage.class, tag);// DictionaryPage.class, tag);
         } else if (itemId == R.id.nav_Profile) {
             newFragment = fragmentStateManager.getOrCreateFragment(ProfilePage.class, tag);
         }
@@ -178,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
     private String getFragmentTag(int itemId) {
         if (itemId == R.id.nav_Home) return "home_fragment";
         if (itemId == R.id.nav_GabAI) return "gabai_fragment";
-        if (itemId == R.id.nav_Dictionary) return "dictionary_fragment";
         if (itemId == R.id.nav_Profile) return "profile_fragment";
         return "unknown_fragment";
     }

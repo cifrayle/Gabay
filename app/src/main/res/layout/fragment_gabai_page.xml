@@ -112,6 +112,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/switchCameraButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/transparentBackground"
+        android:src="@drawable/ic_camera_switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/primaryColor" />
+
     <TextView
         android:id="@+id/instructionText"
         android:layout_width="300dp"
@@ -176,4 +188,3 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

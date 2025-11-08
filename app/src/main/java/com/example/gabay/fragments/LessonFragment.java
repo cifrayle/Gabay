@@ -18,6 +18,7 @@ import android.widget.VideoView;
 
 import com.example.gabay.R;
 import com.example.gabay.data.LessonData;
+import com.example.gabay.data.LessonDescriptionData;
 import com.example.gabay.services.SupabaseJavaService;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
@@ -30,6 +31,7 @@ public class LessonFragment extends Fragment {
     private int levelNumber;
     private VideoView videoView;
     private Button btnNext, btnPrev;
+    private TextView levelDescription;
     private android.widget.ProgressBar video_progressBar;
     private ImageButton btnReplay, btnPausePlay;
 
@@ -70,6 +72,8 @@ public class LessonFragment extends Fragment {
         btnReplay = view.findViewById(R.id.btn_replay);
         btnPausePlay = view.findViewById(R.id.btn_pause_play);
         video_progressBar = view.findViewById(R.id.progressBar);
+        levelDescription = view.findViewById(R.id.levelDescription);
+
 
         showLesson();
 
@@ -83,6 +87,7 @@ public class LessonFragment extends Fragment {
 
     private void showLesson() {
         LessonData.Lesson[] lessons = getLessonsForChapter();
+        LessonDescriptionData.LessonDescription[] descriptions = getDescriptionsForChapter();
 
         if (lessons == null || levelNumber < 1 || levelNumber > lessons.length) {
             Log.e("LessonDebug", "Invalid lesson: Chapter " + chapterId + ", Level " + levelNumber);
@@ -90,6 +95,7 @@ public class LessonFragment extends Fragment {
         }
 
         LessonData.Lesson lesson = lessons[levelNumber - 1];
+        LessonDescriptionData.LessonDescription description = descriptions[levelNumber - 1];
 
         // Set title
         if (getActivity() != null) {
@@ -97,7 +103,12 @@ public class LessonFragment extends Fragment {
             if (actionBarTitle != null) actionBarTitle.setText(lesson.title);
         }
 
-        // ✅ Prepare video correctly
+        // Set description
+        if (levelDescription != null) {
+            levelDescription.setText(description.description);
+        }
+
+        // video
         String path = "android.resource://" + requireContext().getPackageName() + "/" + lesson.videoRes;
         Uri uri = Uri.parse(path);
         videoView.setVideoURI(uri);
@@ -154,7 +165,6 @@ public class LessonFragment extends Fragment {
 
                         if (progress >= 90 && !btnNext.isEnabled() && !alreadyCompleted) {
                             btnNext.setEnabled(true);
-                            Toast.makeText(getContext(), "You can now proceed to the next level!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -231,7 +241,6 @@ public class LessonFragment extends Fragment {
             if (lessons != null && (levelNumber + 1) <= lessons.length) {
                 goToLevel(levelNumber + 1);
             } else if (getActivity() != null)  {
-                Toast.makeText(getActivity(), "All levels completed! Great job!", Toast.LENGTH_LONG).show();
                 getActivity().setResult(android.app.Activity.RESULT_OK);
                 getActivity().finish();
             }
@@ -267,14 +276,14 @@ public class LessonFragment extends Fragment {
                     }
 
                     if (success) {
-                        Toast.makeText(getActivity(), "Level " + levelNumber + " completed!", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "Level " + levelNumber + " completed!", Toast.LENGTH_SHORT).show();
 
                         if (progressViewModel != null) {
                             progressViewModel.updateChapterProgress(chapterNumber, levelNumber);
                             updateUserAchievements(chapterNumber, levelNumber);
                         }
                     } else {
-                        Toast.makeText(getActivity(), "Failed to update progress online.", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getActivity(), "Failed to update progress online.", Toast.LENGTH_SHORT).show();
                     }
 
                     // Safe result set
@@ -288,7 +297,6 @@ public class LessonFragment extends Fragment {
             }
         }).start();
     }
-
 
     private void goToLevel(int nextLevelNumber) {
         Fragment fragment = LessonFragment.newInstance(chapterId, nextLevelNumber);
@@ -308,6 +316,7 @@ public class LessonFragment extends Fragment {
         return 1;
     }
 
+
     private LessonData.Lesson[] getLessonsForChapter() {
         switch (chapterId) {
             case "chapter1": return LessonData.CHAPTER1;
@@ -320,6 +329,20 @@ public class LessonFragment extends Fragment {
                 return null;
         }
     }
+
+    private LessonDescriptionData.LessonDescription[] getDescriptionsForChapter() {
+        switch (chapterId) {
+            case "chapter1": return LessonDescriptionData.CHAPTER1;
+            case "chapter2": return LessonDescriptionData.CHAPTER2;
+            case "chapter3": return LessonDescriptionData.CHAPTER3;
+            case "chapter4": return LessonDescriptionData.CHAPTER4;
+            case "chapter5": return LessonDescriptionData.CHAPTER5;
+            default:
+                Log.e("LessonDebug", "Unknown chapter for description: " + chapterId);
+                return new LessonDescriptionData.LessonDescription[0];
+        }
+    }
+
 
     private void updateUserAchievements(int chapterNumber, int levelNumber) {
         if (progressViewModel == null) return;

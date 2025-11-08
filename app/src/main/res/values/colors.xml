@@ -13,4 +13,3 @@
     <color name="subtitleTextColor">#DCDCDC</color>
     <color name="transparentBackground">@android:color/transparent</color>
 </resources>
-

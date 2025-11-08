@@ -84,23 +84,18 @@ public class SignInPage extends Fragment {
         });
 
         // Google sign in
-        signInGoogle.setOnClickListener(new View.OnClickListener() {
+        signInGoogle.setOnClickListener(new View.OnClickListener() { // img button
             @Override
             public void onClick(View v) {
-                // Optional: Show loading state
                 signInGoogle.setEnabled(false);
-
-                // Trigger Google Sign-In
+                // google signin trigger from authactivity
                 if (getActivity() instanceof AuthActivity) {
                     ((AuthActivity) getActivity()).signInWithGoogle();
                 }
-
-                // Re-enable after a delay or in onActivityResult
                 signInGoogle.postDelayed(() -> signInGoogle.setEnabled(true), 2000);
             }
         });
-
-        // Forgot password
+        // forgor pass
         forgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

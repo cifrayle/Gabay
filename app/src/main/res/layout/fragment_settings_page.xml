@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="64dp">
 
 
         <!-- App Settings Section -->
@@ -124,32 +124,19 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Notification Section -->
-        <TextView
-            android:id="@+id/notification_settings_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/nunito_extrabold"
-            android:text="Notifications"
-            android:textColor="@color/buttonTextColor"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/soundeffect_setting_card" />
 
         <!-- Daily Reminder Setting -->
         <androidx.cardview.widget.CardView
             android:id="@+id/daily_reminder_card"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:backgroundTint="@android:color/white"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/notification_settings_title">
+            app:layout_constraintTop_toBottomOf="@id/soundeffect_setting_card">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -171,7 +158,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="Daily reminder"
+                    android:text="Notifications"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -185,53 +172,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Reminder Time Setting -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/reminder_time_card"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@android:color/white"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/daily_reminder_card">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_time_notif"
-                    android:contentDescription="Reminder time"
-                    app:tint="@color/buttonTextColor"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/nunito"
-                    android:text="Reminder time"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_semibold"
-                    android:text="9:00 AM"
-                    android:textColor="@color/secondaryColor"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
         <!-- Contact Us Section -->
         <TextView
@@ -245,11 +186,11 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reminder_time_card" />
+            app:layout_constraintTop_toBottomOf="@id/daily_reminder_card" />
 
         <!-- About Us Setting -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/dictionary_item2"
+            android:id="@+id/aboutUs_setting"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="12dp"
@@ -280,7 +221,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="About Us"
+                    android:text="About"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -294,120 +235,14 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Terms and Conditions Setting -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/Answer_A"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@android:color/white"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dictionary_item2">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_terms"
-                    android:contentDescription="Terms and conditions"
-                    app:tint="@color/buttonTextColor"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/nunito"
-                    android:text="Terms and Conditions"
-                    android:textColor="@color/buttonTextColor"
-                    android:textSize="14sp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_arrowforward"
-                    android:contentDescription="Navigate to terms and conditions"
-                    app:tint="@color/secondaryColor"/>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Logout Section -->
-        <TextView
-            android:id="@+id/account_section_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/nunito_extrabold"
-            android:text="Account"
-            android:textColor="@color/buttonTextColor"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/Answer_A" />
-
-        <!-- Delete account settings -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/delete_acc_button"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@android:color/white"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/account_section_title">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_dangerous"
-                    android:contentDescription="Delete account"
-                    app:tint="@color/design_default_color_error" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/nunito"
-                    android:text="Delete account"
-                    android:textColor="@color/design_default_color_error"
-                    android:textSize="14sp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_arrowforward"
-                    android:contentDescription="Navigate to terms and conditions"
-                    app:tint="@color/design_default_color_error"/>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
         <!-- Logout Button -->
         <Button
             android:id="@+id/logout_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="64dp"
             android:backgroundTint="@color/secondaryColor"
             android:elevation="2dp"
             android:fontFamily="@font/nunito_bold"
@@ -416,7 +251,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/delete_acc_button" />
+            app:layout_constraintTop_toBottomOf="@id/aboutUs_setting" />
 
 
 
