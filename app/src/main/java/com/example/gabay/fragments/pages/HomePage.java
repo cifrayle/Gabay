@@ -73,8 +73,9 @@ public class HomePage extends BaseFragment {
             Log.d("HomePage", "User swiped to refresh");
 
             if (progressViewModel != null) {
-                progressViewModel.refreshProgressFromSupabase();
-                progressViewModel.loadUserProfileFromSupabase();
+                if (progressViewModel != null) {
+                    progressViewModel.refreshAllData();
+                }
             }
             new Handler().postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 1500);
         });
@@ -90,12 +91,9 @@ public class HomePage extends BaseFragment {
         Log.d("ProgressDebug", "HomePage: ProgressViewModel initialized with requireActivity()");
         initializeChapterCards();
         setupProgressObservers();
-
         verifyViewModelInstance();
-
         loadUserProfile();
 
-        // layout performanmce
         if (rootView != null) {
             LayoutPerformanceMonitor.analyzeLayout(rootView);
         }
@@ -191,6 +189,18 @@ public class HomePage extends BaseFragment {
             if (isFragmentActive() && progressBar != null && todoDescTextView != null) {
                 progressBar.setProgress(totalProgress != null ? totalProgress : 0);
                 todoDescTextView.setText((totalProgress != null ? totalProgress : 0) + "%");
+            }
+        });
+
+        progressViewModel.getProgressUpdateEvent().observe(getViewLifecycleOwner(), shouldUpdate -> {
+            if (shouldUpdate != null && shouldUpdate) {
+                Log.d("ProgressDebug", "HomePage: Progress update event received, refreshing data...");
+
+                // Refresh all data from Supabase
+                progressViewModel.refreshAllData();
+
+                // Mark the event as handled
+                progressViewModel.markProgressUpdateHandled();
             }
         });
 
@@ -341,7 +351,6 @@ public class HomePage extends BaseFragment {
         }
     }
 
-
     private void loadChapter(int chapterNumber) {
         if (!isFragmentActive()) return;
 
@@ -375,7 +384,6 @@ public class HomePage extends BaseFragment {
                     .commit();
         }
     }
-
 
     @Override
     protected void cleanupResources() {

@@ -9,6 +9,9 @@ import android.widget.TextView;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -26,6 +29,20 @@ public class LessonActivity extends AppCompatActivity {
         setTheme(R.style.Theme_Gabay);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson);
+
+        // Apply window insets to handle system bars properly
+        View rootView = findViewById(android.R.id.content);
+        if (rootView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                // Apply padding to the AppBarLayout
+                View appBarLayout = findViewById(R.id.app_bar_layout);
+                if (appBarLayout != null) {
+                    appBarLayout.setPadding(0, systemBars.top, 0, 0);
+                }
+                return insets;
+            });
+        }
 
         ImageButton backButton = findViewById(R.id.levels_back_button);
         backButton.setOnClickListener(v -> onBackPressed());

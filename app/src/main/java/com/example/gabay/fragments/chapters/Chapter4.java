@@ -42,6 +42,7 @@ public class Chapter4 extends Fragment {
             R.id.levelTitle6, R.id.levelTitle7,
     };
 
+
     private View view;
     private SharedPreferences preferences;
     private static final String PREF_NAME = "Chapter4Progress";
@@ -74,6 +75,9 @@ public class Chapter4 extends Fragment {
             updateLevelStates();
             updateQuizButtonState();
         });
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
 
         initializeLevelButtons();
         initializeQuizButton();
@@ -271,6 +275,19 @@ public class Chapter4 extends Fragment {
             });
         }
     }
+    private void openQuizActivity() {
+        int chapterNumber = 4;
+        try {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("chapter_number", chapterNumber);
+            intent.putExtra("level", 1); // compute your real level if needed
+            startActivity(intent);
+            Log.d("Chapter" + chapterNumber, "QuizActivity started successfully");
+        } catch (Exception e) {
+            Log.e("Chapter" + chapterNumber, "Error starting QuizActivity: " + e.getMessage(), e);
+            Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void updateButtonClickListener(Button button, int levelNumber) {
         button.setOnClickListener(null);
@@ -364,17 +381,7 @@ public class Chapter4 extends Fragment {
         Toast.makeText(getContext(), "Progress reset!", Toast.LENGTH_SHORT).show();
     }
 
-    private void openQuizActivity() {
-        try {
-            Intent intent = new Intent(getActivity(), QuizActivity.class);
-            intent.putExtra("chapter_number", 4);
-            startActivity(intent);
-        } catch (Exception e) {
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+
 
     @Override
     public void onDestroyView() {
@@ -388,6 +395,10 @@ public class Chapter4 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Refresh progress when returning from lessons
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
         updateLevelStates();
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 4");

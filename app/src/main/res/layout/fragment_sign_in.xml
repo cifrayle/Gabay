@@ -13,7 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="16dp"
+        android:paddingTop="8dp"
         android:fontFamily="@font/nunito_extrabold"
         android:text="Welcome\nback!"
         android:textColor="@color/primaryColor"
@@ -59,10 +60,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/signIn_Password">
+                app:layout_constraintTop_toBottomOf="@+id/signIn_error_message">
 
                 <CheckBox
                     android:id="@+id/checkBox_rememberMe"
@@ -93,13 +94,28 @@
                 android:ems="10"
                 android:fontFamily="@font/nunito_semibold"
                 android:hint="Email"
-                android:inputType="text"
+                android:inputType="textEmailAddress"
                 android:padding="8dp"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/signIn_email_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:textColor="#FF5252"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/signIn_email" />
 
             <EditText
                 android:id="@+id/signIn_Password"
@@ -122,7 +138,22 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/signIn_email" />
+                app:layout_constraintTop_toBottomOf="@+id/signIn_email_error" />
+
+            <TextView
+                android:id="@+id/signIn_password_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:textColor="#FF5252"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/signIn_Password" />
 
             <ImageButton
                 android:id="@+id/password_toggle_show"
@@ -141,7 +172,7 @@
                 android:id="@+id/tv_forgotPass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:clickable="true"
                 android:fontFamily="@font/nunito_bold"
@@ -149,7 +180,7 @@
                 android:textColor="@color/secondaryColor"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/signIn_Password" />
+                app:layout_constraintTop_toBottomOf="@+id/signIn_error_message" />
 
 
             <LinearLayout
@@ -175,13 +206,30 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/signIn_error_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:textColor="#FF5252"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/signIn_password_error" />
+
             <Button
                 android:id="@+id/signIn_button"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="12dp"
-                android:layout_marginBottom="125dp"
+                android:layout_marginBottom="64dp"
                 android:backgroundTint="@color/secondaryColor"
                 android:elevation="5dp"
                 android:fontFamily="@font/nunito_bold"
@@ -191,7 +239,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/signIn_error_message" />
 
             <ImageButton
                 android:id="@+id/signIn_google"
@@ -199,10 +248,10 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
-                android:background="@drawable/circle_btn"
                 android:contentDescription="Google sign in"
                 android:elevation="4dp"
                 android:padding="6dp"
+                android:background="@drawable/circle_btn"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_google"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout"

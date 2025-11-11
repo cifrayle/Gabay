@@ -1,5 +1,6 @@
 package com.example.gabay.fragments;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -13,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.content.Intent;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.gabay.R;
+import com.example.gabay.activities.QuizActivity;
 import com.example.gabay.data.LessonData;
 import com.example.gabay.data.LessonDescriptionData;
 import com.example.gabay.services.SupabaseJavaService;
@@ -31,7 +34,7 @@ public class LessonFragment extends Fragment {
     private int levelNumber;
     private VideoView videoView;
     private Button btnNext, btnPrev;
-    private TextView levelDescription;
+    private TextView levelDescription, levelCounter;
     private android.widget.ProgressBar video_progressBar;
     private ImageButton btnReplay, btnPausePlay;
 
@@ -73,11 +76,16 @@ public class LessonFragment extends Fragment {
         btnPausePlay = view.findViewById(R.id.btn_pause_play);
         video_progressBar = view.findViewById(R.id.progressBar);
         levelDescription = view.findViewById(R.id.levelDescription);
+        levelCounter = view.findViewById(R.id.levelCounter);
 
 
         showLesson();
 
         btnNext.setOnClickListener(v -> completeAndGoToNext());
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
+
         btnPrev.setOnClickListener(v -> {
             if (levelNumber > 1) goToLevel(levelNumber - 1);
         });
@@ -85,6 +93,7 @@ public class LessonFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     private void showLesson() {
         LessonData.Lesson[] lessons = getLessonsForChapter();
         LessonDescriptionData.LessonDescription[] descriptions = getDescriptionsForChapter();
@@ -102,6 +111,9 @@ public class LessonFragment extends Fragment {
             TextView actionBarTitle = getActivity().findViewById(R.id.action_bar_title);
             if (actionBarTitle != null) actionBarTitle.setText(lesson.title);
         }
+
+        int totalLevels = lessons.length;
+        levelCounter.setText("Level " + levelNumber + " of " + totalLevels);
 
         // Set description
         if (levelDescription != null) {
@@ -152,6 +164,7 @@ public class LessonFragment extends Fragment {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupVideoPlayback(LessonData.Lesson lesson, boolean alreadyCompleted, int chapterNumber) {
         Runnable progressRunnable = new Runnable() {
             @Override
@@ -164,6 +177,7 @@ public class LessonFragment extends Fragment {
                         video_progressBar.setProgress(progress);
 
                         if (progress >= 90 && !btnNext.isEnabled() && !alreadyCompleted) {
+                            progressViewModel.refreshAllData();
                             btnNext.setEnabled(true);
                         }
                     }
@@ -232,31 +246,132 @@ public class LessonFragment extends Fragment {
         });
     }
 
-
     private void completeAndGoToNext() {
-        markLevelsUpToCurrent();
+        int chapterNumber = extractChapterNumber(chapterId);
+        LessonData.Lesson[] lessons = getLessonsForChapter();
+        boolean isLastLevel = lessons != null && levelNumber >= lessons.length;
+        
+        // Update progress first
+        markLevelsUpToCurrent(isLastLevel, chapterNumber);
 
+        // Wait for progress update to complete before navigating
         new Handler().postDelayed(() -> {
-            LessonData.Lesson[] lessons = getLessonsForChapter();
             if (lessons != null && (levelNumber + 1) <= lessons.length) {
+                // Go to next level - progress already updated
                 goToLevel(levelNumber + 1);
-            } else if (getActivity() != null)  {
-                getActivity().setResult(android.app.Activity.RESULT_OK);
+            } else if (isLastLevel) {
+                // Last level completed - check if chapter is fully completed and redirect to quiz
+                checkAndRedirectToQuiz(chapterNumber);
+            } else if (getActivity() != null) {
+                // Ensure progress is updated before finishing
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("completed_level", levelNumber);
+                resultIntent.putExtra("level_completed", true);
+                resultIntent.putExtra("score", 100);
+                getActivity().setResult(android.app.Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
             }
-        }, 800); // 0.8-second delay prevents overlap crash
+        }, 500); // Reduced delay - progress update happens immediately in ViewModel
+    }
+    
+    private void checkAndRedirectToQuiz(int chapterNumber) {
+        if (getActivity() == null) return;
+        
+        // Check if chapter is completed (all levels done)
+        new Thread(() -> {
+            try {
+                // Wait a bit for the progress update to complete
+                Thread.sleep(200);
+                
+                int completedCount = SupabaseJavaService.getCompletedLevelsCount(chapterNumber);
+                int maxLevels = progressViewModel.getMaxLevelsForChapter(chapterNumber);
+                
+                // Check if we just completed the last level
+                boolean isChapterCompleted = (levelNumber >= maxLevels) && (completedCount >= maxLevels);
+                
+                Log.d("LessonDebug", "Chapter " + chapterNumber + " - Level " + levelNumber + 
+                      " completed. Completed count: " + completedCount + "/" + maxLevels + 
+                      ". Is chapter completed: " + isChapterCompleted);
+                
+                requireActivity().runOnUiThread(() -> {
+                    if (isChapterCompleted) {
+                        // Chapter is fully completed - redirect to quiz
+                        Log.d("LessonDebug", "Chapter " + chapterNumber + " completed! Redirecting to quiz...");
+                        openQuizActivity(chapterNumber);
+                    } else {
+                        // Not fully completed yet, just finish the activity with result
+                        if (getActivity() != null) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("completed_level", levelNumber);
+                            resultIntent.putExtra("level_completed", true);
+                            resultIntent.putExtra("score", 100);
+                            getActivity().setResult(android.app.Activity.RESULT_OK, resultIntent);
+                            getActivity().finish();
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e("LessonDebug", "Error checking chapter completion: " + e.getMessage());
+                requireActivity().runOnUiThread(() -> {
+                    if (getActivity() != null) {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("completed_level", levelNumber);
+                        resultIntent.putExtra("level_completed", true);
+                        resultIntent.putExtra("score", 100);
+                        getActivity().setResult(android.app.Activity.RESULT_OK, resultIntent);
+                        getActivity().finish();
+                    }
+                });
+            }
+        }).start();
+    }
+    
+    private void openQuizActivity(int chapterNumber) {
+        try {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("chapter_number", chapterNumber);
+            startActivity(intent);
+            
+            // Finish the lesson activity after starting quiz with result
+            if (getActivity() != null) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("completed_level", levelNumber);
+                resultIntent.putExtra("level_completed", true);
+                resultIntent.putExtra("score", 100);
+                getActivity().setResult(android.app.Activity.RESULT_OK, resultIntent);
+                getActivity().finish();
+            }
+            
+            Log.d("LessonDebug", "QuizActivity started for chapter " + chapterNumber);
+        } catch (Exception e) {
+            Log.e("LessonDebug", "Error starting QuizActivity: " + e.getMessage(), e);
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("completed_level", levelNumber);
+                resultIntent.putExtra("level_completed", true);
+                resultIntent.putExtra("score", 100);
+                getActivity().setResult(android.app.Activity.RESULT_OK, resultIntent);
+                getActivity().finish();
+            }
+        }
     }
 
-    private void markLevelsUpToCurrent() {
+    private void markLevelsUpToCurrent(boolean isLastLevel, int chapterNumber) {
         if (getActivity() == null) return;
-
-        int chapterNumber = extractChapterNumber(chapterId);
 
         new Thread(() -> {
             try {
                 int completedCount = SupabaseJavaService.getCompletedLevelsCount(chapterNumber);
                 if (completedCount >= levelNumber) {
                     Log.d("ProgressDebug", "Level " + levelNumber + " already completed — skipping update.");
+                    // Still trigger UI update for real-time refresh
+                    requireActivity().runOnUiThread(() -> {
+                        if (progressViewModel != null && isAdded()) {
+                            progressViewModel.updateChapterProgress(chapterNumber, levelNumber);
+                            progressViewModel.triggerProgressUpdate();
+                        }
+                    });
                     return;
                 }
 
@@ -276,19 +391,30 @@ public class LessonFragment extends Fragment {
                     }
 
                     if (success) {
-                        //Toast.makeText(getActivity(), "Level " + levelNumber + " completed!", Toast.LENGTH_SHORT).show();
-
                         if (progressViewModel != null) {
+                            // Update progress immediately for real-time UI updates
                             progressViewModel.updateChapterProgress(chapterNumber, levelNumber);
                             updateUserAchievements(chapterNumber, levelNumber);
+                            
+                            // Trigger progress update event to notify all observers (including HomePage)
+                            progressViewModel.triggerProgressUpdate();
+                            
+                            // Refresh all data from Supabase in background
+                            progressViewModel.refreshAllData();
+                            
+                            Log.d("ProgressDebug", "✅ Progress updated and observers notified for Chapter " + chapterNumber + ", Level " + levelNumber);
                         }
-                    } else {
-                       // Toast.makeText(getActivity(), "Failed to update progress online.", Toast.LENGTH_SHORT).show();
                     }
 
-                    // Safe result set
+                    // Safe result set with completed level data
                     if (getActivity() != null) {
-                        getActivity().setResult(android.app.Activity.RESULT_OK);
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("completed_level", levelNumber);
+                        resultIntent.putExtra("level_completed", true);
+                        resultIntent.putExtra("score", 100); // Default score for video completion
+                        getActivity().setResult(android.app.Activity.RESULT_OK, resultIntent);
+                        
+                        Log.d("ProgressDebug", "Result intent set with level " + levelNumber + " completed");
                     }
                 });
 

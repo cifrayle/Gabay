@@ -1,5 +1,6 @@
 package com.example.gabay.fragments.quiz;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -36,9 +37,9 @@ public class QuizFragment extends BaseFragment {
     private String[][] chapterAnswers;
 
 
-    private ImageView questionImageView;
+    private ImageView questionImageView, completionImageView;
     private MaterialCardView[] answerCardViews;
-    private MaterialCardView timeBackground;
+    private MaterialCardView timeBackground, questionImageCard;
     private TextView[] answerTextViews;
     private Button submitButton;
     private TextView questionNumberTextView;
@@ -116,72 +117,125 @@ public class QuizFragment extends BaseFragment {
         showQuizIntroduction();
     }
 
+    //this should handle data for chapter 1 and 4
     private void initializeQuizData() {
-        // Chapter 1 data (your current data)
+        // ---- Base data (defaults) ----
+
+        // Chapter 1 (your current data)
         int[] chapter1Images = {
-                R.drawable.letter_c,
-                R.drawable.letter_i,
-                R.drawable.letter_a,
-                R.drawable.letter_n,
-                R.drawable.letter_f
+                R.drawable.img_letter_c,
+                R.drawable.img_letter_a,
+                R.drawable.img_letter_s,
+                R.drawable.img_letter_h,
+                R.drawable.img_letter_g,
+                R.drawable.img_letter_j,
+                R.drawable.img_letter_i,
+                R.drawable.img_letter_u,
+                R.drawable.img_letter_t,
+                R.drawable.img_letter_f
         };
 
         String[] chapter1Choices = {
                 "HELLO/KUMUSTA", "C", "NO/HINDI", "O",
                 "A", "ONE/ISA", "I", "YOU/IKAW",
-                "FIST/KAMAO", "J", "ME/AKO", "A",
-                "N", "M", "Y", "L",
-                "OK", "G", "THREE/TATLO", "F"
+                "FIST/KAMAO", "S", "ME/AKO", "A",
+                "H", "LEFT/KALIWA", "Y", "L",
+                "X", "G", "TWO/DALAWA", "L",
+                "I", "ONE/ISA", "J", "B",
+                "I", "R", "J", "ONE/ISA",
+                "T", "D", "F", "U",
+                "D", "T", "Y", "L",
+                "THREE/TATLO", "F", "OK", "K",
         };
 
-        String[] chapter1Answers = {"C", "I", "A", "N", "F"};
+        String[] chapter1Answers = {"C", "A", "S", "H", "G", "J", "I", "U", "T", "F"};
 
-        // Chapter 2 data (add your questions here)
-        int[] chapter2Images = {
-//                R.drawable.chapter2_q1,
-//                R.drawable.chapter2_q2,
-//                R.drawable.chapter2_q3,
-//                R.drawable.chapter2_q4,
-//                R.drawable.chapter2_q5
+        // Chapter 4 (placeholder — replace with your real data)
+        int[] chapter4Images = {
+                // R.drawable.ch4_q1, R.drawable.ch4_q2, R.drawable.ch4_q3, R.drawable.ch4_q4, R.drawable.ch4_q5
         };
 
-        String[] chapter2Choices = {
-                "Choice1", "Answer1", "Choice2", "Choice3",
-                "Choice1", "Answer2", "Choice2", "Choice3",
-                "Choice1", "Choice2", "Answer3", "Choice3",
-                "Choice1", "Choice2", "Choice3", "Answer4",
-                "Answer5", "Choice1", "Choice2", "Choice3"
+        String[] chapter4Choices = {
+                // MUST be 4 × numberOfImages
+                // "Choice1", "Answer1", "Choice2", "Choice3",
+                // "Choice1", "Answer2", "Choice2", "Choice3",
+                // "Choice1", "Choice2", "Answer3", "Choice3",
+                // "Choice1", "Choice2", "Choice3", "Answer4",
+                // "Answer5", "Choice1", "Choice2", "Choice3"
         };
 
-        String[] chapter2Answers = {"Answer1", "Answer2", "Answer3", "Answer4", "Answer5"};
+        String[] chapter4Answers = {
+                // "Answer1","Answer2","Answer3","Answer4","Answer5"
+        };
 
-        // Chapter 3, 4, 5 data (similar structure)
-        // ... add more chapters
-
-        // Organize all chapters
+        // ---- Allocate chapter tables up to chapter 4 ----
+        // We keep slots for 2 & 3 empty, since those chapters use MatchingQuizFragment
         chapterImages = new int[][] {
-                chapter1Images,
-                //chapter2Images,
-                // chapter3Images,
-                // chapter4Images,
-                // chapter5Images
+                chapter1Images,      // index 0 -> chapter 1
+                new int[] {},        // index 1 -> chapter 2 (unused here)
+                new int[] {},        // index 2 -> chapter 3 (unused here)
+                chapter4Images       // index 3 -> chapter 4
         };
 
         chapterChoices = new String[][] {
                 chapter1Choices,
-                //chapter2Choices,
-                // chapter3Choices,
-                // chapter4Choices,
-                // chapter5Choices
+                new String[] {},     // ch2 placeholder
+                new String[] {},     // ch3 placeholder
+                chapter4Choices
         };
 
         chapterAnswers = new String[][] {
                 chapter1Answers,
-                //chapter2Answers,
-                // chapter3Answers,
-                // chapter4Answers,
-                // chapter5Answers
+                new String[] {},     // ch2 placeholder
+                new String[] {},     // ch3 placeholder
+                chapter4Answers
         };
+
+        // ---- Optional override via Bundle (from QuizRegistry) ----
+        // Lets QuizRegistry inject MCQ arrays for the *current* chapter.
+        Bundle args = getArguments();
+        if (args != null) {
+            int[] images = args.getIntArray("mcq_images");
+            String[] choices = args.getStringArray("mcq_choices");
+            String[] answers = args.getStringArray("mcq_answers");
+
+            // Only override if everything lines up
+            if (images != null && answers != null && choices != null
+                    && images.length > 0
+                    && answers.length == images.length
+                    && choices.length == images.length * 4) {
+
+                int idx = Math.max(0, currentChapter - 1);
+
+                // Expand tables if a higher chapter index ever shows up
+                if (idx >= chapterImages.length) {
+                    int newLen = idx + 1;
+
+                    int[][] newImgs = new int[newLen][];
+                    String[][] newCh = new String[newLen][];
+                    String[][] newAns = new String[newLen][];
+
+                    System.arraycopy(chapterImages, 0, newImgs, 0, chapterImages.length);
+                    System.arraycopy(chapterChoices, 0, newCh, 0, chapterChoices.length);
+                    System.arraycopy(chapterAnswers, 0, newAns, 0, chapterAnswers.length);
+
+                    // fill any gaps with empty arrays
+                    for (int i = chapterImages.length; i < newLen; i++) {
+                        newImgs[i] = new int[]{};
+                        newCh[i] = new String[]{};
+                        newAns[i] = new String[]{};
+                    }
+
+                    chapterImages = newImgs;
+                    chapterChoices = newCh;
+                    chapterAnswers = newAns;
+                }
+
+                chapterImages[idx] = images;
+                chapterChoices[idx] = choices;
+                chapterAnswers[idx] = answers;
+            }
+        }
     }
 
     private int[] getCurrentImages() {
@@ -234,15 +288,17 @@ public class QuizFragment extends BaseFragment {
 
     private void initializeQuizUI() {
         if (rootView == null) return;
-
         timeBackground = rootView.findViewById(R.id.time_background);
+        questionImageCard = rootView.findViewById(R.id.question_image_card);
         questionImageView = rootView.findViewById(R.id.question_image);
+        completionImageView = rootView.findViewById(R.id.completion_image);
         quizHeaderTextView = rootView.findViewById(R.id.quiz_header);
         quizHeaderTextView2 = rootView.findViewById(R.id.quiz_header2);
         boldTitle_txtView = rootView.findViewById(R.id.boldTitle_txtView);
         regTitle_txtView = rootView.findViewById(R.id.regTitle_txtView);
         questionNumberTextView = rootView.findViewById(R.id.question_number);
         timerTextView = rootView.findViewById(R.id.timerTextView);
+
 
         // Initialize answer CardViews and their TextViews
         int[] cardViewIds = {R.id.Answer_A, R.id.Answer_B, R.id.Answer_C, R.id.Answer_D};
@@ -261,7 +317,6 @@ public class QuizFragment extends BaseFragment {
                 answerCardViews[i].setOnClickListener(v -> selectAnswer(answerIndex));
             }
         }
-
         submitButton = rootView.findViewById(R.id.submit_button);
         if (submitButton != null) {
             submitButton.setOnClickListener(v -> submitAnswer());
@@ -283,6 +338,7 @@ public class QuizFragment extends BaseFragment {
             }
         }.start();
     }
+    @SuppressLint("DefaultLocale")
     private void updateTimer() {
         if (timerTextView != null) {
             int seconds = (int) (timeLeftInMillis / 1000);
@@ -316,18 +372,15 @@ public class QuizFragment extends BaseFragment {
             if (isCorrect) {
                 score += 1;
                 answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.correctAnswerColor));
-                Toast.makeText(getContext(), "Time's up! Answer was correct!", Toast.LENGTH_SHORT).show();
                 if (isSoundEnabled() && correctAnswerSFX != 0) soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
             } else {
                 answerCardViews[selectedAnswerIndex].setStrokeColor(getResources().getColor(R.color.wrongAnswerColor));
-                Toast.makeText(getContext(), "Time's up! Answer was: " + getCurrentAnswers()[currentQuestionIndex], Toast.LENGTH_SHORT).show();
                 if (isSoundEnabled() && wrongAnswerSFX != 0) soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
         }
         if (isSoundEnabled() && timeoutSoundSFX != 0) {
             soundPool.play(timeoutSoundSFX, 1f, 1f, 0, 0, 1f);
         }
-
         new Handler().postDelayed(() -> {
             moveToNextQuestion();
         }, 1200);
@@ -364,14 +417,13 @@ public class QuizFragment extends BaseFragment {
                 answerCardViews[i].setStrokeWidth(0);
             }
         }
-        // Highlight selected CardView
+        // highlight selected CardView
         if (answerCardViews[answerIndex] != null) {
             answerCardViews[answerIndex].setCardBackgroundColor(getResources().getColor(R.color.primaryColor));
             answerCardViews[answerIndex].setCardElevation(12f);
             answerCardViews[answerIndex].setStrokeWidth(5);
             answerCardViews[answerIndex].setStrokeColor(getResources().getColor(R.color.secondaryColor));
         }
-
         selectedAnswerIndex = answerIndex;
     }
 
@@ -384,18 +436,15 @@ public class QuizFragment extends BaseFragment {
             if (isSoundEnabled() && wrongAnswerSFX != 0) {
                 soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
-            // FIX: Don't cancel timer here, just unlock after delay
             new Handler().postDelayed(() -> {
                 isSubmitting = false; // unlock after a short delay
             }, 3000);
             return;
         }
 
-        // Only cancel the timer when we have a valid answer submission
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-
         boolean isCorrect = checkAnswer(selectedAnswerIndex);
 
         if (isCorrect) {
@@ -403,7 +452,6 @@ public class QuizFragment extends BaseFragment {
             answerCardViews[selectedAnswerIndex].setStrokeColor(
                     getResources().getColor(R.color.correctAnswerColor)
             );
-            Toast.makeText(getContext(), "Correct!", Toast.LENGTH_SHORT).show();
             if (isSoundEnabled() && correctAnswerSFX != 0) {
                 soundPool.play(correctAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
@@ -411,16 +459,10 @@ public class QuizFragment extends BaseFragment {
             answerCardViews[selectedAnswerIndex].setStrokeColor(
                     getResources().getColor(R.color.wrongAnswerColor)
             );
-            Toast.makeText(
-                    getContext(),
-                    "Wrong! Correct answer: " + getCurrentAnswers()[currentQuestionIndex],
-                    Toast.LENGTH_SHORT
-            ).show();
             if (isSoundEnabled() && wrongAnswerSFX != 0) {
                 soundPool.play(wrongAnswerSFX, 1f, 1f, 0, 0, 1f);
             }
         }
-
         // delay before going to next question
         new Handler().postDelayed(() -> {
             moveToNextQuestion();
@@ -435,17 +477,14 @@ public class QuizFragment extends BaseFragment {
     }
 
     private void loadQuestion() {
-
         updateTimer();
         if (questionNumberTextView != null) {
             questionNumberTextView.setText("Question " + (currentQuestionIndex + 1) + " of " + getCurrentImages().length);
         }
-
-        // Load question image
+        // load question
         if (questionImageView != null && currentQuestionIndex < getCurrentImages().length) {
             questionImageView.setImageResource(getCurrentImages()[currentQuestionIndex]);
         }
-
         if (answerTextViews != null) {
             int choicesStartIndex = currentQuestionIndex * 4;
             String[] currentChoices = getCurrentChoices();
@@ -462,19 +501,16 @@ public class QuizFragment extends BaseFragment {
                 }
             }
         }
-
         selectedAnswerIndex = -1;
     }
 
     private void completeQuiz() {
         quizInProgress = false;
-
-        // Only mark as completed if score is passing (3/5 or more)
         boolean quizPassed = score >= 3;
 
         Log.d("QuizDebug", "=== QUIZ COMPLETION ===");
         Log.d("QuizDebug", "Chapter: " + currentChapter);
-        Log.d("QuizDebug", "Score: " + score + "/5");
+        Log.d("QuizDebug", "Score: " + score + "/" + getCurrentImages().length);
         Log.d("QuizDebug", "Quiz Passed: " + quizPassed);
 
         if (progressViewModel != null && quizPassed) {
@@ -493,7 +529,6 @@ public class QuizFragment extends BaseFragment {
 
         } else if (!quizPassed) {
             Log.d("QuizDebug", "❌ Quiz failed - not marking as completed");
-            Toast.makeText(getContext(), "Quiz failed. Score: " + score + "/5. Need 3/5 to pass.", Toast.LENGTH_LONG).show();
         } else {
             Log.e("QuizDebug", "❌ ProgressViewModel is null");
         }
@@ -506,7 +541,6 @@ public class QuizFragment extends BaseFragment {
 
     private void showCompletionFeedback() {
         if (getContext() == null) return;
-
         if (isSoundEnabled() && completeSFX != 0) {
             soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
         }
@@ -514,22 +548,23 @@ public class QuizFragment extends BaseFragment {
 
     private void updateUIForCompletion() {
         setVisibility(View.GONE, questionNumberTextView, quizHeaderTextView);
-
         if (timeBackground != null) {
             timeBackground.setVisibility(View.GONE);
         }
+        if (questionImageCard != null)
+        {
+            questionImageCard.setVisibility(View.GONE);
+        }
 
         if (boldTitle_txtView != null) {
-            boldTitle_txtView.setText("Your score: " + score + "/5");
+            boldTitle_txtView.setText("Your score: " + score + "/" + getCurrentImages().length);
             boldTitle_txtView.setTextSize(24);
         }
         if (regTitle_txtView != null) {
             regTitle_txtView.setText("");
             regTitle_txtView.setTextSize(24);
         }
-
         updateQuizResult();
-
         for (MaterialCardView cardView : answerCardViews) {
             if (cardView != null) {
                 cardView.setVisibility(View.GONE);
@@ -538,23 +573,22 @@ public class QuizFragment extends BaseFragment {
     }
 
     private void updateQuizResult() {
-        if (questionImageView == null) return;
-
-        // setting up the layout programmatically for good ui
+        if (completionImageView != null)
+        {
+            completionImageView.setVisibility(View.VISIBLE);
+        }
         int topMarginDp = 200;
         int topMarginPx = (int) (topMarginDp * getResources().getDisplayMetrics().density);
 
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) questionImageView.getLayoutParams();
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) completionImageView.getLayoutParams();
         params.topMargin = topMarginPx;
-        questionImageView.setLayoutParams(params);
+        completionImageView.setLayoutParams(params);
 
-        if (score <= 2) {
-            questionImageView.setImageResource(R.drawable.img_fourleafclover);
-            Toast.makeText(getContext(), "Quiz Failed. Nice try!", Toast.LENGTH_SHORT).show();
+        if (score <= 4) {
+            completionImageView.setImageResource(R.drawable.img_fourleafclover);
             setQuizResultText("Quiz Failed", Color.BLACK);
         } else {
-            questionImageView.setImageResource(R.drawable.img_medal);
-            Toast.makeText(getContext(), "Quiz Completed. Good job!", Toast.LENGTH_SHORT).show();
+            completionImageView.setImageResource(R.drawable.img_medal);
             setQuizResultText("Quiz Completed", Color.BLACK);
         }
     }

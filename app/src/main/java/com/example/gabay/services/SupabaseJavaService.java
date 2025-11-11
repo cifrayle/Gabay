@@ -100,7 +100,6 @@ public class SupabaseJavaService {
             Log.e("SupabaseService", "User not authenticated");
             return null;
         }
-
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<String> userEmail = new AtomicReference<>(null);
 
@@ -586,7 +585,6 @@ public class SupabaseJavaService {
             Log.e("SupabaseService", "User not authenticated");
             return false;
         }
-
         CountDownLatch latch = new CountDownLatch(1);
         AtomicBoolean success = new AtomicBoolean(false);
 
@@ -640,7 +638,6 @@ public class SupabaseJavaService {
             Log.e("SupabaseService", "User not authenticated");
             return false;
         }
-
         CountDownLatch latch = new CountDownLatch(1);
         AtomicBoolean isCompleted = new AtomicBoolean(false);
 

@@ -26,6 +26,7 @@ import com.example.gabay.R;
 import com.example.gabay.activities.MainActivity;
 import com.example.gabay.activities.LessonActivity;
 import com.example.gabay.activities.QuizActivity;
+import com.example.gabay.fragments.quiz.MatchingQuizFragment;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
 public class Chapter2 extends Fragment {
@@ -77,6 +78,9 @@ public class Chapter2 extends Fragment {
             updateLevelStates();
             updateQuizButtonState(); // this will unlock the quiz if the chapter is now completed
         });
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
 
         initializeLevelButtons();
         initializeQuizButton();
@@ -291,6 +295,20 @@ public class Chapter2 extends Fragment {
         }
     }
 
+    private void openQuizActivity() {
+        int chapterNumber = 2;
+        try {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("chapter_number", chapterNumber);
+            intent.putExtra("level", 1); // compute your real level if needed
+            startActivity(intent);
+            Log.d("Chapter" + chapterNumber, "QuizActivity started successfully");
+        } catch (Exception e) {
+            Log.e("Chapter" + chapterNumber, "Error starting QuizActivity: " + e.getMessage(), e);
+            Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void updateButtonClickListener(Button button, int levelNumber) {
         button.setOnClickListener(null);
         button.setOnTouchListener(null);
@@ -406,25 +424,13 @@ public class Chapter2 extends Fragment {
     }
 
 
-    private void openQuizActivity() {
-        try {
-            Intent intent = new Intent(getActivity(), QuizActivity.class);
-            intent.putExtra("chapter_number", 2);
-            startActivity(intent);
-
-            Log.d("Chapter2", "QuizActivity started successfully");
-
-        } catch (Exception e) {
-            Log.e("Chapter2", "Error starting QuizActivity: " + e.getMessage(), e);
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
+        // Refresh progress when returning from lessons
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
         updateLevelStates();
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 2");

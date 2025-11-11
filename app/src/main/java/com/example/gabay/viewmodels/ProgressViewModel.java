@@ -26,6 +26,9 @@ public class ProgressViewModel extends ViewModel {
     // Chapter progress tracking - using simple integer counts instead of ChapterProgress objects
     private final MutableLiveData<Map<Integer, Integer>> chapterProgress;
 
+    private final MutableLiveData<Boolean> _progressUpdateEvent = new MutableLiveData<>();
+    public LiveData<Boolean> getProgressUpdateEvent() { return _progressUpdateEvent; }
+
     // Quiz completion tracking
     private final MutableLiveData<Map<String, Boolean>> quizCompletion;
 
@@ -59,20 +62,31 @@ public class ProgressViewModel extends ViewModel {
         loadUserProfileFromSupabase();
         loadQuizCompletionFromSupabase();// Add this line
     }
+    public void triggerProgressUpdate() {
+        _progressUpdateEvent.setValue(true);
+    }
 
-    public void loadQuizCompletionFromSupabase() {
+    public void markProgressUpdateHandled() {
+        _progressUpdateEvent.setValue(false);
+    }
+
+    // Add this convenience method
+    public void refreshAllData() {
+        refreshProgressFromSupabase();
+        loadUserProfileFromSupabase();
+        loadQuizCompletionFromSupabase();
+    }
+
+        public void loadQuizCompletionFromSupabase() {
         backgroundExecutor.execute(() -> {
             try {
                 Map<String, Boolean> quizStates = new HashMap<>();
 
-                // Load quiz completion for all chapters from Supabase
                 for (int chapter = 1; chapter <= 5; chapter++) {
                     boolean completed = SupabaseJavaService.isQuizCompleted(chapter);
                     quizStates.put("chapter_" + chapter + "_quiz", completed);
                     Log.d("QuizDebug", "Loaded quiz state for chapter " + chapter + ": " + completed);
                 }
-
-                // Update LiveData on main thread
                 new Handler(Looper.getMainLooper()).post(() -> {
                     quizCompletion.setValue(quizStates);
                     Log.d("QuizDebug", "Quiz completion states loaded from Supabase: " + quizStates.toString());
@@ -83,7 +97,6 @@ public class ProgressViewModel extends ViewModel {
             }
         });
     }
-
     private void initializeDefaultProgress() {
         Map<Integer, Integer> progress = new HashMap<>();
 
@@ -91,24 +104,20 @@ public class ProgressViewModel extends ViewModel {
         for (int i = 1; i <= 5; i++) {
             progress.put(i, 0);
         }
-
         chapterProgress.setValue(progress);
         updateTotalProgress();
     }
 
     public void updateChapterProgress(int chapter, int level) {
         Log.d("ProgressDebug", "=== UPDATING PROGRESS: Chapter " + chapter + ", Level " + level + " ===");
-
-        // 1. Update local state immediately for responsive UI
         updateLocalProgress(chapter, level);
 
-        // 2. Check if chapter is completed (all levels done) and mark quiz as passed
         if (isChapterCompleted(chapter)) {
             markChapterQuizCompleted(chapter);
             Log.d("ProgressDebug", "Chapter " + chapter + " completed - quiz auto-marked as passed");
         }
-
-        // 3. Save to Supabase in background
+        triggerProgressUpdate();
+        // save to supabase
         backgroundExecutor.execute(() -> {
             try {
                 Log.d("ProgressDebug", "Saving to Supabase...");
@@ -164,7 +173,6 @@ public class ProgressViewModel extends ViewModel {
 
             Log.d("ProgressDebug", "Chapter " + chapter + ": " + completed + "/" + maxLevels + " levels");
         }
-
         int percentage = totalPossible > 0 ? (totalCompleted * 100) / totalPossible : 0;
         totalProgress.setValue(percentage);
 
@@ -194,14 +202,12 @@ public class ProgressViewModel extends ViewModel {
         backgroundExecutor.execute(() -> {
             try {
                 Map<Integer, Integer> supabaseProgress = new HashMap<>();
-
                 // Fetch progress for each chapter from Supabase
                 for (int chapter = 1; chapter <= 5; chapter++) {
                     int completedLevels = SupabaseJavaService.getCompletedLevelsCount(chapter);
                     supabaseProgress.put(chapter, completedLevels);
                     Log.d("ProgressDebug", "📥 Chapter " + chapter + " from Supabase: " + completedLevels + " levels");
                 }
-
                 // Update LiveData on main thread
                 new Handler(Looper.getMainLooper()).post(() -> {
                     chapterProgress.setValue(supabaseProgress);
@@ -223,7 +229,6 @@ public class ProgressViewModel extends ViewModel {
             setDefaultUserProfile();
             return;
         }
-
         backgroundExecutor.execute(() -> {
             // Get profile data from user_profiles table
             JSONObject profile = SupabaseJavaService.getUserProfile();
@@ -367,8 +372,6 @@ public class ProgressViewModel extends ViewModel {
         quizCompletion.setValue(updatedMap); // notify observers
         Log.d("ProgressDebug", "Chapter " + chapter + " quiz marked as completed");
     }
-
-
     public void markQuizCompleted(int chapter) {
         String quizKey = "chapter_" + chapter + "_quiz";
         Map<String, Boolean> currentMap = quizCompletion.getValue();
@@ -528,6 +531,7 @@ public class ProgressViewModel extends ViewModel {
 
         // Getters and setters
         public String getUsername() { return username; }
+
         public void setUsername(String username) { this.username = username; }
 
         public String getEmail() { return email; }

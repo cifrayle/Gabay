@@ -94,28 +94,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/completion_image"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="0dp"
+        android:contentDescription="TODO"
+        android:padding="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/letter_c"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quiz_header2" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/question_image_card"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="6dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/secondaryColor"
         app:cardBackgroundColor="@color/primaryColor"
-        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/secondaryColor"
+        app:strokeWidth="1dp">
 
         <ImageView
             android:id="@+id/question_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:contentDescription="TODO"
-            android:scaleType="centerInside"
             android:padding="16dp"
-            android:src="@drawable/letter_c" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_letter_c" />
     </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
@@ -126,7 +140,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_image_card">
+        app:layout_constraintTop_toBottomOf="@+id/completion_image">
 
         <TextView
             android:id="@+id/boldTitle_txtView"
@@ -382,7 +396,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <TextView
         android:id="@+id/question_number"

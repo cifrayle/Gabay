@@ -1,16 +1,10 @@
 package com.example.gabay.activities;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentTransaction;
-
+import androidx.fragment.app.Fragment;
 import com.example.gabay.R;
-import com.example.gabay.fragments.quiz.QuizFragment;
+import com.example.gabay.data.QuizRegistry; // <-- use the registry
 
 public class QuizActivity extends AppCompatActivity {
 
@@ -19,17 +13,19 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        // Get chapter and level from intent
-        int chapterNumber = getIntent().getIntExtra("chapter_number", 1);
-        int quizLevel = getIntent().getIntExtra("level", 0);
+        // Only add/replace once (prevents duplicate fragments after rotation)
+        if (savedInstanceState == null) {
+            int chapterNumber = getIntent().getIntExtra("chapter_number", 1);
+            int quizLevel     = getIntent().getIntExtra("level", 1); // default to 1
 
-        // Load the QuizFragment with chapter and level
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            // Build the fully-configured fragment (with bundles) from the registry
+            Fragment target = QuizRegistry.buildFragmentForChapter(chapterNumber, quizLevel);
 
-        // Pass the chapter and level to the fragment
-        QuizFragment quizFragment = QuizFragment.newInstance(chapterNumber, quizLevel);
-
-        transaction.replace(R.id.quiz_fragment_container, quizFragment);
-        transaction.commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.quiz_fragment_container, target)
+                    .commit();
+        }
     }
 }

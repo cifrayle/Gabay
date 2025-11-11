@@ -1,13 +1,18 @@
 package com.example.gabay.activities;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,7 +22,7 @@ import com.example.gabay.R;
 import com.example.gabay.fragments.pages.GabAIPage;
 import com.example.gabay.fragments.pages.HomePage;
 import com.example.gabay.fragments.pages.ProfilePage;
-import com.example.gabay.fragments.pages.DictionaryPage;
+import com.example.gabay.fragments.pages.SignInPage;
 import com.example.gabay.services.SupabaseJavaService;
 import com.example.gabay.viewmodels.ProgressViewModel;
 import com.example.gabay.utils.FragmentStateManager;
@@ -62,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
         actionBarTitle = findViewById(R.id.action_bar_title);
         backButton = findViewById(R.id.levels_back_button);
 
+        // Apply window insets to action bar for proper status bar handling
+        if (actionBarContainer != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(actionBarContainer, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(0, systemBars.top, 0, 0);
+                return insets;
+            });
+        }
 
         if (backButton != null) {
             backButton.setOnClickListener(v -> onBackPressed());
@@ -119,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         fragmentStateManager.restoreState(savedInstanceState);
     }
+
 
     private NavigationBarView.OnItemSelectedListener navListener = item -> {
         int itemId = item.getItemId();
@@ -212,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
     private String getFragmentTagFromFragment(Fragment fragment) {
         if (fragment instanceof HomePage) return "home_fragment";
         if (fragment instanceof GabAIPage) return "gabai_fragment";
-        if (fragment instanceof DictionaryPage) return "dictionary_fragment";
         if (fragment instanceof ProfilePage) return "profile_fragment";
         return "unknown_fragment";
     }

@@ -46,7 +46,6 @@ public class SupabaseHelper {
 
         client.newCall(request).enqueue(callback);
     }
-
     public static void signIn(String email, String password, Callback callback) {
         String url = SUPABASE_URL + "/auth/v1/token?grant_type=password";
 
@@ -58,7 +57,6 @@ public class SupabaseHelper {
             e.printStackTrace();
             return;
         }
-
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder()
                 .url(url)
@@ -69,8 +67,6 @@ public class SupabaseHelper {
 
         client.newCall(request).enqueue(callback);
     }
-
-
     public static void exchangeGoogleToken(String idToken, Callback callback) {
         String url = SUPABASE_URL + "/auth/v1/token?grant_type=id_token";
 
@@ -78,15 +74,12 @@ public class SupabaseHelper {
         try {
             json.put("provider", "google");
             json.put("id_token", idToken);
-            // Some Supabase versions might need access_token instead of id_token
-            // json.put("access_token", idToken);
 
             Log.d("SupabaseHelper", "Request JSON: " + json.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             return;
         }
-
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder()
                 .url(url)

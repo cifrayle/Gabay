@@ -169,17 +169,14 @@ public class GabAIPage extends Fragment {
             Toast.makeText(requireContext(), "Camera not initialized", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // Toggle between front and back camera
         currentLensFacing = (currentLensFacing == CameraSelector.LENS_FACING_FRONT)
                 ? CameraSelector.LENS_FACING_BACK
                 : CameraSelector.LENS_FACING_FRONT;
 
-        // Restart camera with new lens facing
         startCamera();
-
     }
 
+    // image classifier
     @OptIn(markerClass = ExperimentalGetImage.class)
     private Bitmap toBitmap(ImageProxy imageProxy) {
         Image image = imageProxy.getImage();
@@ -226,13 +223,8 @@ public class GabAIPage extends Fragment {
         int left = (bitmap.getWidth() - cropSize) / 2;
         int top = (bitmap.getHeight() - cropSize) / 2;
 
-        // Crop to bounding box area (center of image)
         Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, left, top, cropSize, cropSize);
-
-        // Scale to model input size
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, imageSize, imageSize, true);
-
-        // Apply transformations based on which camera is active
         Matrix matrix = new Matrix();
 
         if (currentLensFacing == CameraSelector.LENS_FACING_FRONT) {
@@ -246,8 +238,6 @@ public class GabAIPage extends Fragment {
 
         Bitmap processedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                 scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-
-        // Allocate buffer
         ByteBuffer buffer = ByteBuffer.allocateDirect(4 * imageSize * imageSize * 3);
         buffer.order(ByteOrder.nativeOrder());
 
@@ -260,8 +250,6 @@ public class GabAIPage extends Fragment {
             buffer.putFloat(((pixelValue >> 8) & 0xFF) / 255.0f);
             buffer.putFloat((pixelValue & 0xFF) / 255.0f);
         }
-
-        // Cleanup bitmaps
         croppedBitmap.recycle();
         if (scaledBitmap != croppedBitmap) scaledBitmap.recycle();
         if (processedBitmap != scaledBitmap) processedBitmap.recycle();
@@ -273,7 +261,6 @@ public class GabAIPage extends Fragment {
         if (probs == null || probs.length == 0) {
             return 0;
         }
-
         int maxIdx = 0;
         float maxProb = probs[0];
         for (int i = 1; i < probs.length; i++) {

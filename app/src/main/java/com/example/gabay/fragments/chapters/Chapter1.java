@@ -77,14 +77,15 @@ public class Chapter1 extends Fragment {
         }
         this.view = view;
 
-        // Initialize ProgressViewModel
         progressViewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
-
         preferences = requireContext().getSharedPreferences(PREF_NAME, getContext().MODE_PRIVATE);
-
         progressViewModel.getChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
             updateLevelStates();
         });
+
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
 
         setupQuizObservers();
         initializeLevelButtons();
@@ -112,12 +113,6 @@ public class Chapter1 extends Fragment {
     }
 
     private void setupLevelButton(Button button, TextView titleView, int levelNumber) {
-        // Set level number as text if not already set
-        if (button.getText().toString().isEmpty()) {
-            //button.setText(String.valueOf(levelNumber));
-        }
-
-        // For locked buttons, use OnTouchListener to capture clicks
         if (!isLevelUnlocked(levelNumber)) {
             button.setOnTouchListener((v, event) -> {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -147,7 +142,6 @@ public class Chapter1 extends Fragment {
         }
     }
 
-    // Handle the result when returning from LessonActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -161,10 +155,8 @@ public class Chapter1 extends Fragment {
                 if (completedLevel != -1 && levelCompleted) {
                     Log.d("Chapter1", "Level " + completedLevel + " completed with score: " + score);
 
-                    // Update progress in both SharedPreferences and ViewModel
                     markLevelAsFinished(completedLevel, score);
 
-                    // Unlock next level if exists
                     if (completedLevel < BUTTON_IDS.length) {
                         unlockLevel(completedLevel + 1);
                     }
@@ -174,11 +166,9 @@ public class Chapter1 extends Fragment {
                         showQuizNotification(completedLevel);
                     }
 
-                    // Check if chapter is completed and update quiz button
                     checkChapterCompletion();
                 }
             }
-            // Update the UI including quiz button
             updateLevelStates();
         }
     }
@@ -197,29 +187,24 @@ public class Chapter1 extends Fragment {
             int levelNumber = i + 1;
 
             if (button != null) {
-                // Reset Material effects
                 button.setBackgroundTintList(null);
                 button.setStateListAnimator(null);
                 button.setElevation(0f);
                 button.setAlpha(1.0f);
 
                 if (isChapterDone) {
-                    // 🟩 Entire chapter is completed → mark all levels as finished
                     button.setBackgroundResource(R.drawable.circular_button_finished);
                     button.setEnabled(true);
 
                 } else if (levelNumber <= completedLevels) {
-                    // 🟩 Previously completed levels
                     button.setBackgroundResource(R.drawable.circular_button_finished);
                     button.setEnabled(true);
 
                 } else if (levelNumber == completedLevels + 1) {
-                    // 🟢 Next level unlocked (optional)
                     button.setBackgroundResource(R.drawable.circular_button);
                     button.setEnabled(true);
 
                 } else {
-                    // 🔒 Locked levels
                     button.setBackgroundResource(R.drawable.circular_button_locked);
                     button.setEnabled(false);
                 }
@@ -227,28 +212,17 @@ public class Chapter1 extends Fragment {
                 updateButtonClickListener(button, levelNumber);
             }
         }
-        // Refresh quiz button too
         updateQuizButtonState();
     }
-
-
 
     private void checkChapterCompletion() {
         ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(1);
         if (progress != null && progress.getProgressPercentage() >= 100) {
             Toast.makeText(requireContext(), "Congratulations! Chapter 1 completed! Quiz unlocked!", Toast.LENGTH_LONG).show();
-            // Mark chapter quiz as completed
-            progressViewModel.markChapterQuizCompleted(1);
 
-            // Update quiz button to be enabled
+            progressViewModel.markChapterQuizCompleted(1);
             updateQuizButtonState();
         }
-    }
-
-    private void showQuizNotification(int level) {
-        Toast.makeText(requireContext(),
-                "Quiz available! You've reached Level " + level + " - take the quiz to test your knowledge!",
-                Toast.LENGTH_LONG).show();
     }
 
     private void setupProgressObserver() {
@@ -340,6 +314,11 @@ public class Chapter1 extends Fragment {
                 return true;
             });
         }
+    }
+    private void showQuizNotification(int level) {
+        Toast.makeText(requireContext(),
+                "Quiz available! You've reached Level " + level + " - take the quiz to test your knowledge!",
+                Toast.LENGTH_LONG).show();
     }
 
     private LevelState getLevelState(int level) {
@@ -470,36 +449,36 @@ public class Chapter1 extends Fragment {
         }
     }
 
+    private void openQuizActivity() {
+        int chapterNumber = 1;
+        try {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("chapter_number", chapterNumber);
+            intent.putExtra("level", 1); // compute your real level if needed
+            startActivity(intent);
+            Log.d("Chapter" + chapterNumber, "QuizActivity started successfully");
+        } catch (Exception e) {
+            Log.e("Chapter" + chapterNumber, "Error starting QuizActivity: " + e.getMessage(), e);
+            Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private boolean isChapterCompleted() {
         int completedLevels = progressViewModel.getChapterProgress(1);
         return completedLevels >= BUTTON_IDS.length;
     }
 
-    private void openQuizActivity() {
-        try {
-            Intent intent = new Intent(getActivity(), QuizActivity.class);
-            intent.putExtra("chapter_number", 1);
-            startActivity(intent);
-
-            Log.d("Chapter1", "QuizActivity started successfully");
-
-        } catch (Exception e) {
-            Log.e("Chapter1", "Error starting QuizActivity: " + e.getMessage(), e);
-            // Show a toast or error message to the user
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d("Chapter1", "Chapter1 resumed - updating UI");
 
-        // Refresh quiz state when returning from quiz
+        // Refresh progress when returning from lessons
         if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
             progressViewModel.loadQuizCompletionFromSupabase();
+            updateLevelStates();
             updateQuizButtonState();
 
             // Debug current state

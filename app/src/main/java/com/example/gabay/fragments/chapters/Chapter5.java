@@ -74,6 +74,9 @@ public class Chapter5 extends Fragment {
             updateLevelStates();
             updateQuizButtonState();
         });
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
 
         initializeLevelButtons();
         initializeQuizButton();
@@ -272,6 +275,19 @@ public class Chapter5 extends Fragment {
             });
         }
     }
+    private void openQuizActivity() {
+        int chapterNumber = 5;
+        try {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("chapter_number", chapterNumber);
+            intent.putExtra("level", 1); // compute your real level if needed
+            startActivity(intent);
+            Log.d("Chapter" + chapterNumber, "QuizActivity started successfully");
+        } catch (Exception e) {
+            Log.e("Chapter" + chapterNumber, "Error starting QuizActivity: " + e.getMessage(), e);
+            Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void updateButtonClickListener(Button button, int levelNumber) {
         button.setOnClickListener(null);
@@ -364,17 +380,7 @@ public class Chapter5 extends Fragment {
         Toast.makeText(getContext(), "Progress reset!", Toast.LENGTH_SHORT).show();
     }
 
-    private void openQuizActivity() {
-        try {
-            Intent intent = new Intent(getActivity(), QuizActivity.class);
-            intent.putExtra("chapter_number", 5);
-            startActivity(intent);
-        } catch (Exception e) {
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "Error opening quiz", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+
 
     @Override
     public void onDestroyView() {
@@ -388,6 +394,10 @@ public class Chapter5 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Refresh progress when returning from lessons
+        if (progressViewModel != null) {
+            progressViewModel.refreshAllData();
+        }
         updateLevelStates();
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 5");

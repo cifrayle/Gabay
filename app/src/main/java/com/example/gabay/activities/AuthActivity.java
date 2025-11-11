@@ -1,15 +1,21 @@
 package com.example.gabay.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.gabay.R;
@@ -58,6 +64,16 @@ public class AuthActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_auth); // Only call this once!
+
+        // Apply window insets to handle system bars properly
+        View rootView = findViewById(R.id.main);
+        if (rootView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(0, systemBars.top, 0, systemBars.bottom);
+                return insets;
+            });
+        }
 
         loadSignInFragment();
 
@@ -109,7 +125,7 @@ public class AuthActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    // Trigger this when Google button is clicked
+    // google signin
     public void signInWithGoogle() {
         oneTapClient.beginSignIn(signInRequest)
                 .addOnSuccessListener(this, new OnSuccessListener<BeginSignInResult>() {
@@ -129,7 +145,6 @@ public class AuthActivity extends AppCompatActivity {
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // No saved credentials found or other error
                         Log.d(TAG, "One-tap sign-in failed: " + e.getLocalizedMessage());
                         Toast.makeText(AuthActivity.this, "Sign-in failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -150,6 +165,30 @@ public class AuthActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.d(TAG, "Google sign-out cleanup: " + e.getMessage());
         }
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Uri data = intent.getData();
+        if (data != null && data.toString().startsWith("gabay://auth")) {
+            showVerificationSuccessDialog();
+        }
+    }
+
+    private void showVerificationSuccessDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Email Verified 🎉")
+                .setMessage("Your account has been successfully verified. You can now sign in.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    // Navigate to your Sign-In fragment or activity
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new SignInPage())
+                            .commit();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     @Override

@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:elevation="2dp"
+    android:fitsSystemWindows="false">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="#E6FFFFFF"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingTop="0dp">
 
         <!-- Back Button -->
         <ImageButton
             android:id="@+id/levels_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:background="@color/transparentBackground"
             android:contentDescription="Back"
-            android:paddingStart="20px"
-            android:paddingTop="30dp"
-            android:paddingBottom="30dp"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
             android:src="@drawable/baseline_arrow_back_24" />
 
         <!-- Action Bar Title Container -->
@@ -29,8 +37,8 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="35px"
-            android:paddingBottom="35px">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
             <!-- Action Bar Title -->
             <TextView
@@ -40,7 +48,7 @@
                 android:fontFamily="@font/nunito_bold"
                 android:text="Default Title"
                 android:textColor="@color/buttonTextColor"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <!-- Action Bar Subtitle -->

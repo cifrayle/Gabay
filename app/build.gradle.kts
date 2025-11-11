@@ -117,6 +117,8 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:realtime-kt:3.0.0")
     implementation("io.github.jan-tennert.supabase:auth-kt:3.0.0")
 
+    implementation ("androidx.security:security-crypto:1.1.0-alpha06")
+
     // Kotlin Serialization (for JSON handling)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
