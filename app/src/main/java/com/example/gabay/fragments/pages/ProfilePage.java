@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.example.gabay.R;
 import com.example.gabay.fragments.BaseFragment;
+import com.example.gabay.services.QuizCompletionService;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
 import java.util.Map;
@@ -553,8 +555,24 @@ public class ProfilePage extends BaseFragment {
                 updateProgressDisplay();
             }
         });
+
+        // Observe quiz completion changes - FIXED: Properly update quiz count
+        progressViewModel.getQuizCompletion().observe(getViewLifecycleOwner(), quizCompletion -> {
+            if (isFragmentActive()) {
+                Log.d("ProfileDebug", "Quiz completion changed - updating display");
+                updateProgressDisplay();
+                
+                // Update quiz count specifically
+                if (quizzesPassedTextView != null) {
+                    int quizzesPassed = calculateQuizzesPassed();
+                    quizzesPassedTextView.setText(quizzesPassed + "/5");
+                    Log.d("QuizDebug", "Updated quiz count display: " + quizzesPassed + "/5");
+                }
+            }
+        });
     }
     private void updateIndividualChapterProgress(Map<Integer, Integer> progressMap) {
+        // This check is good, no changes needed here.
         if (progressMap == null || progressMap.isEmpty()) {
             Log.d("ProfilePage", "No chapter progress data available");
             setDefaultChapterProgress();
@@ -570,13 +588,14 @@ public class ProfilePage extends BaseFragment {
 
             String progressText;
             if (completedLevels >= maxLevels) {
-                // All levels completed - show completion message
-                progressText = "All levels completed! 🎉";
+                // CORRECT: Use the string resource for the completion message
+                progressText = getString(R.string.all_levels_completed);
             } else {
-                // Show normal progress
-                progressText = completedLevels + "/" + maxLevels + " levels completed";
+                // CORRECT: Use the formatted string resource for normal progress
+                progressText = getString(R.string.levels_completed_format, completedLevels, maxLevels);
             }
 
+            // This method call is correct as is.
             updateChapterProgressView(chapter, progressText);
         }
     }
@@ -584,7 +603,8 @@ public class ProfilePage extends BaseFragment {
     private void setDefaultChapterProgress() {
         for (int chapter = 1; chapter <= 5; chapter++) {
             int maxLevels = getMaxLevelsForChapter(chapter);
-            String progressText = "0/" + maxLevels + " levels completed";
+            // CORRECT: Use the formatted string resource with 0 completed levels
+            String progressText = getString(R.string.levels_completed_format, 0, maxLevels);
             updateChapterProgressView(chapter, progressText);
         }
     }
@@ -596,30 +616,18 @@ public class ProfilePage extends BaseFragment {
             case 3: return 10;
             case 4: return 7;
             case 5: return 7;
-            default: return 28;
+            default: return 28; // Fallback, good practice
         }
     }
 
-    // Update specific chapter progress view
     private void updateChapterProgressView(int chapter, String progressText) {
         TextView progressView = null;
-
         switch (chapter) {
-            case 1:
-                progressView = chapter1LevelProgress;
-                break;
-            case 2:
-                progressView = chapter2LevelProgress;
-                break;
-            case 3:
-                progressView = chapter3LevelProgress;
-                break;
-            case 4:
-                progressView = chapter4LevelProgress;
-                break;
-            case 5:
-                progressView = chapter5LevelProgress;
-                break;
+            case 1: progressView = chapter1LevelProgress; break;
+            case 2: progressView = chapter2LevelProgress; break;
+            case 3: progressView = chapter3LevelProgress; break;
+            case 4: progressView = chapter4LevelProgress; break;
+            case 5: progressView = chapter5LevelProgress; break;
         }
 
         if (progressView != null) {
@@ -629,6 +637,7 @@ public class ProfilePage extends BaseFragment {
             Log.d("ProfilePage", "Progress view not found for chapter " + chapter);
         }
     }
+
 
     private void updateProfileDisplay(ProgressViewModel.UserProfile profile) {
         if (profile != null) {
@@ -661,9 +670,18 @@ public class ProfilePage extends BaseFragment {
     private void loadUserProfile() {
         if (progressViewModel == null) return;
 
-        // Force reload from Supabase when profile page opens
+        // Only refresh user profile from Supabase, not quiz data (to preserve local quiz completion)
         progressViewModel.loadUserProfileFromSupabase();
-        progressViewModel.refreshProgressFromSupabase(); // Also refresh progress data
+        
+        // Don't refresh progress data aggressively - it causes quiz button flickering
+        // Only refresh if we have absolutely no data
+        Map<Integer, Integer> currentProgress = progressViewModel.getChapterProgress().getValue();
+        if (currentProgress == null || currentProgress.isEmpty()) {
+            Log.d("ProfilePage", "No progress data found, doing initial refresh");
+            progressViewModel.refreshProgressFromSupabase();
+        } else {
+            Log.d("ProfilePage", "Using existing progress data to prevent quiz state overwrite");
+        }
 
         updateProgressDisplay();
     }
@@ -710,22 +728,60 @@ public class ProfilePage extends BaseFragment {
         return completedCount;
     }
 
+
     private int calculateQuizzesPassed() {
         if (progressViewModel == null) return 0;
 
         int quizzesPassed = 0;
 
-        // Assume quiz is passed when chapter is 100% completed
+        // Use the same quiz completion logic as ProgressViewModel
         for (int chapter = 1; chapter <= 5; chapter++) {
-            ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(chapter);
-            if (progress != null && progress.getProgressPercentage() >= 100) {
+            if (progressViewModel.isQuizCompleted(chapter)) {
                 quizzesPassed++;
-                Log.d("ProfilePage", "Chapter " + chapter + " completed - quiz counted as passed");
+                Log.d("ProfilePage", "Chapter " + chapter + " quiz marked as completed");
+            } else {
+                Log.d("ProfilePage", "Chapter " + chapter + " quiz not completed");
             }
         }
 
-        Log.d("ProfilePage", "Total quizzes passed (based on chapter completion): " + quizzesPassed);
+        Log.d("ProfilePage", "Total quizzes passed (using ProgressViewModel logic): " + quizzesPassed);
         return quizzesPassed;
+    }
+
+    /**
+     * Verify quiz count with database for accuracy
+     */
+    private void verifyQuizCountWithDatabase() {
+        QuizCompletionService.getTotalCompletedQuizzes(new QuizCompletionService.TotalQuizzesCallback() {
+            @Override
+            public void onResult(int totalCompleted) {
+                // Update UI on main thread
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (quizzesPassedTextView != null && isFragmentActive()) {
+                        int localCount = calculateQuizzesPassed();
+                        
+                        Log.d("ProfilePage", "Quiz count verification - Local: " + localCount + ", Database: " + totalCompleted);
+                        
+                        if (localCount != totalCompleted) {
+                            Log.w("ProfilePage", "Quiz count mismatch detected! Refreshing data...");
+                            // Refresh data if there's a mismatch
+                            if (progressViewModel != null) {
+                                progressViewModel.loadQuizCompletionFromSupabase();
+                            }
+                        }
+                        
+                        // Always use the database value for accuracy
+                        quizzesPassedTextView.setText(totalCompleted + "/5");
+                        Log.d("ProfilePage", "Quiz count updated from database: " + totalCompleted + "/5");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception error) {
+                Log.e("ProfilePage", "Error verifying quiz count: " + error.getMessage());
+            }
+        });
     }
 
     @Override
@@ -734,8 +790,21 @@ public class ProfilePage extends BaseFragment {
         // Refresh data when returning to profile page
         loadUserProfile();
 
+        // Force refresh quiz completion using QuizCompletionService for better reliability
+        if (progressViewModel != null) {
+            QuizCompletionService.refreshQuizCompletionFromDatabase(progressViewModel);
+            
+            // Update display after a short delay to allow data to load
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                updateProgressDisplay();
+                
+                // Verify quiz count with database for accuracy
+                verifyQuizCountWithDatabase();
+            }, 800);
+        }
+
         // Ensure profile picture is loaded for current user
-        new Handler().postDelayed(this::loadProfilePicture, 200);
+        new Handler(Looper.getMainLooper()).postDelayed(this::loadProfilePicture, 200);
     }
 
     @Override

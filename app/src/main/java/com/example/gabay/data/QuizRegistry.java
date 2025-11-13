@@ -41,14 +41,14 @@ public final class QuizRegistry {
                 return buildMatching(chapter, level,
                         new int[]{
                                 //image resources
-                                R.drawable.img_letter_c,
-                                R.drawable.img_letter_a,
-                                R.drawable.img_letter_s,
-                                R.drawable.img_letter_h,
-                                R.drawable.img_letter_g, },
-                        new String[]{ "C", "A", "S", "H", "G"}); //answers
+                                R.drawable.img_sorry,
+                                R.drawable.img_letter_r,
+                                R.drawable.img_letter_y,
+                                R.drawable.img_hello,
+                                R.drawable.img_letter_q, },
+                        new String[]{ "Sorry", "R", "Y", "Hello", "Q"}); //answers
 
-            case 3: // Matching
+            case 3: // Matching - questions
                 return buildMatching(chapter, level,
                         new int[]{
                                 R.drawable.img_number_4,
@@ -61,30 +61,30 @@ public final class QuizRegistry {
             case 4: // Multiple choice
                 return buildMCQ(chapter, level,
                         new int[]{
-                                R.drawable.img_letter_j,
-                                R.drawable.img_letter_i,
-                                R.drawable.img_letter_u,
-                                R.drawable.img_letter_t,
-                                R.drawable.img_letter_f },
+                                R.drawable.img_when,
+                                R.drawable.img_where,
+                                R.drawable.img_what,
+                                R.drawable.img_which,
+                                R.drawable.img_number_2 },
 
                         new String[]{
-                                "I","ONE/ISA","J","B",
-                                "I","R","J","ONE/ISA",
-                                "T","D","F","U",
-                                "D","T","Y","L",
-                                "THREE/TATLO","F","OK","K" },
+                                "WHERE/SAAN","WHICH/ALIN","WHAT/ANO","WHEN/KAILAN",
+                                "WHERE/SAAN","WHICH/ALIN","WHAT/ANO","WHEN/KAILAN",
+                                "WHERE/SAAN","WHICH/ALIN","WHAT/ANO","WHEN/KAILAN",
+                                "WHERE/SAAN","WHICH/ALIN","WHAT/ANO","WHEN/KAILAN",
+                                "THREE/TATLO","V","TWO/DALAWA","W" },
 
-                        new String[]{ "J","I","U","T","F" });
+                        new String[]{ "WHEN/KAILAN","WHERE/SAAN","WHAT/ANO","WHICH/ALIN","TWO/DALAWA" });
 
             case 5: // Matching
                 return buildMatching(chapter, level,
                         new int[]{
-                                R.drawable.img_number_8,
-                                R.drawable.img_number_9,
-                                R.drawable.img_letter_t,
-                                R.drawable.img_letter_f
+                                R.drawable.img_sunday,
+                                R.drawable.img_monday,
+                                R.drawable.img_wednesday,
+                                R.drawable.img_tuesday
                         },
-                        new String[]{ "8", "9", "T", "F" });
+                        new String[]{ "Sunday", "Monday", "Wednesday", "Tuesday" });
 
             default:
                 // Safe fallback: show MCQ with no data (fragments will use defaults)

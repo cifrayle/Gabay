@@ -596,6 +596,26 @@ public class SignInPage extends Fragment {
         }
     }
 
+    private void setForgotPasswordLoadingState(boolean loading) {
+        forgotPass.setEnabled(!loading);
+        forgotPass.setText(loading ? "Sending..." : "Forgot Password?");
+        
+        // Disable other interactive elements during loading
+        emailInput.setEnabled(!loading);
+        signInButton.setEnabled(!loading);
+        tvCreateAcc.setEnabled(!loading);
+        signInGoogle.setEnabled(!loading);
+    }
+
+    private void showSuccessMessage(String message) {
+        if (errorMessage != null) {
+            errorMessage.setText(message);
+            errorMessage.setVisibility(View.VISIBLE);
+            // You might want to change the text color to green for success messages
+            // errorMessage.setTextColor(ContextCompat.getColor(requireContext(), R.color.success_green));
+        }
+    }
+
     private void handleForgotPassword() {
         String email = sanitizeEmail(emailInput.getText().toString());
 
@@ -616,16 +636,17 @@ public class SignInPage extends Fragment {
             return;
         }
 
-        // Disable button and show loading
-        forgotPass.setEnabled(false);
+        // Show loading state with visual feedback
+        setForgotPasswordLoadingState(true);
+        showErrorMessage("Sending password reset email...");
 
         SupabaseHelper.resetPassword(email, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> {
-                    forgotPass.setEnabled(true);
-                    showErrorMessage("Failed to send reset email. Please try again.");
+                    setForgotPasswordLoadingState(false);
+                    showErrorMessage("Failed to send reset email. Please check your connection and try again.");
                     Log.e("SignInPage", "Password reset failure: " + e.getMessage());
                 });
             }
@@ -634,13 +655,19 @@ public class SignInPage extends Fragment {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> {
-                    forgotPass.setEnabled(true);
+                    setForgotPasswordLoadingState(false);
 
                     if (response.isSuccessful()) {
-                        showErrorMessage("✓ Password reset email sent. Please check your inbox.");
-                        clearErrors();
+                        showSuccessMessage("Password reset email sent successfully! Please check your inbox and spam folder.");
+                        
+                        // Auto-hide success message after 5 seconds
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            if (getActivity() != null) {
+                                hideErrorMessage();
+                            }
+                        }, 5000);
                     } else {
-                        showErrorMessage("Failed to send reset email. Please check your email address and try again.");
+                        showErrorMessage("Failed to send reset email. Please verify your email address and try again.");
                     }
                 });
             }

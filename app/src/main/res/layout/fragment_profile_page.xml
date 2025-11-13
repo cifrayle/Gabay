@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:fontFamily="@font/nunito_extrabold"
-                android:text="Learning Progress"
+                android:text="@string/learning_progress"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -229,7 +229,7 @@
                         android:padding="8dp">
 
                         <TextView
-                            android:text="Chapters completed"
+                            android:text="@string/chapters_completed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -271,7 +271,7 @@
                         android:padding="8dp">
 
                         <TextView
-                            android:text="Quizzes passed"
+                            android:text="@string/quiz_passed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -299,7 +299,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/nunito_extrabold"
-                android:text="Level Progress"
+                android:text="@string/level_progress"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -337,7 +337,7 @@
                         android:padding="16dp">
 
                         <TextView
-                            android:text="Chapter 1"
+                            android:text="@string/chapter_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
@@ -348,7 +348,8 @@
                             android:id="@+id/chapter1_lvl_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1/28 levels completed"
+                            android:text="@string/levels_completed_format"
+                            tools:text="1/28 levels completed"
                             android:textColor="@color/accentTextColor"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -376,7 +377,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chapter 2"
+                            android:text="@string/chapter_2"
                             android:textStyle="bold"
                             android:textColor="@color/buttonTextColor"
                             android:textSize="16sp" />
@@ -385,7 +386,8 @@
                             android:id="@+id/chapter2_lvl_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1/5 levels completed"
+                            android:text="@string/levels_completed_format"
+                            tools:text="1/5 levels completed"
                             android:textColor="@color/accentTextColor"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -412,7 +414,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chapter 3"
+                            android:text="@string/chapter_3"
                             android:textStyle="bold"
                             android:textColor="@color/buttonTextColor"
                             android:textSize="16sp" />
@@ -421,7 +423,8 @@
                             android:id="@+id/chapter3_lvl_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1/10 levels completed"
+                            android:text="@string/levels_completed_format"
+                            tools:text="1/10 levels completed"
                             android:textColor="@color/accentTextColor"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -448,7 +451,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chapter 4"
+                            android:text="@string/chapter_4"
                             android:textStyle="bold"
                             android:textColor="@color/buttonTextColor"
                             android:textSize="16sp" />
@@ -457,7 +460,8 @@
                             android:id="@+id/chapter4_lvl_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1/7 levels completed"
+                            android:text="@string/levels_completed_format"
+                            tools:text="1/7 levels completed"
                             android:textColor="@color/accentTextColor"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -484,7 +488,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chapter 5"
+                            android:text="@string/chapter_4"
                             android:textStyle="bold"
                             android:textColor="@color/buttonTextColor"
                             android:textSize="16sp" />
@@ -493,7 +497,8 @@
                             android:id="@+id/chapter5_lvl_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1/7 levels completed"
+                            android:text="@string/levels_completed_format"
+                            tools:text="1/7 levels completed"
                             android:textColor="@color/accentTextColor"
                             android:textSize="14sp" />
                     </LinearLayout>

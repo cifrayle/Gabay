@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/nunito_extrabold"
         android:gravity="center"
-        android:text="Matching Quiz"
+        android:text="@string/mq_title"
         android:textColor="@color/transparentBackground"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -39,14 +39,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Completion Image (hidden initially) -->
+    <!-- Completion Image for PASSING (hidden initially) -->
     <ImageView
-        android:id="@+id/completion_image"
+        android:id="@+id/completion_image_pass"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:contentDescription="Completion"
-        android:padding="16dp"
-        android:background="@drawable/img_medal"
+        android:contentDescription="@string/quiz_failed"
+        android:src="@drawable/img_medal"
+        android:layout_marginTop="100dp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quiz_header2" />
+
+    <!-- Completion Image for FAILING (hidden initially) -->
+    <ImageView
+        android:id="@+id/completion_image_fail"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:contentDescription="@string/quiz_failed"
+        android:src="@drawable/img_fourleafclover"
         android:layout_marginTop="100dp"
         android:scaleType="centerInside"
         android:visibility="gone"
@@ -59,13 +72,13 @@
         android:id="@+id/completion_text_holder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/completion_image">
+        app:layout_constraintTop_toBottomOf="@+id/completion_image_pass"> <!-- Constrain to one of them -->
 
         <TextView
             android:id="@+id/boldTitle_txtView"
@@ -89,6 +102,41 @@
             android:textSize="20sp" />
     </LinearLayout>
 
+    <!-- Completion Text2 -->
+    <LinearLayout
+        android:id="@+id/completion_text_holder2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/completion_image_fail"> <!-- Constrain to one of them -->
+
+        <TextView
+            android:id="@+id/boldTitle_txtView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/nunito_bold"
+            android:text="Your score: "
+            android:textColor="@color/buttonTextColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/regTitle_txtView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/nunito"
+            android:text=""
+            android:textColor="@color/buttonTextColor"
+            android:textSize="20sp" />
+    </LinearLayout>
+
     <!-- Instructions Text -->
     <TextView
         android:id="@+id/instructions_text"
@@ -96,7 +144,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/nunito_semibold"
         android:gravity="center"
-        android:text="Drag the images to match with the correct letters"
+        android:text="@string/mq_instructions"
         android:textColor="@color/buttonTextColor"
         android:textSize="16sp"
         android:layout_marginTop="8dp"
@@ -152,7 +200,7 @@
         android:elevation="12dp"
         android:enabled="true"
         android:fontFamily="@font/nunito_bold"
-        android:text="Finish"
+        android:text="@string/finish"
         android:textColor="@color/primaryColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"

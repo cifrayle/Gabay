@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -164,11 +165,11 @@ public class HomePage extends BaseFragment {
         // Update user title with profile data
         ProgressViewModel.UserProfile profile = progressViewModel.getUserProfile().getValue();
         if (profile != null && userTitleTextView != null) {
-            userTitleTextView.setText("Hello, " + profile.getUsername() + "!");
+            userTitleTextView.setText(" "+profile.getUsername() + "!");
             Log.d("ProgressDebug", "HomePage: Updated greeting with username: " + profile.getUsername());
         } else {
             // Fallback if profile not loaded yet
-            userTitleTextView.setText("Hello!");
+            userTitleTextView.setText("User!");
             Log.d("ProgressDebug", "HomePage: Using fallback greeting");
         }
 
@@ -222,9 +223,9 @@ public class HomePage extends BaseFragment {
             Log.d("ProgressDebug", "HomePage: UserProfile LiveData triggered");
             if (isFragmentActive() && userTitleTextView != null) {
                 if (profile != null && profile.getUsername() != null && !profile.getUsername().isEmpty()) {
-                    userTitleTextView.setText("Hello, " + profile.getUsername() + "!");
+                    userTitleTextView.setText(" "+profile.getUsername() + "!");
                 } else {
-                    userTitleTextView.setText("Hello!");
+                    userTitleTextView.setText("User");
                 }
             }
         });
@@ -324,16 +325,18 @@ public class HomePage extends BaseFragment {
         }
     }
     private void initializeChapterCards() {
-        if (!isFragmentActive()) return;
+        if (!isFragmentActive() || rootView == null) return; // Added null check for rootView
+
         int[] cardIds = {R.id.chpt1, R.id.chpt2, R.id.chpt3, R.id.chpt4, R.id.chpt5};
         chapterCards = new CardView[cardIds.length];
 
-        String[] subtitles = {
-                "FSL Alphabet",
-                "Basic Greetings",
-                "Numbers (1-10)",
-                "WH Questions",
-                "Days of the week"
+        // CORRECT: Use an integer array for resource IDs
+        int[] subtitleResIds = {
+                R.string.chapter1_subtitle,
+                R.string.chapter2_subtitle,
+                R.string.chapter3_subtitle,
+                R.string.chapter4_subtitle,
+                R.string.chapter5_subtitle
         };
 
         for (int i = 0; i < cardIds.length; i++) {
@@ -342,14 +345,24 @@ public class HomePage extends BaseFragment {
                 TextView titleView = chapterCards[i].findViewById(R.id.chapter_title);
                 TextView subtitleView = chapterCards[i].findViewById(R.id.chapter_subtitle);
 
-                if (titleView != null) titleView.setText("Chapter " + (i + 1));
-                if (subtitleView != null) subtitleView.setText(subtitles[i]);
+                // CORRECT: Use the formatted string resource for the title
+                if (titleView != null) {
+                    // getString will format "Chapter %1$d" into "Chapter 1", "Kabanata 1", etc.
+                    titleView.setText(getString(R.string.chapter_title_format, i + 1));
+                }
+
+                // CORRECT: Use the integer resource ID directly for the subtitle
+                if (subtitleView != null) {
+                    // setText(int) will look up the correct string from resources
+                    subtitleView.setText(subtitleResIds[i]);
+                }
 
                 final int chapterNumber = i + 1;
                 chapterCards[i].setOnClickListener(v -> loadChapter(chapterNumber));
             }
         }
     }
+
 
     private void loadChapter(int chapterNumber) {
         if (!isFragmentActive()) return;

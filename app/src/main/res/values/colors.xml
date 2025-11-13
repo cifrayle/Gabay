@@ -12,4 +12,14 @@
     <color name="accentButtonColor">#6196C7</color>
     <color name="subtitleTextColor">#DCDCDC</color>
     <color name="transparentBackground">@android:color/transparent</color>
+    
+    <!-- Dialog and UI colors -->
+    <color name="dialogBackground">#FFFFFF</color>
+    <color name="dialogBorder">#E0E0E0</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#666666</color>
+    <color name="hintTextColor">#999999</color>
+    <color name="inputBackground">#F5F5F5</color>
+    <color name="inputBorder">#DDDDDD</color>
+    <color name="white">#FFFFFF</color>
 </resources>

@@ -1,7 +1,6 @@
 package com.example.gabay.fragments.quiz;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -24,19 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.ViewCompat;
-
-import com.google.android.material.card.MaterialCardView;
 
 import com.example.gabay.R;
-import com.example.gabay.fragments.BaseFragment;
-import com.example.gabay.viewmodels.ProgressViewModel;
+import com.example.gabay.utils.SharedPreferenceHelper;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MatchingQuizFragment extends BaseFragment {
+public class MatchingQuizFragment extends BaseQuizFragment {
 
     // Quiz data
     private int[] imageResources;
@@ -59,11 +52,12 @@ public class MatchingQuizFragment extends BaseFragment {
     private TextView quizHeader;
     private TextView quizHeader2;
     private TextView instructionsText;
-    private TextView boldTitleTextView;
-    private TextView regTitleTextView;
-    private ImageView completionImageView;
+    private TextView boldTitleTextView, boldTitleTextView2;
+    private TextView regTitleTextView, regTitleTextView2;
+    private ImageView completion_image_pass;
+    private ImageView completion_image_fail;
     private View scrollContainer;
-    private LinearLayout completionTextHolder;
+    private LinearLayout completionTextHolder, completionTextHolder2;
 
     // Draggable images and drop containers
     private List<MaterialCardView> draggableImageCards;
@@ -73,13 +67,10 @@ public class MatchingQuizFragment extends BaseFragment {
     private Map<Integer, MaterialCardView> imageResourceToCard; // Map image resource to its card view
 
     // Quiz state
-    private int currentChapter;
-    private int currentLevel;
     private int score = 0;
     private int totalQuestions = 0;
     private boolean quizCompleted = false;
     private boolean quizInProgress = false;
-    private ProgressViewModel progressViewModel;
 
     // Sound effects
     private SoundPool soundPool;
@@ -98,7 +89,7 @@ public class MatchingQuizFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_matching_quiz, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_matching_quiz, container, false);
 
         // Initialize sound pool
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -125,16 +116,8 @@ public class MatchingQuizFragment extends BaseFragment {
     }
 
     @Override
-    protected void initializeViews() {
-        progressViewModel = getActivityViewModel(ProgressViewModel.class);
-
-        // Get chapter and level from arguments
-        Bundle args = getArguments();
-        if (args != null) {
-            currentChapter = args.getInt("chapter", 2);
-            currentLevel = args.getInt("level", 1);
-        }
-
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initializeQuizData();
         initializeUI();
         showQuizIntroduction();
@@ -179,8 +162,8 @@ public class MatchingQuizFragment extends BaseFragment {
         imageResourceToCard = new HashMap<>();
     }
 
-
     private void initializeUI() {
+        View rootView = getView();
         if (rootView == null) return;
 
         leftColumn = rootView.findViewById(R.id.leftColumn);
@@ -191,7 +174,11 @@ public class MatchingQuizFragment extends BaseFragment {
         instructionsText = rootView.findViewById(R.id.instructions_text);
         boldTitleTextView = rootView.findViewById(R.id.boldTitle_txtView);
         regTitleTextView = rootView.findViewById(R.id.regTitle_txtView);
-        completionImageView = rootView.findViewById(R.id.completion_image);
+        completionTextHolder2 = rootView.findViewById(R.id.completion_text_holder2);
+        boldTitleTextView2 = rootView.findViewById(R.id.boldTitle_txtView2);
+        regTitleTextView2 = rootView.findViewById(R.id.regTitle_txtView2);
+        completion_image_pass = rootView.findViewById(R.id.completion_image_pass);
+        completion_image_fail = rootView.findViewById(R.id.completion_image_fail);
         scrollContainer = rootView.findViewById(R.id.scroll_container);
         completionTextHolder = rootView.findViewById(R.id.completion_text_holder);
 
@@ -519,7 +506,7 @@ public class MatchingQuizFragment extends BaseFragment {
     }
 
     private void showQuizIntroduction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.BlackTextDialog);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext(), R.style.BlackTextDialog);
         builder.setTitle("Matching Quiz!");
         builder.setMessage("Quiz instructions:\n" +
                 "• Drag images from the left to match with letters on the right\n" +
@@ -535,11 +522,11 @@ public class MatchingQuizFragment extends BaseFragment {
         });
         builder.setCancelable(false);
 
-        AlertDialog dialog = builder.create();
+        android.app.AlertDialog dialog = builder.create();
         dialog.show();
 
-        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        Button positiveButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
         if (positiveButton != null) {
             positiveButton.setTextColor(getResources().getColor(R.color.secondaryColor));
         }
@@ -552,7 +539,7 @@ public class MatchingQuizFragment extends BaseFragment {
         quizInProgress = true;
         quizCompleted = false;
         finishButton.setEnabled(true);
-        finishButton.setText("Finish");
+        finishButton.setText(R.string.finish);
     }
 
     private void finishQuiz() {
@@ -565,7 +552,7 @@ public class MatchingQuizFragment extends BaseFragment {
         int matchedCount = userMatches.size();
         if (matchedCount < totalQuestions) {
             // Show confirmation dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.BlackTextDialog);
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext(), R.style.BlackTextDialog);
             builder.setTitle("Finish Quiz?");
             builder.setMessage("You have matched " + matchedCount + " out of " + totalQuestions + " items.\n\n" +
                     "Are you sure you want to finish?");
@@ -577,11 +564,11 @@ public class MatchingQuizFragment extends BaseFragment {
             });
             builder.setCancelable(true);
 
-            AlertDialog dialog = builder.create();
+            android.app.AlertDialog dialog = builder.create();
             dialog.show();
 
-            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            Button positiveButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
             if (positiveButton != null) {
                 positiveButton.setTextColor(getResources().getColor(R.color.secondaryColor));
             }
@@ -607,7 +594,6 @@ public class MatchingQuizFragment extends BaseFragment {
         // Disable all dragging
         quizCompleted = true;
         quizInProgress = false;
-        boolean quizPassed = score >= (totalQuestions * 0.7); // 70% to pass
 
         // Lock all containers to prevent further changes
         for (MaterialCardView container : dropContainers) {
@@ -620,28 +606,144 @@ public class MatchingQuizFragment extends BaseFragment {
         Log.d("MatchingQuizDebug", "=== QUIZ COMPLETION ===");
         Log.d("MatchingQuizDebug", "Chapter: " + currentChapter);
         Log.d("MatchingQuizDebug", "Score: " + score + "/" + totalQuestions);
-        Log.d("MatchingQuizDebug", "Quiz Passed: " + quizPassed);
 
-        if (progressViewModel != null && quizPassed) {
-            Log.d("MatchingQuizDebug", "✅ Quiz passed - marking as completed");
-            progressViewModel.markQuizCompleted(currentChapter);
-            progressViewModel.updateChapterProgress(currentChapter, currentLevel);
+        // Call the base class method to handle completion logic
+        onQuizCompleted(score, totalQuestions);
+    }
 
-            new Handler().postDelayed(() -> {
-                boolean isComplete = progressViewModel.isQuizCompleted(currentChapter);
-                Log.d("MatchingQuizDebug", "Verification - Quiz completed: " + isComplete);
-                progressViewModel.loadQuizCompletionFromSupabase();
-            }, 1500);
-        } else if (!quizPassed) {
-            Log.d("MatchingQuizDebug", "❌ Quiz failed - not marking as completed");
+    // ============ REQUIRED BASE CLASS METHODS ============
+
+    @Override
+    protected void updateUIForCompletion() {
+        // Hide instructions/header
+        if (instructionsText != null) instructionsText.setVisibility(View.GONE);
+        if (quizHeader != null)       quizHeader.setVisibility(View.GONE);
+
+        // Hide both completion text holders initially
+        if (completionTextHolder != null) completionTextHolder.setVisibility(View.GONE);
+        if (completionTextHolder2 != null) completionTextHolder2.setVisibility(View.GONE);
+
+        // Determine pass/fail using your existing criteria
+        int passingScore = (int) Math.ceil(totalQuestions * 0.7);
+        boolean isPass = score >= passingScore;
+
+        // Get the localized score string
+        String scoreText = getString(R.string.score) +" "+ score + "/" + totalQuestions;
+
+        // Show the appropriate completion text holder based on pass/fail
+        if (isPass) {
+            if (completionTextHolder != null) completionTextHolder.setVisibility(View.VISIBLE);
+
+            if (boldTitleTextView != null) {
+                boldTitleTextView.setVisibility(View.VISIBLE);
+                boldTitleTextView.setText(scoreText);
+                boldTitleTextView.setTextSize(20);
+            }
+            if (regTitleTextView != null) {
+                regTitleTextView.setText("");
+                regTitleTextView.setTextSize(20);
+            }
+        } else {
+            if (completionTextHolder2 != null) completionTextHolder2.setVisibility(View.VISIBLE);
+
+            if (boldTitleTextView2 != null) {
+                boldTitleTextView2.setVisibility(View.VISIBLE);
+                boldTitleTextView2.setText(scoreText);
+                boldTitleTextView2.setTextSize(20);
+            }
+            if (regTitleTextView2 != null) {
+                regTitleTextView2.setText("");
+                regTitleTextView2.setTextSize(20);
+            }
         }
 
-        showCompletionFeedback();
-        updateUIForCompletion();
-        setupNavigation();
+        // This method handles showing the right image (pass/fail)
+        updateQuizResult();
 
-        // Final validation: reset all stroke colors to show final state
-        resetAllContainerStrokes();
+        // Hide the matching UI so results are front-and-center.
+        if (scrollContainer != null) scrollContainer.setVisibility(View.GONE);
+        if (leftColumn != null) { leftColumn.removeAllViews(); leftColumn.setVisibility(View.GONE); }
+        if (rightColumn != null){ rightColumn.removeAllViews(); rightColumn.setVisibility(View.GONE); }
+
+        // Make sure result widgets are on top.
+        if (completionTextHolder != null) completionTextHolder.bringToFront();
+        if (completionTextHolder2 != null) completionTextHolder2.bringToFront();
+        // Also bring the new images to the front (only one will be visible).
+        if (completion_image_pass != null) completion_image_pass.bringToFront();
+        if (completion_image_fail != null) completion_image_fail.bringToFront();
+    }
+
+    @Override
+    protected void cleanupQuizResources() {
+        // Clean up any quiz-specific resources
+        if (leftColumn != null) leftColumn.removeAllViews();
+        if (rightColumn != null) rightColumn.removeAllViews();
+        draggableImageCards.clear();
+        dropContainers.clear();
+        containerImages.clear();
+        containerLabels.clear();
+        imageResourceToCard.clear();
+    }
+
+    @Override
+    protected void setupNavigation() {
+        if (finishButton != null) {
+            finishButton.setText(R.string.back_to_lesson);
+            finishButton.setOnClickListener(v -> navigateBack());
+        }
+    }
+
+    @Override
+    protected void showCompletionFeedback() {
+        if (getContext() == null) return;
+        if (isSoundEnabled() && completeSFX != 0) {
+            soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
+        }
+    }
+
+    // ============ HELPER METHODS ============
+
+    private void updateQuizResult() {
+        // Ensure the views were found before proceeding
+        if (completion_image_pass == null || completion_image_fail == null) {
+            Log.e("MatchingQuiz", "Completion ImageViews not found.");
+            return;
+        }
+
+        // Define which view will be shown and which will be hidden
+        ImageView viewToShow;
+        ImageView viewToHide;
+
+        // Use a clear passing score threshold
+        int passingScore = (int) Math.ceil(totalQuestions * 0.6);
+        if (score >= passingScore) {
+            viewToShow = completion_image_pass;
+            viewToHide = completion_image_fail;
+            setQuizResultText(getString(R.string.quiz_completed), Color.BLACK);
+        } else {
+            viewToShow = completion_image_fail;
+            viewToHide = completion_image_pass;
+            setQuizResultText(getString(R.string.quiz_failed), Color.BLACK);
+        }
+
+        // Apply the standard layout logic to the image that will be SHOWN
+        int topMarginDp = 200;
+        int topMarginPx = (int) (topMarginDp * getResources().getDisplayMetrics().density);
+
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) viewToShow.getLayoutParams();
+        params.topMargin = topMarginPx;
+        viewToShow.setLayoutParams(params);
+
+        // Finally, set the visibility
+        viewToHide.setVisibility(View.GONE);
+        viewToShow.setVisibility(View.VISIBLE);
+    }
+
+    private void setQuizResultText(String text, int color) {
+        if (quizHeader2 != null) {
+            quizHeader2.setText(text);
+            quizHeader2.setTextColor(color);
+        }
     }
 
     private void resetAllContainerStrokes() {
@@ -671,90 +773,6 @@ public class MatchingQuizFragment extends BaseFragment {
         }
     }
 
-    private void showCompletionFeedback() {
-        if (getContext() == null) return;
-        if (isSoundEnabled() && completeSFX != 0) {
-            soundPool.play(completeSFX, 1f, 1f, 0, 0, 1f);
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void updateUIForCompletion() {
-        // Hide instructions/header
-        if (instructionsText != null) instructionsText.setVisibility(View.GONE);
-        if (quizHeader != null)       quizHeader.setVisibility(View.GONE);
-
-        // Show results UI
-        if (completionImageView != null)  completionImageView.setVisibility(View.VISIBLE);
-        if (completionTextHolder != null) completionTextHolder.setVisibility(View.VISIBLE);
-
-        if (boldTitleTextView != null && completionImageView != null) {
-            boldTitleTextView.setVisibility(View.VISIBLE);
-            boldTitleTextView.setText("Your score: " + score + "/" + totalQuestions);
-            boldTitleTextView.setTextSize(20);
-
-            // Move the score below the image if you use a ConstraintLayout
-            if (boldTitleTextView.getLayoutParams() instanceof ConstraintLayout.LayoutParams) {
-                ConstraintLayout.LayoutParams scoreParams =
-                        (ConstraintLayout.LayoutParams) boldTitleTextView.getLayoutParams();
-                scoreParams.topToBottom = completionImageView.getId();
-                scoreParams.topMargin = (int) (16 * getResources().getDisplayMetrics().density); // small gap
-                boldTitleTextView.setLayoutParams(scoreParams);
-            }
-        }
-        if (regTitleTextView != null) {
-            regTitleTextView.setText("");
-            regTitleTextView.setTextSize(20);
-        }
-
-        // Update image/result text
-        updateQuizResult();
-
-        // Hide the matching UI so results are front-and-center
-        if (scrollContainer != null) scrollContainer.setVisibility(View.GONE);
-        if (leftColumn != null) { leftColumn.removeAllViews(); leftColumn.setVisibility(View.GONE); }
-        if (rightColumn != null){ rightColumn.removeAllViews(); rightColumn.setVisibility(View.GONE); }
-
-        // Make sure result widgets are on top
-        if (completionTextHolder != null) completionTextHolder.bringToFront();
-        if (completionImageView != null)  completionImageView.bringToFront();
-    }
-
-    private void updateQuizResult() {
-        if (completionImageView == null) return;
-
-        // Smaller image for matching quiz since we keep the matches visible
-        int topMarginDp = 10;
-        int topMarginPx = (int) (topMarginDp * getResources().getDisplayMetrics().density);
-
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) completionImageView.getLayoutParams();
-        params.topMargin = topMarginPx;
-        completionImageView.setLayoutParams(params);
-
-        boolean quizPassed = score >= (totalQuestions * 0.7);
-        if (quizPassed) {
-            completionImageView.setImageResource(R.drawable.img_medal);
-            setQuizResultText("Quiz Completed!", Color.BLACK);
-        } else {
-            completionImageView.setImageResource(R.drawable.img_fourleafclover);
-            setQuizResultText("Quiz Failed", Color.BLACK);
-        }
-    }
-
-    private void setQuizResultText(String text, int color) {
-        if (quizHeader2 != null) {
-            quizHeader2.setText(text);
-            quizHeader2.setTextColor(color);
-        }
-    }
-
-    private void setupNavigation() {
-        if (finishButton != null) {
-            finishButton.setText("Back to lesson");
-            finishButton.setOnClickListener(v -> navigateBack());
-        }
-    }
-
     private boolean isSoundEnabled() {
         SharedPreferences prefs = requireContext().getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
         return prefs.getBoolean("sound_enabled", true);
@@ -780,19 +798,6 @@ public class MatchingQuizFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    @Override
-    protected void cleanupResources() {
-        leftColumn = null;
-        rightColumn = null;
-        finishButton = null;
-        progressViewModel = null;
-        draggableImageCards.clear();
-        dropContainers.clear();
-        containerImages.clear();
-        containerLabels.clear();
-        imageResourceToCard.clear();
     }
 
     @Override

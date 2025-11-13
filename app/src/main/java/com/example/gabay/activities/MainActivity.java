@@ -26,6 +26,7 @@ import com.example.gabay.fragments.pages.SignInPage;
 import com.example.gabay.services.SupabaseJavaService;
 import com.example.gabay.viewmodels.ProgressViewModel;
 import com.example.gabay.utils.FragmentStateManager;
+import com.example.gabay.utils.SessionTracker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -87,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
         // default page
         bottomNavView.setSelectedItemId(R.id.nav_Home);
+        
+        // Start session tracking
+        SessionTracker.getInstance(this).startSession();
     }
 
     private void restoreSupabaseAuthentication() {
@@ -298,8 +302,25 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // Resume session tracking when app comes to foreground
+        SessionTracker.getInstance(this).resumeSession();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // End session when app goes to background
+        SessionTracker.getInstance(this).endSession();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        // End session and clear tracking
+        SessionTracker.getInstance(this).endSession();
+        
         // Clear fragment cache and state manager to prevent memory leaks
         if (fragmentCache != null) {
             fragmentCache.clear();

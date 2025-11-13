@@ -95,7 +95,7 @@
             android:fontFamily="@font/nunito_bold"
             android:gravity="center_vertical"
             android:paddingStart="18dp"
-            android:text="Prev"
+            android:text="@string/previous"
             android:textColor="@color/primaryColor"
             android:textSize="16sp" />
 
@@ -121,7 +121,7 @@
             android:fontFamily="@font/nunito_bold"
             android:gravity="center_vertical"
             android:paddingEnd="18dp"
-            android:text="Next"
+            android:text="@string/next"
             android:textColor="@color/primaryColor"
             android:textSize="16sp" />
     </LinearLayout>
@@ -134,7 +134,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/nunito_bold"
         android:textSize="18sp"
-        android:text="How to:"
+        android:text="@string/how_to"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/videoCard" />
 

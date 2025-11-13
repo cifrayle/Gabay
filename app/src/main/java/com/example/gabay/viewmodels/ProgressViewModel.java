@@ -60,7 +60,10 @@ public class ProgressViewModel extends ViewModel {
         // Load progress from Supabase when ViewModel is created
         refreshProgressFromSupabase();
         loadUserProfileFromSupabase();
-        loadQuizCompletionFromSupabase();// Add this line
+        loadQuizCompletionFromSupabase(); // Load quiz data once at startup
+        
+        // Don't run aggressive fix methods that overwrite database quiz completion states
+        // The database is the source of truth for quiz completion
     }
     public void triggerProgressUpdate() {
         _progressUpdateEvent.setValue(true);
@@ -74,12 +77,30 @@ public class ProgressViewModel extends ViewModel {
     public void refreshAllData() {
         refreshProgressFromSupabase();
         loadUserProfileFromSupabase();
-        loadQuizCompletionFromSupabase();
+        // Quiz completion is preserved and not refreshed to prevent flickering
     }
 
-        public void loadQuizCompletionFromSupabase() {
+    // Method to refresh quiz completion data when needed (e.g., returning to ProfilePage)
+    public void refreshQuizCompletionIfNeeded() {
+        Map<String, Boolean> currentQuizData = quizCompletion.getValue();
+        if (currentQuizData == null || currentQuizData.isEmpty()) {
+            Log.d("QuizDebug", "No quiz data found, loading from database");
+            loadQuizCompletionFromSupabase();
+        } else {
+            Log.d("QuizDebug", "Quiz data exists, checking for updates from database");
+            loadQuizCompletionFromSupabasePreservingLocal();
+        }
+    }
+
+    public void loadQuizCompletionFromSupabase() {
         backgroundExecutor.execute(() -> {
             try {
+                // First, ensure the quiz completion fields exist in the database
+                boolean fieldsInitialized = SupabaseJavaService.ensureQuizCompletionFields();
+                if (!fieldsInitialized) {
+                    Log.w("QuizDebug", "Warning: Could not initialize quiz completion fields");
+                }
+
                 Map<String, Boolean> quizStates = new HashMap<>();
 
                 for (int chapter = 1; chapter <= 5; chapter++) {
@@ -112,10 +133,12 @@ public class ProgressViewModel extends ViewModel {
         Log.d("ProgressDebug", "=== UPDATING PROGRESS: Chapter " + chapter + ", Level " + level + " ===");
         updateLocalProgress(chapter, level);
 
+        // Don't auto-mark quiz as completed when all levels are done
+        // Quiz completion should only happen when user actually takes the quiz
         if (isChapterCompleted(chapter)) {
-            markChapterQuizCompleted(chapter);
-            Log.d("ProgressDebug", "Chapter " + chapter + " completed - quiz auto-marked as passed");
+            Log.d("ProgressDebug", "🎯 Chapter " + chapter + " fully completed - Quiz now available");
         }
+        
         triggerProgressUpdate();
         // save to supabase
         backgroundExecutor.execute(() -> {
@@ -125,9 +148,7 @@ public class ProgressViewModel extends ViewModel {
 
                 if (success) {
                     Log.d("ProgressDebug", "✅ Progress saved to Supabase successfully");
-
-                    // Refresh from Supabase to ensure consistency
-                    refreshProgressFromSupabase();
+                    // Don't refresh immediately - it overwrites quiz completion states
                 } else {
                     Log.e("ProgressDebug", "❌ Failed to save progress to Supabase");
                 }
@@ -163,6 +184,8 @@ public class ProgressViewModel extends ViewModel {
 
         int totalCompleted = 0;
         int totalPossible = 0;
+        int completedQuizzes = 0;
+        int totalQuizzes = 5; // One quiz per chapter
 
         for (int chapter = 1; chapter <= 5; chapter++) {
             int completed = progress.getOrDefault(chapter, 0);
@@ -171,12 +194,57 @@ public class ProgressViewModel extends ViewModel {
             totalCompleted += completed;
             totalPossible += maxLevels;
 
-            Log.d("ProgressDebug", "Chapter " + chapter + ": " + completed + "/" + maxLevels + " levels");
-        }
-        int percentage = totalPossible > 0 ? (totalCompleted * 100) / totalPossible : 0;
-        totalProgress.setValue(percentage);
+            // Check if quiz is completed for this chapter
+            if (isQuizCompleted(chapter)) {
+                completedQuizzes++;
+            }
 
-        Log.d("ProgressDebug", "🎯 Total progress: " + percentage + "% (" + totalCompleted + "/" + totalPossible + " levels)");
+            Log.d("ProgressDebug", "Chapter " + chapter + ": " + completed + "/" + maxLevels + " levels, quiz: " + isQuizCompleted(chapter));
+        }
+        
+        // Calculate level progress percentage (this is the main progress indicator)
+        int levelPercentage = totalPossible > 0 ? (totalCompleted * 100) / totalPossible : 0;
+        
+        // Calculate quiz progress percentage  
+        int quizPercentage = (completedQuizzes * 100) / totalQuizzes;
+        
+        // NEW LOGIC: Overall progress is based on level completion primarily
+        // If all levels are completed (100%), show 100% progress
+        // Otherwise, show the level progress percentage
+        int overallPercentage = levelPercentage;
+        
+        totalProgress.setValue(overallPercentage);
+
+        Log.d("ProgressDebug", "🎯 Progress breakdown:");
+        Log.d("ProgressDebug", "   Levels: " + levelPercentage + "% (" + totalCompleted + "/" + totalPossible + ")");
+        Log.d("ProgressDebug", "   Quizzes: " + quizPercentage + "% (" + completedQuizzes + "/" + totalQuizzes + ")");
+        Log.d("ProgressDebug", "   Overall: " + overallPercentage + "% (based on level completion)");
+        
+        // Check if we've reached 100% completion (all levels done)
+        if (overallPercentage >= 100) {
+            Log.d("ProgressDebug", "🏆 MILESTONE REACHED: 100% level completion achieved!");
+            
+            // Additional check: if quizzes are also completed, note that too
+            if (quizPercentage >= 100) {
+                Log.d("ProgressDebug", "🎯 PERFECT COMPLETION: Both levels AND quizzes are 100%!");
+            } else {
+                Log.d("ProgressDebug", "📝 Note: Some quizzes may still be pending (" + quizPercentage + "%)");
+            }
+        }
+    }
+    /**
+     * Checks if the user's total progress has reached 100%.
+     * This is a synchronous check on the current value of the LiveData.
+     * @return true if total progress is 100 or more, false otherwise.
+     */
+    public boolean isTotalProgressComplete() {
+        Integer currentProgress = totalProgress.getValue();
+        if (currentProgress == null) {
+            // If the value hasn't been loaded yet, assume it's not complete.
+            return false;
+        }
+        // Check if the progress is 100% or more (to be safe).
+        return currentProgress >= 100;
     }
 
     // Helper method to check if a chapter is fully completed
@@ -201,6 +269,10 @@ public class ProgressViewModel extends ViewModel {
 
         backgroundExecutor.execute(() -> {
             try {
+                // Store current quiz completion to preserve it
+                Map<String, Boolean> currentQuizCompletion = quizCompletion.getValue();
+                if (currentQuizCompletion == null) currentQuizCompletion = new HashMap<>();
+                
                 Map<Integer, Integer> supabaseProgress = new HashMap<>();
                 // Fetch progress for each chapter from Supabase
                 for (int chapter = 1; chapter <= 5; chapter++) {
@@ -208,15 +280,68 @@ public class ProgressViewModel extends ViewModel {
                     supabaseProgress.put(chapter, completedLevels);
                     Log.d("ProgressDebug", "📥 Chapter " + chapter + " from Supabase: " + completedLevels + " levels");
                 }
+                
                 // Update LiveData on main thread
                 new Handler(Looper.getMainLooper()).post(() -> {
                     chapterProgress.setValue(supabaseProgress);
-                    updateTotalProgress();
-                    Log.d("ProgressDebug", "✅ Progress refreshed from Supabase");
+                    
+                    // IMPORTANT: Don't overwrite quiz completion data during progress refresh
+                    // Quiz completion is managed separately to prevent flickering
+                    
+                    updateTotalProgress(); // This will now include quiz completion in calculation
+                    Log.d("ProgressDebug", "✅ Progress refreshed from Supabase (quiz data preserved)");
                 });
 
             } catch (Exception e) {
                 Log.e("ProgressDebug", "❌ Error refreshing progress from Supabase: " + e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Load quiz completion from Supabase while preserving local data that hasn't been saved yet.
+     * This prevents the refresh from overwriting recent quiz completions.
+     */
+    private void loadQuizCompletionFromSupabasePreservingLocal() {
+        backgroundExecutor.execute(() -> {
+            try {
+                // First, ensure the quiz completion fields exist in the database
+                boolean fieldsInitialized = SupabaseJavaService.ensureQuizCompletionFields();
+                if (!fieldsInitialized) {
+                    Log.w("QuizDebug", "Warning: Could not initialize quiz completion fields");
+                }
+
+                // Get current local data to preserve
+                Map<String, Boolean> localQuizStates = quizCompletion.getValue();
+                if (localQuizStates == null) localQuizStates = new HashMap<>();
+
+                Map<String, Boolean> mergedQuizStates = new HashMap<>();
+
+                for (int chapter = 1; chapter <= 5; chapter++) {
+                    String quizKey = "chapter_" + chapter + "_quiz";
+                    
+                    // Check if we have recent local data that should be preserved
+                    Boolean localCompleted = localQuizStates.get(quizKey);
+                    
+                    // Get database state
+                    boolean dbCompleted = SupabaseJavaService.isQuizCompleted(chapter);
+                    
+                    // Preserve local state if it's true (recently completed) or use database state
+                    boolean finalState = (localCompleted != null && localCompleted) ? localCompleted : dbCompleted;
+                    
+                    mergedQuizStates.put(quizKey, finalState);
+                    
+                    Log.d("QuizDebug", "Chapter " + chapter + " quiz - Local: " + localCompleted + 
+                          ", DB: " + dbCompleted + ", Final: " + finalState);
+                }
+                
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    quizCompletion.setValue(mergedQuizStates);
+                    Log.d("QuizDebug", "Quiz completion states merged and updated: " + mergedQuizStates.toString());
+                });
+
+            } catch (Exception e) {
+                Log.e("ProgressViewModel", "Error loading quiz completion with preservation: " + e.getMessage());
             }
         });
     }
@@ -371,7 +496,14 @@ public class ProgressViewModel extends ViewModel {
 
         quizCompletion.setValue(updatedMap); // notify observers
         Log.d("ProgressDebug", "Chapter " + chapter + " quiz marked as completed");
+        
+        // Save to database
+        saveQuizCompletionToSupabase(chapter);
+        
+        // Recalculate total progress to potentially trigger congratulatory dialog
+        updateTotalProgress();
     }
+    
     public void markQuizCompleted(int chapter) {
         String quizKey = "chapter_" + chapter + "_quiz";
         Map<String, Boolean> currentMap = quizCompletion.getValue();
@@ -385,9 +517,17 @@ public class ProgressViewModel extends ViewModel {
         Log.d("QuizDebug", "✅ Quiz marked completed for chapter " + chapter + " - Key: " + quizKey);
         Log.d("QuizDebug", "Current quiz states: " + updatedMap.toString());
 
-        // Save to Supabase if needed
+        // Save to Supabase
         saveQuizCompletionToSupabase(chapter);
+        
+        // IMPORTANT: Recalculate total progress after quiz completion
+        // This ensures the congratulatory dialog can trigger if this was the final quiz
+        updateTotalProgress();
+        
+        // Trigger progress update event to notify observers
+        triggerProgressUpdate();
     }
+    
     private void saveQuizCompletionToSupabase(int chapter) {
         backgroundExecutor.execute(() -> {
             try {
@@ -487,6 +627,179 @@ public class ProgressViewModel extends ViewModel {
             chapterProgress.setValue(progress);
             updateTotalProgress();
         }
+    }
+
+    /**
+     * Fix existing progress by marking quizzes as completed for chapters that are fully finished.
+     * Call this method if you have completed all levels but progress shows less than 100%.
+     * This method can be called manually or automatically when data loads.
+     */
+    public void fixExistingProgress() {
+        Log.d("ProgressDebug", "🔧 Fixing existing progress - Checking for completed chapters...");
+        
+        Map<Integer, Integer> progress = chapterProgress.getValue();
+        if (progress == null) return;
+        
+        boolean anyFixes = false;
+        
+        for (int chapter = 1; chapter <= 5; chapter++) {
+            int completedLevels = progress.getOrDefault(chapter, 0);
+            int maxLevels = getMaxLevelsForChapter(chapter);
+            
+            // If all levels in this chapter are completed but quiz isn't marked, fix it
+            if (completedLevels >= maxLevels && !isQuizCompleted(chapter)) {
+                Log.d("ProgressDebug", "🔧 Chapter " + chapter + " is fully completed but quiz not marked - Fixing...");
+                markChapterQuizCompleted(chapter);
+                anyFixes = true;
+            }
+        }
+        
+        if (anyFixes) {
+            // Recalculate progress after fixes
+            updateTotalProgress();
+            Log.d("ProgressDebug", "✅ Progress fixes applied - Check if progress is now 100%");
+        } else {
+            Log.d("ProgressDebug", "✅ No fixes needed - Progress is already correct");
+        }
+    }
+
+    /**
+     * Force mark all completed chapters' quizzes as completed.
+     * This method should be called if you have completed all levels but quizzes show 0%.
+     */
+    public void forceMarkCompletedChapterQuizzes() {
+        Log.d("ProgressDebug", "🔧 Force marking completed chapter quizzes...");
+        
+        Map<Integer, Integer> progress = chapterProgress.getValue();
+        if (progress == null) {
+            Log.w("ProgressDebug", "❌ Chapter progress is null - cannot force mark quizzes");
+            return;
+        }
+        
+        Log.d("ProgressDebug", "Current chapter progress: " + progress.toString());
+        
+        for (int chapter = 1; chapter <= 5; chapter++) {
+            int completedLevels = progress.getOrDefault(chapter, 0);
+            int maxLevels = getMaxLevelsForChapter(chapter);
+            boolean currentlyCompleted = isQuizCompleted(chapter);
+            
+            Log.d("ProgressDebug", "Chapter " + chapter + ": " + completedLevels + "/" + maxLevels + 
+                  " levels, quiz currently completed: " + currentlyCompleted);
+            
+            // If all levels in this chapter are completed but quiz is not marked, mark it
+            if (completedLevels >= maxLevels && !currentlyCompleted) {
+                Log.d("ProgressDebug", "🔧 Chapter " + chapter + " is fully completed but quiz not marked - Force marking quiz as completed");
+                markQuizCompleted(chapter);
+            } else if (completedLevels >= maxLevels && currentlyCompleted) {
+                Log.d("ProgressDebug", "✅ Chapter " + chapter + " is fully completed and quiz already marked");
+            } else {
+                Log.d("ProgressDebug", "⏳ Chapter " + chapter + " is not fully completed yet");
+            }
+        }
+        
+        // Recalculate progress after fixes
+        updateTotalProgress();
+        Log.d("ProgressDebug", "✅ Force quiz completion applied - Check if progress is now 100%");
+    }
+
+    /**
+     * Manual fix for quiz completion - call this if quizzes still show 0% after completing all levels.
+     * This method will immediately mark all completed chapters' quizzes as completed and save to database.
+     */
+    public void manualFixQuizCompletion() {
+        Log.d("ProgressDebug", "🔧 MANUAL FIX: Forcing quiz completion for all completed chapters...");
+        
+        // Force mark all completed chapters as having completed quizzes
+        for (int chapter = 1; chapter <= 5; chapter++) {
+            int completedLevels = getChapterProgress(chapter);
+            int maxLevels = getMaxLevelsForChapter(chapter);
+            boolean currentlyCompleted = isQuizCompleted(chapter);
+            
+            Log.d("ProgressDebug", "🔧 MANUAL FIX: Chapter " + chapter + " - Levels: " + completedLevels + "/" + maxLevels + ", Quiz completed: " + currentlyCompleted);
+            
+            if (completedLevels >= maxLevels) {
+                Log.d("ProgressDebug", "🔧 MANUAL FIX: Chapter " + chapter + " is fully completed - FORCING quiz completion");
+                markQuizCompleted(chapter);
+            } else {
+                Log.d("ProgressDebug", "🔧 MANUAL FIX: Chapter " + chapter + " not fully completed yet (" + completedLevels + "/" + maxLevels + ")");
+            }
+        }
+        
+        // Force refresh all data after a short delay to ensure database operations complete
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Log.d("ProgressDebug", "🔧 MANUAL FIX: Refreshing all data from database...");
+            refreshAllData();
+        }, 2000);
+        
+        Log.d("ProgressDebug", "✅ MANUAL FIX: Quiz completion fix applied!");
+    }
+
+    /**
+     * Manually sync all local quiz completion data to Supabase database.
+     * Call this method to ensure quiz completion is properly saved.
+     */
+    public void syncQuizCompletionToDatabase() {
+        Log.d("QuizDebug", "🔄 Manually syncing quiz completion to database...");
+        
+        backgroundExecutor.execute(() -> {
+            Map<String, Boolean> localQuizStates = quizCompletion.getValue();
+            if (localQuizStates == null) {
+                Log.d("QuizDebug", "No local quiz data to sync");
+                return;
+            }
+            
+            int syncedCount = 0;
+            for (int chapter = 1; chapter <= 5; chapter++) {
+                String quizKey = "chapter_" + chapter + "_quiz";
+                Boolean localCompleted = localQuizStates.get(quizKey);
+                
+                if (localCompleted != null && localCompleted) {
+                    // Save to database
+                    boolean success = SupabaseJavaService.updateQuizCompletion(chapter, true);
+                    if (success) {
+                        syncedCount++;
+                        Log.d("QuizDebug", "✅ Synced chapter " + chapter + " quiz completion to database");
+                    } else {
+                        Log.e("QuizDebug", "❌ Failed to sync chapter " + chapter + " quiz completion");
+                    }
+                }
+            }
+            
+            Log.d("QuizDebug", "Sync completed: " + syncedCount + " quizzes synced to database");
+        });
+    }
+
+    /**
+     * Test method to simulate 100% completion by setting all chapters and quizzes as completed.
+     * This can be called for testing the congratulatory dialog.
+     */
+    public void simulateFullCompletion() {
+        Log.d("ProgressDebug", "🧪 Simulating full completion for testing...");
+        
+        // Set all chapters to maximum levels
+        Map<Integer, Integer> fullProgress = new HashMap<>();
+        fullProgress.put(1, 28); // Chapter 1: 28 levels
+        fullProgress.put(2, 5);  // Chapter 2: 5 levels
+        fullProgress.put(3, 10); // Chapter 3: 10 levels
+        fullProgress.put(4, 7);  // Chapter 4: 7 levels
+        fullProgress.put(5, 7);  // Chapter 5: 7 levels
+        
+        chapterProgress.setValue(fullProgress);
+        
+        // Set all quizzes as completed
+        Map<String, Boolean> fullQuizCompletion = new HashMap<>();
+        fullQuizCompletion.put("chapter_1_quiz", true);
+        fullQuizCompletion.put("chapter_2_quiz", true);
+        fullQuizCompletion.put("chapter_3_quiz", true);
+        fullQuizCompletion.put("chapter_4_quiz", true);
+        fullQuizCompletion.put("chapter_5_quiz", true);
+        
+        quizCompletion.setValue(fullQuizCompletion);
+        
+        // Recalculate progress
+        updateTotalProgress();
+        
+        Log.d("ProgressDebug", "🏆 Full completion simulated - Check if congratulatory dialog appears!");
     }
 
     public void resetAllProgress() {

@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -48,6 +50,7 @@ public class Chapter2 extends Fragment {
     private ProgressViewModel progressViewModel;
 
     private static final int LESSON_ACTIVITY_REQUEST = 1001;
+    private static final int QUIZ_ACTIVITY_REQUEST = 1002;
 
     private Button[] levelButtons;
 
@@ -71,21 +74,19 @@ public class Chapter2 extends Fragment {
         progressViewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
         preferences = requireContext().getSharedPreferences(PREF_NAME, getContext().MODE_PRIVATE);
 
-        progressViewModel.getQuizCompletion().observe(getViewLifecycleOwner(), quizMap -> {
-            updateQuizButtonState();
-        });
+
         progressViewModel.getChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
             updateLevelStates();
-            updateQuizButtonState(); // this will unlock the quiz if the chapter is now completed
         });
-        if (progressViewModel != null) {
-            progressViewModel.refreshAllData();
-        }
+//        if (progressViewModel != null) {
+//            progressViewModel.refreshAllData();
+//        }
 
         initializeLevelButtons();
         initializeQuizButton();
         updateLevelStates();
         setupProgressObserver();
+        setupQuizObservers();
 
         Log.d("Chapter2", "Chapter2 fragment initialized");
     }
@@ -172,6 +173,18 @@ public class Chapter2 extends Fragment {
                 }
             }
             updateLevelStates();
+        } else if (requestCode == QUIZ_ACTIVITY_REQUEST) {
+            // Quiz completed - refresh UI to show updated quiz button state
+            Log.d("Chapter2", "Quiz activity returned, refreshing UI");
+            if (progressViewModel != null) {
+                // Force refresh quiz completion data from database
+                progressViewModel.loadQuizCompletionFromSupabase();
+                // Update UI after a short delay to ensure data is loaded
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    updateQuizButtonState();
+                    updateLevelStates();
+                }, 500);
+            }
         }
     }
 
@@ -223,12 +236,8 @@ public class Chapter2 extends Fragment {
     private void checkChapterCompletion() {
         ProgressViewModel.ChapterProgress progress = progressViewModel.getChapterProgressObject(2);
         if (progress != null && progress.getProgressPercentage() >= 100) {
-            Toast.makeText(requireContext(), "Congratulations! Chapter 1 completed! Quiz unlocked!", Toast.LENGTH_LONG).show();
-            // Mark chapter quiz as completed
-            progressViewModel.markChapterQuizCompleted(2);
-
-            // Update quiz button to be enabled
-            updateQuizButtonState();
+            Toast.makeText(requireContext(), "Congratulations! Chapter 2 completed! Quiz unlocked!", Toast.LENGTH_LONG).show();
+            // Quiz will only be marked complete when user actually takes it
         }
     }
 
@@ -237,12 +246,22 @@ public class Chapter2 extends Fragment {
                 "Quiz available! You've reached Level " + level + " - take the quiz to test your knowledge!",
                 Toast.LENGTH_LONG).show();
     }
+    private void setupQuizObservers() {
+        if (progressViewModel == null) return;
+
+        // Observe quiz completion changes
+        progressViewModel.getQuizCompletion().observe(getViewLifecycleOwner(), quizCompletion -> {
+            if (isAdded()) {
+                Log.d("QuizDebug", "Quiz completion updated, refreshing quiz button immediately");
+                updateQuizButtonState();
+            }
+        });
+    }
 
     private void setupProgressObserver() {
         progressViewModel.getAllChapterProgress().observe(getViewLifecycleOwner(), progressMap -> {
             if (isAdded()) {
                 updateLevelStates();
-                updateQuizButtonState();
                 Log.d("Chapter1", "Progress observer triggered - updating level states");
             }
         });
@@ -259,16 +278,28 @@ public class Chapter2 extends Fragment {
         boolean isChapterDone = progressViewModel.isChapterCompleted(2);
         boolean isQuizDone = progressViewModel.isQuizCompleted(2);
 
+        Log.d("QuizDebug", "Chapter 2 - Completed: " + isChapterDone + ", Quiz Done: " + isQuizDone);
+        Log.d("QuizDebug", "Chapter 2 Progress: " + progressViewModel.getChapterProgress(2) + "/" + progressViewModel.getMaxLevelsForChapter(2));
+
         if (!isChapterDone) {
             btn_chapter_quiz.setEnabled(false);
             btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button_locked);
+            Log.d("QuizDebug", "Chapter 2 quiz button: LOCKED (chapter not completed)");
         } else if (isChapterDone && !isQuizDone) {
             btn_chapter_quiz.setEnabled(true);
             btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button);
+            Log.d("QuizDebug", "Chapter 2 quiz button: READY (chapter completed, quiz available)");
         } else if (isQuizDone) {
             btn_chapter_quiz.setEnabled(true);
             btn_chapter_quiz.setBackgroundResource(R.drawable.circular_button_finished);
+            Log.d("QuizDebug", "Chapter 2 quiz button: FINISHED (quiz completed)");
         }
+        
+        // Force the button to update immediately
+        btn_chapter_quiz.post(() -> {
+            btn_chapter_quiz.invalidate();
+            btn_chapter_quiz.requestLayout();
+        });
     }
 
     private boolean isChapterCompleted() {
@@ -280,7 +311,7 @@ public class Chapter2 extends Fragment {
         btn_chapter_quiz = view.findViewById(R.id.btn_chapter_quiz);
         if (btn_chapter_quiz != null) {
             // Check if all levels are completed and update button state
-            updateQuizButtonState();
+            //updateQuizButtonState();
 
             btn_chapter_quiz.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -301,7 +332,7 @@ public class Chapter2 extends Fragment {
             Intent intent = new Intent(getActivity(), QuizActivity.class);
             intent.putExtra("chapter_number", chapterNumber);
             intent.putExtra("level", 1); // compute your real level if needed
-            startActivity(intent);
+            startActivityForResult(intent, QUIZ_ACTIVITY_REQUEST);
             Log.d("Chapter" + chapterNumber, "QuizActivity started successfully");
         } catch (Exception e) {
             Log.e("Chapter" + chapterNumber, "Error starting QuizActivity: " + e.getMessage(), e);
@@ -427,15 +458,24 @@ public class Chapter2 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh progress when returning from lessons
+        // Don't refresh all data aggressively - it overwrites quiz completion states
+        // Only update UI based on current ViewModel state
         if (progressViewModel != null) {
-            progressViewModel.refreshAllData();
+            // Only refresh if we have no data at all
+            if (progressViewModel.getChapterProgress(2) == 0) {
+                Log.d("Chapter2", "No progress data found, refreshing from database");
+                progressViewModel.refreshProgressFromSupabase();
+            } else {
+                Log.d("Chapter2", "Using existing progress data to avoid overwriting quiz states");
+            }
+            
         }
+        
         updateLevelStates();
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showActionBarWithTitle("Chapter 2");
         }
-        Log.d("Chapter2", "Chapter2 resumed - updating UI");
+        Log.d("Chapter2", "Chapter2 resumed - updating UI without data overwrite");
     }
 
     @Override

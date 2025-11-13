@@ -1,0 +1,257 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Gabay</string>
+
+    <!-- chapters -->
+    <string name="chapter_1">Kabanata 1</string>
+    <string name="chapter_2">Kabanata 2</string>
+    <string name="chapter_3">Kabanata 3</string>
+    <string name="chapter_4">Kabanata 4</string>
+    <string name="chapter_5">Kabanata 5</string>
+
+    <!-- quiz -->
+    <string name="quiz_completed">Napasa ang pagsusulit!</string>
+    <string name="quiz_failed" >Nabigo ang pagsusulit</string>
+    <string name="back_to_lesson">Bumalik sa aralin</string>
+    <string name="score_format">%1$s: %2$d/%3$d</string>
+    <string name="score">Ang iyong score: </string>
+    <string name="finish">Tapusin</string>
+    <string name="submit_answer">Isumite ang sagot</string>
+    <string name="mq_title">Tugmaang pagsusulit</string>
+    <string name="mq_instructions">I-drag ang mga larawan upang tumugma sa tamang handsign.</string>
+    <string name="mcq_title">Kabanatang pagsusulit</string>
+    <string name="mcq_instruction">Multiple choice: </string>
+    <string name="mcq_instruction2">Piliin ang tamang handsign.</string>
+    <string name="quiz_counter_format">Tanong %1$d ng %2$d</string>
+
+
+    <!-- Format for displaying level progress in the profile (Tagalog) -->
+    <string name="levels_completed_format">%1$d/%2$d na level ang natapos</string>
+    <string name="all_levels_completed">Lahat ng mga levels ay natapos na! 🎉</string>
+
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+
+    <string name="next">Next</string>
+    <string name="previous">Prev</string>
+
+    <string name="title_activity_auth">AuthActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- General Titles -->
+    <string name="greet" >Kumusta, </string>
+    <string name="lessons" >Mga Aralin</string>
+    <string name="settings">Mga Setting</string>
+    <string name="overall_progress" >Ang iyong pangkalahatang progress:</string>
+    <string name="learning_progress" >Proseso ng pag-aaral</string>
+    <string name="level_progress" >Progress sa mga level</string>
+    <string name="chapters_completed" >Natapos na kabanata</string>
+    <string name="quiz_passed" >Napasa na pagsusulit</string>
+
+    <!-- Settings -->
+    <string name="general_setting" >Pangkalahatan</string>
+    <string name="language_setting" >Wika</string>
+    <string name="sound_setting" >Mga sound effects</string>
+    <string name="notification_setting" >Mga push notifications</string>
+
+    <string name="support_feedback" >Suporta at mga puna</string>
+    <string name="contact_setting" >Kami ay kontakin</string>
+    <string name="rate_setting" >Rate Gabay</string>
+
+    <string name="about_setting" >Tunkol sa</string>
+    <string name="app_version" >Bersyon ng app</string>
+    <string name="logout_btn" > MAG-LOG OUT</string>
+    <string name="how_to" >Kung paano: </string>
+
+
+        <!-- Generic Chapter Title Format -->
+        <string name="chapter_title_format">Kabanata %1$d</string>
+
+        <!-- Chapter Subtitles (You might already have these) -->
+        <string name="chapter1_subtitle">Alpabetong Filipino</string>
+        <string name="chapter2_subtitle">Mga Karaniwang Pagbati</string>
+        <string name="chapter3_subtitle">Mga Numero</string>
+        <string name="chapter4_subtitle">Mga Katanungan</string>
+        <string name="chapter5_subtitle">Mga Araw ng Linggo</string>
+
+
+    <string name="language_english">English</string>
+    <string name="language_filipino">Filipino</string>
+    <string name="select_language">Pumili ng Wika</string>
+    <string name="language_changed_to_english">Language changed to English</string>
+    <string name="language_changed_to_filipino">Nabago ang wika sa Filipino</string>
+    <string name="cancel">Kanselahin</string>
+    <string name="logout_title">Mag-logout</string>
+    <string name="logout_message">Sigurado ka bang gusto mong mag-logout?</string>
+    <string name="logout_yes">Oo</string>
+    <string name="logout_no">Hindi</string>
+    <string name="logged_out_success">Matagumpay na naka-logout</string>
+
+
+        <!-- leson fragment -->
+
+        <!-- Chapter 1 Lessons: Alpabetong Filipino -->
+        <string name="lesson_letter_a">Letrang A</string>
+        <string name="lesson_letter_b">Letrang B</string>
+        <string name="lesson_letter_c">Letrang C</string>
+        <string name="lesson_letter_d">Letrang D</string>
+        <string name="lesson_letter_e">Letrang E</string>
+        <string name="lesson_letter_f">Letrang F</string>
+        <string name="lesson_letter_g">Letrang G</string>
+        <string name="lesson_letter_h">Letrang H</string>
+        <string name="lesson_letter_i">Letrang I</string>
+        <string name="lesson_letter_j">Letrang J</string>
+        <string name="lesson_letter_k">Letrang K</string>
+        <string name="lesson_letter_l">Letrang L</string>
+        <string name="lesson_letter_m">Letrang M</string>
+        <string name="lesson_letter_n">Letrang N</string>
+        <string name="lesson_letter_enye">Letrang Ñ</string>
+        <string name="lesson_letter_ng">Letrang NG</string>
+        <string name="lesson_letter_o">Letrang O</string>
+        <string name="lesson_letter_p">Letrang P</string>
+        <string name="lesson_letter_q">Letrang Q</string>
+        <string name="lesson_letter_r">Letrang R</string>
+        <string name="lesson_letter_s">Letrang S</string>
+        <string name="lesson_letter_t">Letrang T</string>
+        <string name="lesson_letter_u">Letrang U</string>
+        <string name="lesson_letter_v">Letrang V</string>
+        <string name="lesson_letter_w">Letrang W</string>
+        <string name="lesson_letter_x">Letrang X</string>
+        <string name="lesson_letter_y">Letrang Y</string>
+        <string name="lesson_letter_z">Letrang Z</string>
+
+        <!-- Chapter 2 Lessons: Mga Karaniwang Pagbati -->
+        <string name="lesson_greeting_hello">Kumusta</string>
+        <string name="lesson_greeting_how_are_you">Kamusta ka?</string>
+        <string name="lesson_greeting_sorry">Paumanhin</string>
+        <string name="lesson_greeting_thank_you_formal">Salamat po</string>
+        <string name="lesson_greeting_thank_you_informal">Salamat</string>
+
+        <!-- Chapter 3 Lessons: Mga Numero -->
+        <string name="lesson_number_1">Numero 1 (Isa)</string>
+        <string name="lesson_number_2">Numero 2 (Dalawa)</string>
+        <string name="lesson_number_3">Numero 3 (Tatlo)</string>
+        <string name="lesson_number_4">Numero 4 (Apat)</string>
+        <string name="lesson_number_5">Numero 5 (Lima)</string>
+        <string name="lesson_number_6">Numero 6 (Anim)</string>
+        <string name="lesson_number_7">Numero 7 (Pito)</string>
+        <string name="lesson_number_8">Numero 8 (Walo)</string>
+        <string name="lesson_number_9">Numero 9 (Siyam)</string>
+        <string name="lesson_number_10">Numero 10 (Sampu)</string>
+
+        <!-- Chapter 4 Lessons: Mga Katanungan -->
+        <string name="lesson_question_what">Ano</string>
+        <string name="lesson_question_when">Kailan</string>
+        <string name="lesson_question_where">Saan</string>
+        <string name="lesson_question_which">Alin</string>
+        <string name="lesson_question_who">Sino</string>
+        <string name="lesson_question_why">Bakit</string>
+        <string name="lesson_question_how">Paano</string>
+
+        <!-- Chapter 5 Lessons: Mga Araw ng Linggo -->
+        <string name="lesson_day_monday">Lunes</string>
+        <string name="lesson_day_tuesday">Martes</string>
+        <string name="lesson_day_wednesday">Miyerkules</string>
+        <string name="lesson_day_thursday">Huwebes</string>
+        <string name="lesson_day_friday">Biyernes</string>
+        <string name="lesson_day_saturday">Sabado</string>
+        <string name="lesson_day_sunday">Linggo</string>
+
+        <string name="level_counter_format">Level %1$d of %2$d</string>
+        <string name="chapter_quiz">Kabanatang pagsusulit</string>
+
+
+        <!-- ============================================= -->
+        <!-- Chapter 1: Mga Deskripsyon ng Alpabeto        -->
+        <!-- ============================================= -->
+        <string name="lesson_alphabet_desc_a">Bumuo ng kamao. Ilagay ang hinlalaki sa gilid ng kamao, nakaturo sa gilid, hindi sa harap ng ibang mga daliri.</string>
+        <string name="lesson_alphabet_desc_b">Panatilihing tuwid at magkadikit ang mga daliri, na nakaharap ang palad. Itupi ang hinlalaki sa iyong palad.</string>
+        <string name="lesson_alphabet_desc_c">Ikurbada ang kamay sa hugis na “C”, kung saan ang iyong mga daliri at hinlalaki ay bumubuo ng kalahating bilog.</string>
+        <string name="lesson_alphabet_desc_d">Pagsamahin ang dulo ng iyong hinlalaki at mga daliring gitna, palasingsingan, at kalingkingan habang itinataas ang hintuturo.</string>
+        <string name="lesson_alphabet_desc_e">Ibaluktot ang mga daliri papunta sa palad at ilagay ang hinlalaki sa ibabaw nito, na bumubuo ng maliit na kurbadong hugis tulad ng maliit na letrang \'e\'.</string>
+        <string name="lesson_alphabet_desc_f">Bumuo ng “OK” sign — pagdugtungin ang hinlalaki at hintuturo para makagawa ng bilog habang nakataas ang tatlong iba pang daliri.</string>
+        <string name="lesson_alphabet_desc_g">Hawakan ang kamay nang patagilid na nakaturo palabas ang hinlalaki at hintuturo, na parang nagpapakita ng maliit na distansya.</string>
+        <string name="lesson_alphabet_desc_h">Iunat ang iyong hintuturo at gitnang daliri nang magkadikit, nakaturo sa gilid, habang ang iba ay nakasara — parang patagilid na peace sign.</string>
+        <string name="lesson_alphabet_desc_i">Itaas ang iyong kalingkingan habang ang iba ay nakakuyom.</string>
+        <string name="lesson_alphabet_desc_j">Magsimula sa “I” sign, pagkatapos ay iguhit ang letrang “J” sa hangin gamit ang iyong kalingkingan.</string>
+        <string name="lesson_alphabet_desc_k">Itaas ang iyong hintuturo at gitnang daliri nang magkahiwalay (parang “V”), pagkatapos ay ilagay ang iyong hinlalaki sa pagitan ng mga ito.</string>
+        <string name="lesson_alphabet_desc_l">Iunat ang iyong hintuturo pataas at ang iyong hinlalaki patagilid para bumuo ng hugis “L”.</string>
+        <string name="lesson_alphabet_desc_m">Ilagay ang iyong hinlalaki sa ilalim ng unang tatlong daliri (hintuturo, gitna, palasingsingan), habang ang kalingkingan ay nakaunat o nakatupi — sumisimbolo sa tatlong umbok ng “M”.</string>
+        <string name="lesson_alphabet_desc_n">Katulad ng “M” ngunit ilagay lamang ang hinlalaki sa ilalim ng dalawang daliri (hintuturo at gitna) — bumubuo ng dalawang umbok ng “N”.</string>
+        <string name="lesson_alphabet_desc_enye">Magsimula sa “N” sign, pagkatapos ay gumawa ng maliit na pakaway-kaway na galaw (mula sa magkabilang gilid).</string>
+        <string name="lesson_alphabet_desc_ng">Magsimula sa “N” sign, pagkatapos ay gawin ang “G” sign.</string>
+        <string name="lesson_alphabet_desc_o">Bumuo ng isang buong “O” sa pamamagitan ng pagdidikit ng iyong mga daliri at hinlalaki upang makagawa ng bilog.</string>
+        <string name="lesson_alphabet_desc_p">Gawin ang hugis “K”, pagkatapos ay ikiling ang iyong galang-galangan pababa — ang hintuturo ay nakaturo sa harap.</string>
+        <string name="lesson_alphabet_desc_q">Gawin ang parehong hugis ng “G”, ngunit ituro ito nang bahagya pababa.</string>
+        <string name="lesson_alphabet_desc_r">Pagkrusin ang iyong hintuturo at gitnang daliri.</string>
+        <string name="lesson_alphabet_desc_s">Katulad ng “A” sign, ngunit bumuo ng kamao na ang hinlalaki ay nakakrus sa harap ng iyong mga daliri.</string>
+        <string name="lesson_alphabet_desc_t">Gumawa ng “thumbs up” na galaw, at ilagay ang iyong hintuturo sa ibabaw ng iyong hinlalaki.</string>
+        <string name="lesson_alphabet_desc_u">Itaas ang iyong hintuturo at gitnang daliri nang magkadikit, magkatabi.</string>
+        <string name="lesson_alphabet_desc_v">Itaas ang iyong hintuturo at gitnang daliri nang magkahiwalay para bumuo ng “V” sign.</string>
+        <string name="lesson_alphabet_desc_w">Itaas ang iyong hintuturo, gitna, at palasingsingan na mga daliri para bumuo ng “W”.</string>
+        <string name="lesson_alphabet_desc_x">Ibaluktot ang iyong hintuturo para bumuo ng isang kawit habang ang iba ay nakasara.</string>
+        <string name="lesson_alphabet_desc_y">Iunat ang iyong hinlalaki at kalingkingan, habang ang ibang mga daliri ay nakasara.</string>
+        <string name="lesson_alphabet_desc_z">Gamitin ang iyong hintuturo para iguhit ang hugis “Z” sa hangin.</string>
+
+        <!-- ============================================ -->
+        <!-- Chapter 2: Deskripsyon ng mga Pagbati        -->
+        <!-- ============================================ -->
+        <string name="lesson_greeting_desc_hello">Itaas ang iyong nangingibabaw na kamay malapit sa iyong sentido, na parang nagbibigay ng kaswal na saludo. Igalaw nang bahagya ang iyong kamay palabas na parang bumabati sa isang tao mula sa malayo.</string>
+        <string name="lesson_greeting_desc_how_are_you">Pagsamahin ang parehong kamay sa harap ng iyong dibdib, na nakaharap pababa ang mga palad. Pagkatapos, paikutin ang mga kamay palabas upang ang mga palad ay humarap pataas, na parang may ipinapakita. At ituro ang hintuturo pasulong.</string>
+        <string name="lesson_greeting_desc_sorry">Bumuo ng kamao gamit ang iyong nangingibabaw na kamay at ilagay ito sa iyong dibdib. Igalaw ang kamao sa maliit na pabilog na galaw nang ilang beses.</string>
+        <string name="lesson_greeting_desc_thank_you_formal">Ilagay ang parehong kamay malapit sa iyong mga labi kung saan ang mga dulo ng daliri ay dumidikit sa bibig.</string>
+        <string name="lesson_greeting_desc_thank_you_informal">Dahan-dahang idikit ang mga dulo ng daliri ng isang kamay sa iyong mga labi, pagkatapos ay igalaw ang iyong kamay pasulong.</string>
+
+        <!-- ============================================ -->
+        <!-- Chapter 3: Deskripsyon ng mga Numero         -->
+        <!-- ============================================ -->
+        <string name="lesson_number_desc_1">Itaas ang iyong hintuturo habang ang ibang mga daliri ay nakatiklop sa iyong palad. Tiyaking nakaharap palabas ang iyong palad. Malinaw na sinisimbolo ng simpleng hugis-kamay na ito ang numerong isa.</string>
+        <string name="lesson_number_desc_2">Iunat ang iyong hintuturo at gitnang daliri nang magkasama habang ang ibang mga daliri ay nakatiklop. Ang iyong palad ay dapat nakaharap palabas, katulad ng isang peace sign, na kumakatawan sa numerong dalawa.</string>
+        <string name="lesson_number_desc_3">Itaas ang iyong hinlalaki, hintuturo, at gitnang daliri habang nakatiklop ang iyong palasingsingan at kalingkingan. Hawakan ang iyong palad na nakaharap palabas — ito ay sumisimbolo sa numerong tatlo.</string>
+        <string name="lesson_number_desc_4">Iunat ang lahat ng apat na daliri pataas — hintuturo, gitna, palasingsingan, at kalingkingan — habang ang iyong hinlalaki ay nakatago sa iyong palad. Ito ay malinaw na kumakatawan sa numerong apat.</string>
+        <string name="lesson_number_desc_5">Ikalat ang lahat ng limang daliri na nakaharap ang palad, na parang ipinapakita ang iyong buong kamay. Ang bukas-palad na kilos na ito ay sumisimbolo sa numerong lima.</string>
+        <string name="lesson_number_desc_6">Idikit ang dulo ng iyong hinlalaki sa dulo ng iyong kalingkingan, na bumubuo ng maliit na bilog. Panatilihing nakaunat ang iyong tatlong iba pang daliri. Ang kilos na ito ay biswal na nag-uugnay sa pinakamaliit at pinakamalaking daliri upang kumatawan sa numerong anim.</string>
+        <string name="lesson_number_desc_7">Idikit ang dulo ng iyong hinlalaki sa dulo ng iyong palasingsingan habang pinapanatiling nakaunat ang ibang mga daliri. Lumilikha ito ng hugis na sumisimbolo sa numerong pito.</string>
+        <string name="lesson_number_desc_8">Idikit ang dulo ng iyong hinlalaki sa iyong gitnang daliri, habang ang iyong ibang mga daliri ay nakaunat. Ang hugis na ito ay ginagamit upang kumatawan sa numerong walo.</string>
+        <string name="lesson_number_desc_9">Idikit ang dulo ng iyong hinlalaki sa iyong hintuturo upang bumuo ng maliit na bilog, habang pinapanatiling nakaunat ang iba pang mga daliri. Ito ay katulad ng isang \'OK\' sign — sumisimbolo sa numerong siyam.</string>
+        <string name="lesson_number_desc_10">Gumawa ng nakasarang kamao at bahagyang kalugin ito, o iunat ang iyong hinlalaki pataas tulad ng isang thumbs-up sign. Ang kilos na ito ay ginagamit upang kumatawan sa numerong sampu.</string>
+
+        <!-- ============================================ -->
+        <!-- Chapter 4: Deskripsyon ng mga Katanungan     -->
+        <!-- ============================================ -->
+        <string name="lesson_question_desc_what">Hawakan ang isang kamay na bukas sa harap ng iyong dibdib na nakaharap ang palad. Igalaw ang kamay nang bahagya habang itinataas ang iyong mga kilay.</string>
+        <string name="lesson_question_desc_when">Itaas ang hintuturo ng isang kamay at gamitin ang hintuturo ng kabilang kamay upang gumuhit ng maliit na pabilog na galaw sa paligid nito. Pagkatapos, ituro ang iyong daliri pasulong habang bahagyang itinataas ang iyong mga kilay.</string>
+        <string name="lesson_question_desc_where">Itaas ang parehong kamay at dahan-dahang igalaw ito, na nakaharap ang palad. Ikiling nang bahagya ang iyong ulo at itaas ang iyong mga kilay upang ipakita na nagtatanong ka.</string>
+        <string name="lesson_question_desc_which">Hawakan ang parehong kamay sa harap ng iyong dibdib na nakaunat ang mga hinlalaki at nakasara ang ibang mga daliri. Igalaw ang bawat kamay nang salitan pataas at pababa, na parang nagkukumpara ng dalawang pagpipilian.</string>
+        <string name="lesson_question_desc_who">Bumuo ng bahagyang bukas na kamay malapit sa iyong baba. Dahan-dahang isara ito hanggang sa makabuo ka ng hugis na parang may dinadampot kang napakaliit na bagay gamit ang lahat ng iyong mga daliri. Gumamit ng mausisang ekspresyon ng mukha upang ipakita na nagtatanong ka, \'Sino?\'</string>
+        <string name="lesson_question_desc_why">Idikit ang iyong mga dulo ng daliri sa iyong noo, pagkatapos ay igalaw ang iyong kamay palabas at pababa habang binabago ito sa isang \'Y\' sign (nakaunat ang hinlalaki at kalingkingan).</string>
+        <string name="lesson_question_desc_how">Pagsamahin ang parehong kamay sa harap ng iyong dibdib, na nakaharap pababa ang mga palad. Pagkatapos, paikutin ang mga kamay palabas upang ang mga palad ay humarap pataas, na parang may ipinapakita.</string>
+
+        <!-- ================================================= -->
+        <!-- Chapter 5: Deskripsyon ng mga Araw ng Linggo      -->
+        <!-- ================================================= -->
+        <string name="lesson_day_desc_monday">Bumuo ng letrang \'M\' sa pamamagitan ng paglalagay ng iyong hinlalaki sa ilalim ng iyong unang tatlong daliri. Pagkatapos ay gumawa ng maliit na pabilog na galaw sa harap ng iyong dibdib.</string>
+        <string name="lesson_day_desc_tuesday">Gawin ang letrang \'T\' sa pamamagitan ng paglalagay ng iyong hintuturo sa ibabaw ng iyong hinlalaki. Igalaw ang iyong kamay sa isang maliit na bilog sa harap ng iyong dibdib.</string>
+        <string name="lesson_day_desc_wednesday">Bumuo ng letrang \'W\' gamit ang iyong tatlong gitnang daliri na nakataas, habang nakababa ang iyong hinlalaki at kalingkingan. Igalaw nang bahagya ang iyong kamay sa isang pabilog na galaw sa harap ng iyong dibdib.</string>
+        <string name="lesson_day_desc_thursday">Pagsamahin ang mga letrang \'T\' at \'H\' nang magkasunod. Una, bumuo ng letrang \'T\' gamit ang iyong hintuturo sa ibabaw ng iyong hinlalaki, pagkatapos ay i-slide ang iyong kamay sa hugis \'H\' (nakaunat na magkasama ang hintuturo at gitnang daliri, nakaharap patagilid ang palad).</string>
+        <string name="lesson_day_desc_friday">Gawin ang letrang \'F\' sa pamamagitan ng pagdidikit ng iyong hintuturo at hinlalaki upang bumuo ng isang maliit na bilog, habang ang ibang mga daliri ay nananatiling nakaunat. Igalaw nang bahagya ang kamay sa harap ng iyong dibdib.</string>
+        <string name="lesson_day_desc_saturday">Bumuo ng letrang \'S\' sa pamamagitan ng paggawa ng isang nakasarang kamao na ang iyong hinlalaki ay nakapatong sa iyong mga daliri. Igalaw ang iyong kamay sa isang maliit na pabilog na galaw sa harap ng iyong dibdib.</string>
+        <string name="lesson_day_desc_sunday">Hawakan ang parehong bukas na kamay na nakaharap ang mga palad. Pagkatapos ay bahagyang igalaw ang mga ito sa isang pabilog na galaw nang sabay.</string>
+
+    <!-- Chapter completion  -->
+    <string name="final_completion_title">Binabati kita! 🎉</string>
+    <string name="final_completion_message">Matagumpay mong natapos ang lahat ng mga aralin at pagsusulit sa Gabay. Malaking hakbang ang iyong nagawa sa pag-aaral ng Filipino Sign Language. Ipinagmamalaki ka namin!</string>
+    <string name="final_completion_button">Kumpletuhin</string>
+
+
+</resources>

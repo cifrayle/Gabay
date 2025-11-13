@@ -1,82 +1,14 @@
 <resources>
     <string name="app_name">Gabay</string>
-    <string name="_1">1</string>
-    <string name="_2">2</string>
-    <string name="_3">3</string>
-    <string name="_4">4</string>
-    <string name="_5">5</string>
-    <string name="_6">6</string>
-    <string name="_7">7</string>
-    <string name="_8">8</string>
-    <string name="_9">9</string>
-    <string name="_10">10</string>
-    <string name="_11">11</string>
-    <string name="_12">12</string>
-    <string name="_13">13</string>
-    <string name="_14">14</string>
-    <string name="_15">15</string>
-    <string name="chapter_1">Chapter 1</string>
-    <string name="chapter_2">Chapter 2</string>
-    <string name="chapter_3">Chapter 3</string>
-    <string name="chapter_4">Chapter 4</string>
-    <string name="chapter_5">Chapter 5</string>
-    <string name="level_1">Level 1</string>
-    <string name="level_2">Level 2</string>
-    <string name="level_3">Level 3</string>
-    <string name="level_4">Level 4</string>
-    <string name="level_5">Level 5</string>
-    <string name="level_6">Level 6</string>
-    <string name="level_7">Level 7</string>
-    <string name="level_8">Level 8</string>
-    <string name="level_9">Level 9</string>
-    <string name="level_10">Level 10</string>
-    <string name="level_11">Level 11</string>
-    <string name="level_12">Level 12</string>
-    <string name="level_13">Level 13</string>
-    <string name="level_14">Level 14</string>
-    <string name="level_15">Level 15</string>
+
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
+    <string name="next">Next</string>
+    <string name="previous">Prev</string>
+
     <string name="title_activity_auth">AuthActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -88,4 +20,238 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- chapter numbers -->
+    <string name="chapter_1">Chapter 1</string>
+    <string name="chapter_2">Chapter 2</string>
+    <string name="chapter_3">Chapter 3</string>
+    <string name="chapter_4">Chapter 4</string>
+    <string name="chapter_5">Chapter 5</string>
+
+    <!-- quiz -->
+    <string name="quiz_completed">Quiz completed!</string>
+    <string name="quiz_failed">Quiz failed</string>
+    <string name="back_to_lesson">Back to lesson</string>
+    <string name="score_format">%1$s: %2$d/%3$d</string>
+    <string name="score">Your score: </string>
+    <string name="finish">Finish</string>
+    <string name="quiz_counter_format">Question %1$d of %2$d</string>
+    <string name="submit_answer">Sumbit answer</string>
+    <string name="mq_title">Matching quiz</string>
+    <string name="mq_instructions">Drag the images to match with the correct handsign.</string>
+    <string name="mcq_title">Chapter quiz</string>
+    <string name="mcq_instruction">Multiple choice: </string>
+    <string name="mcq_instruction2">Select the correct sign. </string>
+
+
+
+    <!-- Format for displaying level progress in the profile -->
+    <string name="levels_completed_format">%1$d/%2$d levels completed</string>
+    <string name="all_levels_completed">All levels completed! 🎉</string>
+
+    <!-- General Titles -->
+    <string name="greet" >Hello, </string>
+    <string name="lessons">Your Lessons</string>
+    <string name="settings">Settings</string>
+    <string name="overall_progress" >Your overall progress: </string>
+    <string name="learning_progress" >Learning progress</string>
+    <string name="level_progress" >Level progress</string>
+    <string name="chapters_completed" >Completed chapters</string>
+    <string name="quiz_passed">Quiz passed</string>
+
+    <!-- Settings -->
+    <string name="general_setting" >General</string>
+    <string name="language_setting" >Language</string>
+    <string name="sound_setting" >Sound effects</string>
+    <string name="notification_setting" >Push notifications</string>
+
+    <string name="support_feedback" >Support and feedback</string>
+    <string name="contact_setting" >Contact Us</string>
+    <string name="rate_setting" >Rate Gabay</string>
+
+    <string name="about_setting" >About</string>
+    <string name="app_version" >App version</string>
+    <string name="logout_btn" >LOG OUT</string>
+    <string name="how_to" >How to: </string>
+
+
+        <!-- Generic Chapter Title Format -->
+        <string name="chapter_title_format">Chapter %1$d</string>
+
+        <!-- Chapter Subtitles  -->
+        <string name="chapter1_subtitle">Filipino Alphabet</string>
+        <string name="chapter2_subtitle">Common Greetings</string>
+        <string name="chapter3_subtitle">Numbers</string>
+        <string name="chapter4_subtitle">Questions</string>
+        <string name="chapter5_subtitle">Days of the Week</string>
+
+
+    <string name="language_english">English</string>
+    <string name="language_filipino">Filipino</string>
+    <string name="select_language">Select Language</string>
+    <string name="language_changed_to_english">Language changed to English</string>
+    <string name="language_changed_to_filipino">Nabago ang wika sa Filipino</string>
+    <string name="cancel">Cancel</string>
+    <string name="logout_title">Logout</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="logout_yes">Yes</string>
+    <string name="logout_no">No</string>
+    <string name="logged_out_success">Logged out successfully</string>
+
+
+    <!-- lesson fragment -->
+        <!-- Chapter 1 Lessons: Filipino Alphabet -->
+        <string name="lesson_letter_a">Letter A</string>
+        <string name="lesson_letter_b">Letter B</string>
+        <string name="lesson_letter_c">Letter C</string>
+        <string name="lesson_letter_d">Letter D</string>
+        <string name="lesson_letter_e">Letter E</string>
+        <string name="lesson_letter_f">Letter F</string>
+        <string name="lesson_letter_g">Letter G</string>
+        <string name="lesson_letter_h">Letter H</string>
+        <string name="lesson_letter_i">Letter I</string>
+        <string name="lesson_letter_j">Letter J</string>
+        <string name="lesson_letter_k">Letter K</string>
+        <string name="lesson_letter_l">Letter L</string>
+        <string name="lesson_letter_m">Letter M</string>
+        <string name="lesson_letter_n">Letter N</string>
+        <string name="lesson_letter_enye">Letter Ñ</string>
+        <string name="lesson_letter_ng">Letter NG</string>
+        <string name="lesson_letter_o">Letter O</string>
+        <string name="lesson_letter_p">Letter P</string>
+        <string name="lesson_letter_q">Letter Q</string>
+        <string name="lesson_letter_r">Letter R</string>
+        <string name="lesson_letter_s">Letter S</string>
+        <string name="lesson_letter_t">Letter T</string>
+        <string name="lesson_letter_u">Letter U</string>
+        <string name="lesson_letter_v">Letter V</string>
+        <string name="lesson_letter_w">Letter W</string>
+        <string name="lesson_letter_x">Letter X</string>
+        <string name="lesson_letter_y">Letter Y</string>
+        <string name="lesson_letter_z">Letter Z</string>
+
+        <!-- Chapter 2 Lessons: Basic Greetings -->
+        <string name="lesson_greeting_hello">Hello</string>
+        <string name="lesson_greeting_how_are_you">How are you?</string>
+        <string name="lesson_greeting_sorry">Sorry</string>
+        <string name="lesson_greeting_thank_you_formal">Thank you (Formal)</string>
+        <string name="lesson_greeting_thank_you_informal">Thank you (Informal)</string>
+
+        <!-- Chapter 3 Lessons: Numbers -->
+        <string name="lesson_number_1">Number 1</string>
+        <string name="lesson_number_2">Number 2</string>
+        <string name="lesson_number_3">Number 3</string>
+        <string name="lesson_number_4">Number 4</string>
+        <string name="lesson_number_5">Number 5</string>
+        <string name="lesson_number_6">Number 6</string>
+        <string name="lesson_number_7">Number 7</string>
+        <string name="lesson_number_8">Number 8</string>
+        <string name="lesson_number_9">Number 9</string>
+        <string name="lesson_number_10">Number 10</string>
+
+        <!-- Chapter 4 Lessons: Questions -->
+        <string name="lesson_question_what">What</string>
+        <string name="lesson_question_when">When</string>
+        <string name="lesson_question_where">Where</string>
+        <string name="lesson_question_which">Which</string>
+        <string name="lesson_question_who">Who</string>
+        <string name="lesson_question_why">Why</string>
+        <string name="lesson_question_how">How</string>
+
+        <!-- Chapter 5 Lessons: Days of the Week -->
+        <string name="lesson_day_monday">Monday</string>
+        <string name="lesson_day_tuesday">Tuesday</string>
+        <string name="lesson_day_wednesday">Wednesday</string>
+        <string name="lesson_day_thursday">Thursday</string>
+        <string name="lesson_day_friday">Friday</string>
+        <string name="lesson_day_saturday">Saturday</string>
+        <string name="lesson_day_sunday">Sunday</string>
+
+        <string name="level_counter_format">Level %1$d of %2$d</string>
+        <string name="chapter_quiz">Chapter quiz</string>
+
+
+        <!-- =================================== -->
+        <!-- Chapter 1: Alphabet Descriptions    -->
+        <!-- =================================== -->
+        <string name="lesson_alphabet_desc_a">Make a fist. Keep your thumb on the side of your fist, pointing to the side, not across the front of your other fingers.</string>
+        <string name="lesson_alphabet_desc_b">Keep your fingers straight and together, palm facing forward. Tuck your thumb across your palm.</string>
+        <string name="lesson_alphabet_desc_c">Curve your hand into a “C” shape, with your fingers and thumb forming a half circle.</string>
+        <string name="lesson_alphabet_desc_d">Touch your thumb and middle, ring, and pinky fingertips together while raising your index finger straight up.</string>
+        <string name="lesson_alphabet_desc_e">Curl your fingers toward your palm and place your thumb across them, forming a small curved shape like the lowercase \'e\'.</string>
+        <string name="lesson_alphabet_desc_f">Form an “OK” sign — connect your thumb and index finger to make a circle while the other three fingers are raised.</string>
+        <string name="lesson_alphabet_desc_g">Hold your hand sideways with your thumb and index finger pointing outward, as if showing a small distance between them.</string>
+        <string name="lesson_alphabet_desc_h">Hold out your index and middle finger together, pointing to the side, while the rest are closed — like a sideways peace sign.</string>
+        <string name="lesson_alphabet_desc_i">Raise your pinky finger while keeping the rest closed in a fist.</string>
+        <string name="lesson_alphabet_desc_j">Start with the “I” sign, then draw a “J” in the air using your pinky finger.</string>
+        <string name="lesson_alphabet_desc_k">Raise your index and middle fingers apart (like a “V”), then place your thumb between them.</string>
+        <string name="lesson_alphabet_desc_l">Extend your index finger upward and your thumb sideways to form an “L” shape.</string>
+        <string name="lesson_alphabet_desc_m">Place your thumb under your first three fingers (index, middle, ring), with your pinky out or folded — representing the three bumps of “M”.</string>
+        <string name="lesson_alphabet_desc_n">Similar to “M” but only place your thumb under two fingers (index and middle) — forming the two bumps of “N”.</string>
+        <string name="lesson_alphabet_desc_enye">Start with the “N” sign, then make a small waving motion (side to side).</string>
+        <string name="lesson_alphabet_desc_ng">Start with the “N” sign, then make a “G” sign.</string>
+        <string name="lesson_alphabet_desc_o">Form a full “O” with your fingers and thumb touching each other to make a round circle.</string>
+        <string name="lesson_alphabet_desc_p">Make a “K” shape, then tilt your wrist downward — the index finger points forward.</string>
+        <string name="lesson_alphabet_desc_q">Form the same shape as “G”, but point it slightly downward.</string>
+        <string name="lesson_alphabet_desc_r">Cross your index and middle fingers.</string>
+        <string name="lesson_alphabet_desc_s">Similar to “A” sign, but make a fist with your thumb crossing in front of your fingers.</string>
+        <string name="lesson_alphabet_desc_t">Make a “thumbs up” gesture, and place your index finger on top of your thumb.</string>
+        <string name="lesson_alphabet_desc_u">Raise your index and middle fingers together, touching side by side.</string>
+        <string name="lesson_alphabet_desc_v">Raise your index and middle fingers apart to form a “V” sign.</string>
+        <string name="lesson_alphabet_desc_w">Raise your index, middle, and ring fingers to form a “W”.</string>
+        <string name="lesson_alphabet_desc_x">Bend your index finger to form a hook while keeping the rest closed.</string>
+        <string name="lesson_alphabet_desc_y">Extend your thumb and pinky finger out, keeping the other fingers closed.</string>
+        <string name="lesson_alphabet_desc_z">Use your index finger to draw a “Z” shape in the air.</string>
+
+        <!-- ===================================== -->
+        <!-- Chapter 2: Greetings Descriptions     -->
+        <!-- ===================================== -->
+        <string name="lesson_greeting_desc_hello">Raise your dominant hand near your temple, like giving a casual salute. Move your hand outward slightly as if greeting someone from a distance.</string>
+        <string name="lesson_greeting_desc_how_are_you">Place both hands together in front of your chest, palms facing downward. Then, rotate your hands outward so the palms face up, as if showing or presenting something. And point your index finger forward.</string>
+        <string name="lesson_greeting_desc_sorry">Form a fist with your dominant hand and place it over your chest. Move your fist in a small circular motion a few times.</string>
+        <string name="lesson_greeting_desc_thank_you_formal">Place both hands near your lips with fingertips touching the mouth.</string>
+        <string name="lesson_greeting_desc_thank_you_informal">Touch your lips lightly with the fingertips of one hand, then move your hand forward.</string>
+
+        <!-- =================================== -->
+        <!-- Chapter 3: Numbers Descriptions     -->
+        <!-- =================================== -->
+        <string name="lesson_number_desc_1">Raise your index finger while keeping the other fingers closed into your palm. Make sure your palm faces outward. This simple handshape clearly represents the number one.</string>
+        <string name="lesson_number_desc_2">Extend your index and middle fingers together while keeping the other fingers folded down. Your palm should face outward, similar to a peace sign, representing the number two.</string>
+        <string name="lesson_number_desc_3">Raise your thumb, index finger, and middle finger while keeping your ring and pinky fingers folded down. Hold your palm facing outward — this represents the number three.</string>
+        <string name="lesson_number_desc_4">Extend all four fingers upward — index, middle, ring, and pinky — with your thumb tucked against your palm. This clearly represents the number four.</string>
+        <string name="lesson_number_desc_5">Spread out all five fingers with your palm facing forward, as if showing your whole hand. This open-hand gesture symbolizes the number five.</string>
+        <string name="lesson_number_desc_6">Touch the tip of your thumb to the tip of your pinky finger, forming a small circle. Keep your other three fingers extended upward. This gesture visually connects the smallest and largest fingers to represent the number six.</string>
+        <string name="lesson_number_desc_7">Touch the tip of your thumb to the tip of your ring finger while keeping the other fingers extended. This creates a shape that symbolizes the number seven.</string>
+        <string name="lesson_number_desc_8">Touch the tip of your thumb to your middle finger, with your other fingers extended upward. This shape is used to represent the number eight.</string>
+        <string name="lesson_number_desc_9">Touch the tip of your thumb to your index finger to form a small circle, keeping the rest of your fingers extended. It’s similar to an \'OK\' sign — symbolizing the number nine.</string>
+        <string name="lesson_number_desc_10">Make a closed fist and slightly shake it side to side, or extend your thumb upward like a thumbs-up sign. This gesture is used to represent the number ten.</string>
+
+        <!-- ====================================== -->
+        <!-- Chapter 4: Questions Descriptions      -->
+        <!-- ====================================== -->
+        <string name="lesson_question_desc_what">Hold one hand open in front of your chest with your palm facing upward. Move your hand slightly side to side while raising your eyebrows.</string>
+        <string name="lesson_question_desc_when">Raise your index finger of one hand and use the index finger of your other hand to trace a small circular motion around it. Then, point your finger forward while slightly raising your eyebrows.</string>
+        <string name="lesson_question_desc_where">Raise both of your hands and move it side to side gently, with your palm facing outward. Tilt your head slightly and raise your eyebrows to show you’re asking a question.</string>
+        <string name="lesson_question_desc_which">Hold both hands in front of your chest with thumbs extended upward and other fingers closed. Move each hand alternately up and down, as if comparing two choices.</string>
+        <string name="lesson_question_desc_who">Form a slightly open hand near your chin. Gently close it up until you form a shape that looks like you are grabbing something tiny with all of your fingers. Use a curious facial expression to show you’re asking, \'Who?\'</string>
+        <string name="lesson_question_desc_why">Touch your forehead with your fingertips, then move your hand outward and downward while changing it into a \'Y\' sign (thumb and pinky extended).</string>
+        <string name="lesson_question_desc_how">Place both hands together in front of your chest, palms facing downward. Then, rotate your hands outward so the palms face up, as if showing or presenting something.</string>
+
+        <!-- ========================================= -->
+        <!-- Chapter 5: Days of the Week Descriptions  -->
+        <!-- ========================================= -->
+        <string name="lesson_day_desc_monday">Form the letter \'M\' by placing your thumb under your first three fingers. Then make a small circular motion in front of your chest.</string>
+        <string name="lesson_day_desc_tuesday">Make the letter \'T\' by placing your index finger on top of your thumb. Move your hand in a small circle in front of your chest.</string>
+        <string name="lesson_day_desc_wednesday">Form the letter \'W\' using your three middle fingers raised, with your thumb and pinky down. Move your hand slightly in a circular motion in front of your chest.</string>
+        <string name="lesson_day_desc_thursday">Combine the letters \'T\' and \'H\' in sequence. First, form the letter \'T\' with your index finger on top of your thumb, then slide your hand into the \'H\' shape (index and middle fingers extended together, palm facing sideways).</string>
+        <string name="lesson_day_desc_friday">Make the letter \'F\' by touching your index finger and thumb together to form a small circle, while the other fingers stay extended. Move the hand slightly in front of your chest.</string>
+        <string name="lesson_day_desc_saturday">Form the letter \'S\' by making a closed fist with your thumb placed over your fingers. Move your hand in a small circular motion in front of your chest.</string>
+        <string name="lesson_day_desc_sunday">Hold both open hands with palms facing forward. Then move them slightly in a circular motion together.</string>
+
+    <!-- Chapter completion  -->
+    <string name="final_completion_title">Congratulations! 🎉</string>
+    <string name="final_completion_message">You have successfully completed all available lessons and quizzes in Gabay. You\'ve taken a huge step in learning Filipino Sign Language. We\'re proud of you!</string>
+    <string name="final_completion_button">Complete</string>
+
+
 </resources>

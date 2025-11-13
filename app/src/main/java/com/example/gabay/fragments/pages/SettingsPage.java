@@ -6,12 +6,15 @@ import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +26,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
+import androidx.core.os.LocaleListCompat;
 
 import com.example.gabay.R;
 import com.example.gabay.activities.AuthActivity;
@@ -32,7 +37,10 @@ import com.example.gabay.activities.LessonActivity;
 import com.example.gabay.activities.MainActivity;
 import com.example.gabay.fragments.BaseFragment;
 import com.example.gabay.services.SupabaseJavaService;
+import com.example.gabay.services.UserAnalyticsService;
 import com.example.gabay.utils.NotificationReceiver;
+import com.example.gabay.utils.RatingDialog;
+import com.example.gabay.utils.SessionTracker;
 import com.example.gabay.viewmodels.ProgressViewModel;
 
 import java.util.Calendar;
@@ -58,43 +66,6 @@ public class SettingsPage extends BaseFragment {
 
     private static final String CHANNEL_ID = "gabay_daily_notifications";
     private static final int NOTIFICATION_ID = 1;
-
-    private String[] getDailyNotifications() {
-        return new String[]{
-                // Motivational & Engagement
-                "📚 Daily FSL Practice! Learn a new sign today and expand your communication skills!",
-                "🌟 Consistency is key! Spend 5 minutes practicing Filipino Sign Language now.",
-                "💫 Your FSL journey continues! Open Gabay to learn something new today.",
-
-                // Educational & Practical
-                "👋 Did you know? Practice the Filipino Sign Language alphabet today!",
-                "🗣️ Learn how to sign basic Filipino greetings in today's session!",
-                "🔄 Quick FSL Tip: Master 3 new signs every day and see your progress soar!",
-
-                // Cultural & Community Focused
-                "🤟 Connect with the Filipino Deaf community through sign language! Practice now.",
-                "🇵🇭 Embrace Filipino culture through sign language. Learn a new phrase today!",
-                "❤️ Communication bridges gaps. Practice FSL to connect with more people!",
-
-                // Progress & Achievement
-                "📈 Your FSL skills are growing! Continue your daily learning streak today!",
-                "🎯 Daily Challenge: Can you sign 'Kumusta' perfectly? Let's practice!",
-                "🏆 Consistency builds fluency! Don't break your learning streak - practice now!",
-
-                // Practical Usage
-                "🛍️ Learn FSL signs for shopping and dining - useful for everyday conversations!",
-
-                // Interactive & Engaging
-                "🔍 Quiz Time! Test your FSL knowledge with today's quick sign recognition!",
-                "🎭 Learn emotional expressions in FSL - convey feelings without words!",
-                "📝 New Lesson Available: Emergency signs that could be life-saving!",
-
-                // Weekend Specials
-                "🎉 Weekend Learning! Explore fun FSL phrases for social situations!",
-                "📖 Story Time: Learn how to sign a short Filipino story in FSL!",
-                "👥 Social Signs Saturday: Master introductions and conversations in FSL!"
-        };
-    }
 
     @Nullable
     @Override
@@ -128,7 +99,7 @@ public class SettingsPage extends BaseFragment {
                 editor.apply();
             });
 
-            // Initialize notification switch - UPDATED
+            // Initialize notification switch - FIXED
             boolean notificationsEnabled = prefs.getBoolean(NOTIFICATION_PREF_KEY, true);
             notificationSwitch.setChecked(notificationsEnabled);
             notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -138,12 +109,24 @@ public class SettingsPage extends BaseFragment {
 
                 if (isChecked) {
                     createNotificationChannel();
-                    //scheduleDailyNotification(); // Start scheduling when enabled
-                    showTestNotification(); // Optional: show test notification
+                    // Schedule on UI thread to avoid context issues
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        scheduleDailyNotification();
+                        showTestNotification(); // Optional: show confirmation
+                    }, 100);
                 } else {
-                    //cancelDailyNotification(); // Cancel when disabled
+                    cancelDailyNotification();
                 }
             });
+
+            // Schedule initial notifications with safety check
+            if (notificationsEnabled) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (isAdded() && !isDetached()) {
+                        scheduleDailyNotification();
+                    }
+                }, 500);
+            }
 
             // Initialize language
             String currentLanguage = prefs.getString(LANGUAGE_PREF_KEY, LANGUAGE_ENGLISH);
@@ -161,13 +144,6 @@ public class SettingsPage extends BaseFragment {
                 logoutButton.setOnClickListener(v -> logout());
             }
 
-            // Create notification channel on initialization
-            createNotificationChannel();
-
-            // Schedule notifications if they're enabled
-            if (notificationsEnabled) {
-                //scheduleDailyNotification();
-            }
         }
     }
 
@@ -189,71 +165,32 @@ public class SettingsPage extends BaseFragment {
         }
     }
 
-    private void showDailyNotification() {
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean notificationsEnabled = prefs.getBoolean(NOTIFICATION_PREF_KEY, true);
-
-        if (!notificationsEnabled) {
-            return;
-        }
-
-        NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Get random daily message
-        String[] notifications = getDailyNotifications();
-        Random random = new Random();
-        String contentText = notifications[random.nextInt(notifications.length)];
-
-        // Create pending intent to open app
-        Intent intent = new Intent(requireContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notif)
-                .setContentTitle("Gabay - Filipino Sign Language")
-                .setContentText(contentText)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-        // Add action button for quick learning
-        Intent learnIntent = new Intent(requireContext(), LessonActivity.class);
-        PendingIntent learnPendingIntent = PendingIntent.getActivity(requireContext(), 1, learnIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        builder.addAction(R.drawable.ic_multicolor_books, "Learn Now", learnPendingIntent);
-
-        if (notificationManager != null) {
-            // Use different ID each day to allow multiple notifications
-            int dailyId = (int) System.currentTimeMillis();
-            notificationManager.notify(dailyId, builder.build());
-        }
-    }
-
     @SuppressLint({"ScheduleExactAlarm", "ObsoleteSdkInt"})
     private void scheduleDailyNotification() {
-        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-        Intent notificationIntent = new Intent(requireContext(), NotificationReceiver.class);
-        notificationIntent.setAction("gabay.app.DAILY_NOTIFICATION");
+        try {
+            AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager == null) {
+                Log.e("SettingsPage", "AlarmManager is null");
+                return;
+            }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            Intent notificationIntent = new Intent(requireContext(), NotificationReceiver.class);
+            notificationIntent.setAction("gabay.app.DAILY_NOTIFICATION");
 
-        // Set notification time (e.g., 9:00 AM daily)
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        // If it's already past 9 AM, schedule for next day
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
+            // Set notification time (e.g., 9:00 AM daily)
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 9);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
 
-        if (alarmManager != null) {
+            // If it's already past 9 AM, schedule for next day
+            if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+
             // Use setExactAndAllowWhileIdle for better reliability on Android 6.0+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
@@ -262,50 +199,94 @@ public class SettingsPage extends BaseFragment {
                         AlarmManager.INTERVAL_DAY, pendingIntent);
             }
             Log.d("SettingsPage", "Daily notification scheduled for: " + calendar.getTime());
+
+        } catch (SecurityException e) {
+            Log.e("SettingsPage", "Schedule exact alarm permission required", e);
+
+            // ========== PUT THE FALLBACK CODE RIGHT HERE ==========
+            // Handle Android 12+ SCHEDULE_EXACT_ALARM permission requirement
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+                    Intent notificationIntent = new Intent(requireContext(), NotificationReceiver.class);
+                    notificationIntent.setAction("gabay.app.DAILY_NOTIFICATION");
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+                    // FIX: Create calendar instance for fallback
+                    Calendar fallbackCalendar = Calendar.getInstance();
+                    fallbackCalendar.setTimeInMillis(System.currentTimeMillis());
+                    fallbackCalendar.set(Calendar.HOUR_OF_DAY, 9);
+                    fallbackCalendar.set(Calendar.MINUTE, 0);
+                    fallbackCalendar.set(Calendar.SECOND, 0);
+                    if (fallbackCalendar.getTimeInMillis() <= System.currentTimeMillis()) {
+                        fallbackCalendar.add(Calendar.DAY_OF_YEAR, 1);
+                    }
+
+                    // Fallback: use setAlarmClock which doesn't require exact alarm permission
+                    alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(fallbackCalendar.getTimeInMillis(), pendingIntent), pendingIntent);
+                    Log.d("SettingsPage", "Used setAlarmClock fallback");
+                } catch (Exception ex) {
+                    Log.e("SettingsPage", "Fallback scheduling also failed", ex);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("SettingsPage", "Failed to schedule notification", e);
         }
     }
 
     private void cancelDailyNotification() {
-        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-        Intent notificationIntent = new Intent(requireContext(), NotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        try {
+            AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+            Intent notificationIntent = new Intent(requireContext(), NotificationReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        if (alarmManager != null) {
-            alarmManager.cancel(pendingIntent);
-            Log.d("SettingsPage", "Daily notifications cancelled");
+            if (alarmManager != null) {
+                alarmManager.cancel(pendingIntent);
+                Log.d("SettingsPage", "Daily notifications cancelled");
+            }
+        } catch (Exception e) {
+            Log.e("SettingsPage", "Failed to cancel notification", e);
         }
     }
 
     private void showTestNotification() {
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean notificationsEnabled = prefs.getBoolean(NOTIFICATION_PREF_KEY, true);
+        try {
+            SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            boolean notificationsEnabled = prefs.getBoolean(NOTIFICATION_PREF_KEY, true);
 
-        if (!notificationsEnabled) {
-            return;
-        }
+            if (!notificationsEnabled) {
+                return;
+            }
 
-        NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager == null) {
+                Log.e("SettingsPage", "NotificationManager is null");
+                return;
+            }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notif)
-                .setContentTitle("Gabay")
-                .setContentText("Daily FSL reminders are now enabled!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notif)
+                    .setContentTitle("Gabay")
+                    .setContentText("Daily FSL reminders are now enabled!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
 
-        if (notificationManager != null) {
             notificationManager.notify(999, builder.build()); // Use fixed ID for test
+            Log.d("SettingsPage", "Test notification shown");
+        } catch (Exception e) {
+            Log.e("SettingsPage", "Failed to show test notification", e);
         }
     }
 
     // REST OF YOUR EXISTING METHODS (keep all your existing methods below)
 
+    // Use string resources instead of hardcoded text
     private void updateLanguageDisplay(String language) {
         if (languageValue != null) {
             if (LANGUAGE_FILIPINO.equals(language)) {
-                languageValue.setText("Filipino");
+                languageValue.setText(R.string.language_filipino);
             } else {
-                languageValue.setText("English");
+                languageValue.setText(R.string.language_english);
             }
         }
     }
@@ -314,38 +295,70 @@ public class SettingsPage extends BaseFragment {
         SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String currentLanguage = prefs.getString(LANGUAGE_PREF_KEY, LANGUAGE_ENGLISH);
 
-        String[] languages = {"English", "Filipino"};
+        // Use string resources for the dialog items
+        final String[] languages = {
+                getString(R.string.language_english),
+                getString(R.string.language_filipino)
+        };
+        final String[] languageCodes = {LANGUAGE_ENGLISH, LANGUAGE_FILIPINO};
+
         int selectedIndex = LANGUAGE_FILIPINO.equals(currentLanguage) ? 1 : 0;
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.BlackTextDialog)
-                .setTitle("Select Language")
+                .setTitle(R.string.select_language) // Use string resource
                 .setSingleChoiceItems(languages, selectedIndex, (dialogInterface, which) -> {
-                    String selectedLanguage = (which == 0) ? LANGUAGE_ENGLISH : LANGUAGE_FILIPINO;
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString(LANGUAGE_PREF_KEY, selectedLanguage);
-                    editor.apply();
+                    String selectedLanguageCode = languageCodes[which];
 
-                    updateLanguageDisplay(selectedLanguage);
+                    // Only proceed if the language was actually changed
+                    if (!currentLanguage.equals(selectedLanguageCode)) {
+                        // 1. Save the new preference
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString(LANGUAGE_PREF_KEY, selectedLanguageCode);
+                        editor.apply();
 
-                    // Show message (in selected language)
-                    String message = (which == 0)
-                            ? "Language changed to English"
-                            : "Nabago ang wika sa Filipino";
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                        // 2. Set the application locale
+                        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(selectedLanguageCode));
+                    }
 
+                    // 3. Dismiss the dialog. The activity will be recreated by the system.
                     dialogInterface.dismiss();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null) // Use string resource
                 .create();
 
         dialog.show();
 
-        // Optionally set button colors if needed
         Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
         if (negativeButton != null) {
-            negativeButton.setTextColor(getResources().getColor(R.color.buttonTextColor));
+            negativeButton.setTextColor(getResources().getColor(R.color.buttonTextColor, null));
         }
     }
+
+    private void logout() {
+        if (getActivity() != null) {
+            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.BlackTextDialog)
+                    .setTitle(R.string.logout_title) // Use string resource
+                    .setMessage(R.string.logout_message) // Use string resource
+                    .setPositiveButton(R.string.logout_yes, (dialogInterface, which) -> { // Use string resource
+                        performLogout();
+                    })
+                    .setNegativeButton(R.string.logout_no, null) // Use string resource
+                    .create();
+
+            dialog.show();
+
+            // Set button colors after showing the dialog
+            Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
+            if (positiveButton != null) {
+                positiveButton.setTextColor(getResources().getColor(R.color.secondaryColor, null));
+            }
+            if (negativeButton != null) {
+                negativeButton.setTextColor(getResources().getColor(R.color.buttonTextColor, null));
+            }
+        }
+    }
+
 
     private void openContactUs() {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
@@ -356,46 +369,41 @@ public class SettingsPage extends BaseFragment {
 
         try {
             startActivity(Intent.createChooser(emailIntent, "Send email using..."));
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(requireContext(), "No email app found. Please contact us at gabayfsl@gmail.com", Toast.LENGTH_LONG).show();
         }
     }
 
     private void openRateApp() {
-        try {
-            // Try to open Play Store
-            Intent rateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + requireContext().getPackageName()));
-            startActivity(rateIntent);
-        } catch (android.content.ActivityNotFoundException e) {
-            // If Play Store app is not available, open in browser
-            Intent rateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + requireContext().getPackageName()));
-            startActivity(rateIntent);
-        }
+        // Show custom rating dialog instead of directly opening Play Store
+        RatingDialog ratingDialog = new RatingDialog(requireContext());
+        ratingDialog.show(new RatingDialog.RatingCallback() {
+            @Override
+            public void onRatingSubmitted(int rating, String comment) {
+                Log.d("SettingsPage", "User submitted rating: " + rating + " stars");
+                // Track this rating event in analytics
+                trackUserRatingEvent(rating);
+            }
+
+            @Override
+            public void onRatingCancelled() {
+                Log.d("SettingsPage", "User cancelled rating dialog");
+            }
+        });
     }
 
-    private void logout() {
-        if (getActivity() != null) {
-            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.BlackTextDialog)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure you want to logout?")
-                    .setPositiveButton("Yes", (dialogInterface, which) -> {
-                        performLogout();
-                    })
-                    .setNegativeButton("No", null)
-                    .create();
-
-            dialog.show();
-
-            // Set button colors after showing the dialog
-            Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
-            Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
-            if (positiveButton != null) {
-                positiveButton.setTextColor(getResources().getColor(R.color.secondaryColor));
-            }
-            if (negativeButton != null) {
-                negativeButton.setTextColor(getResources().getColor(R.color.buttonTextColor));
-            }
-        }
+    /**
+     * Track rating event for analytics (optional)
+     */
+    private void trackUserRatingEvent(int rating) {
+        // This could be used for internal analytics
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("last_app_rating", rating);
+        editor.putLong("last_rating_time", System.currentTimeMillis());
+        editor.apply();
+        
+        Log.d("SettingsPage", "Rating event tracked locally: " + rating + " stars");
     }
 
     private void performLogout() {
@@ -413,13 +421,16 @@ public class SettingsPage extends BaseFragment {
         // 3. Clear SharedPreferences (credentials and tokens)
         clearAuthenticationData();
 
-        // 4. Sign out from Google (if using Google Sign-In)
+        // 4. Reset session tracking
+        SessionTracker.getInstance(requireContext()).resetSession();
+
+        // 5. Sign out from Google (if using Google Sign-In)
         signOutFromGoogle();
 
-        // 5. Show confirmation message
+        // 6. Show confirmation message
         Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show();
 
-        // 6. Navigate back to AuthActivity
+        // 7. Navigate back to AuthActivity
         navigateToAuthActivity();
     }
 

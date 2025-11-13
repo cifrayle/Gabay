@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_extrabold"
-            android:text="General"
+            android:text="@string/general_setting"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="Language"
+                    android:text="@string/language_setting"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="Sound effects"
+                    android:text="@string/sound_setting"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="Push Notifications"
+                    android:text="@string/notification_setting"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -190,7 +190,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/nunito_extrabold"
-            android:text="Support &amp; Feedback"
+            android:text="@string/support_feedback"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -234,7 +234,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="Contact Us"
+                    android:text="@string/contact_setting"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -284,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="Rate Gabay"
+                    android:text="@string/rate_setting"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -305,7 +305,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/nunito_extrabold"
-            android:text="About"
+            android:text="@string/about_setting"
             android:textColor="@color/buttonTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -347,7 +347,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nunito"
-                    android:text="App Version"
+                    android:text="@string/app_version"
                     android:textColor="@color/buttonTextColor"
                     android:textSize="14sp" />
 
@@ -373,7 +373,7 @@
             android:backgroundTint="@color/secondaryColor"
             android:elevation="2dp"
             android:fontFamily="@font/nunito_bold"
-            android:text="LOG OUT"
+            android:text="@string/logout_btn"
             android:textColor="@color/primaryColor"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"

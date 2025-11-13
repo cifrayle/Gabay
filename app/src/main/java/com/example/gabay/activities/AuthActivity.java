@@ -166,18 +166,95 @@ public class AuthActivity extends AppCompatActivity {
             Log.d(TAG, "Google sign-out cleanup: " + e.getMessage());
         }
     }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
+        handleDeepLink(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Handle deep link when activity is created
+        handleDeepLink(getIntent());
+    }
+
+    private void handleDeepLink(Intent intent) {
         Uri data = intent.getData();
         if (data != null && data.toString().startsWith("gabay://auth")) {
+            String path = data.getPath();
+            Log.d(TAG, "Deep link received: " + data.toString());
+
+            if (path != null) {
+                switch (path) {
+                    case "/confirm":
+                        handleEmailConfirmation(data);
+                        break;
+                    case "/reset":
+                        handlePasswordReset(data);
+                        break;
+                    case "/callback":
+                        showVerificationSuccessDialog();
+                        break;
+                    default:
+                        Log.d(TAG, "Unknown deep link path: " + path);
+                        break;
+                }
+            }
+        }
+    }
+
+    private void handleEmailConfirmation(Uri data) {
+        // Extract tokens from URL parameters
+        String accessToken = data.getQueryParameter("access_token");
+        String refreshToken = data.getQueryParameter("refresh_token");
+        String type = data.getQueryParameter("type");
+
+        Log.d(TAG, "Email confirmation - Type: " + type);
+
+        if ("signup".equals(type) && accessToken != null) {
+            // Save tokens and navigate to main activity
+            saveAuthTokens(accessToken, refreshToken);
+            showVerificationSuccessDialog();
+        } else {
             showVerificationSuccessDialog();
         }
     }
 
+    private void handlePasswordReset(Uri data) {
+        // Extract tokens from URL parameters
+        String accessToken = data.getQueryParameter("access_token");
+        String refreshToken = data.getQueryParameter("refresh_token");
+        String type = data.getQueryParameter("type");
+
+        Log.d(TAG, "Password reset - Type: " + type);
+
+        if ("recovery".equals(type) && accessToken != null) {
+            // Save tokens temporarily and show password reset dialog
+            saveAuthTokens(accessToken, refreshToken);
+            showPasswordResetDialog();
+        } else {
+            showPasswordResetDialog();
+        }
+    }
+
+    private void showPasswordResetDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Password Reset")
+                .setMessage("You can now set a new password. Please sign in and update your password in settings.")
+                .setPositiveButton("Sign In", (dialog, which) -> {
+                    dialog.dismiss();
+                    loadSignInFragment();
+                })
+                .setCancelable(false)
+                .show();
+    }
+
     private void showVerificationSuccessDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Email Verified 🎉")
+                .setTitle("Email Verified ")
                 .setMessage("Your account has been successfully verified. You can now sign in.")
                 .setPositiveButton("OK", (dialog, which) -> {
                     dialog.dismiss();

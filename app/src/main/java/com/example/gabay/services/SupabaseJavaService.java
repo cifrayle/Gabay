@@ -537,8 +537,12 @@ public class SupabaseJavaService {
 
         try {
             JSONObject updates = new JSONObject();
-            updates.put("chapter_" + chapter + "_quiz_completed", completed);
+            String fieldName = "chapter_" + chapter + "_quiz_completed";
+            updates.put(fieldName, completed);
             updates.put("updated_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date()));
+
+            Log.d("SupabaseService", "Updating quiz completion - Field: " + fieldName + ", Value: " + completed);
+            Log.d("SupabaseService", "Update payload: " + updates.toString());
 
             RequestBody body = RequestBody.create(updates.toString(), JSON);
             String updateUrl = REST_URL + "/user_profiles?id=eq." + userId;
@@ -562,10 +566,14 @@ public class SupabaseJavaService {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.isSuccessful()) {
-                        Log.d("SupabaseService", "Quiz completion updated successfully for chapter " + chapter);
+                        Log.d("SupabaseService", "✅ Quiz completion updated successfully for chapter " + chapter + 
+                              " (field: " + fieldName + " = " + completed + ")");
                         success.set(true);
                     } else {
-                        Log.e("SupabaseService", "Failed to update quiz completion: " + response.code() + " - " + response.body().string());
+                        String errorBody = response.body().string();
+                        Log.e("SupabaseService", "❌ Failed to update quiz completion: " + response.code() + " - " + errorBody);
+                        Log.e("SupabaseService", "Update URL was: " + updateUrl);
+                        Log.e("SupabaseService", "Update payload was: " + updates.toString());
                     }
                     latch.countDown();
                 }
@@ -664,18 +672,28 @@ public class SupabaseJavaService {
                     if (response.isSuccessful()) {
                         try {
                             String responseBody = response.body().string();
+                            Log.d("SupabaseService", "Quiz completion check - Raw response: " + responseBody);
+                            
                             JSONArray jsonArray = new JSONArray(responseBody);
                             if (jsonArray.length() > 0) {
                                 JSONObject profile = jsonArray.getJSONObject(0);
-                                boolean completed = profile.optBoolean("chapter_" + chapter + "_quiz_completed", false);
+                                Log.d("SupabaseService", "Quiz completion check - Profile data: " + profile.toString());
+                                
+                                String fieldName = "chapter_" + chapter + "_quiz_completed";
+                                boolean completed = profile.optBoolean(fieldName, false);
+                                
+                                Log.d("SupabaseService", "Quiz completion check for chapter " + chapter + 
+                                      " (field: " + fieldName + "): " + completed);
                                 isCompleted.set(completed);
-                                Log.d("SupabaseService", "Quiz completion check for chapter " + chapter + ": " + completed);
+                            } else {
+                                Log.w("SupabaseService", "No profile found for user during quiz completion check");
                             }
                         } catch (Exception e) {
                             Log.e("SupabaseService", "Error parsing profile for quiz completion: " + e.getMessage());
                         }
                     } else {
-                        Log.e("SupabaseService", "Failed to fetch profile for quiz completion: " + response.code());
+                        Log.e("SupabaseService", "Failed to fetch profile for quiz completion: " + response.code() + 
+                              " - " + response.body().string());
                     }
                     latch.countDown();
                 }
@@ -690,6 +708,119 @@ public class SupabaseJavaService {
         }
     }
 
+    /**
+     * Ensures that quiz completion fields exist in the user profile.
+     * This method can be called to initialize missing fields for existing users.
+     */
+    public static boolean ensureQuizCompletionFields() {
+        if (!isAuthenticated()) {
+            Log.e("SupabaseService", "User not authenticated");
+            return false;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean success = new AtomicBoolean(false);
+
+        try {
+            // First, get current profile to see what fields exist
+            String profileUrl = REST_URL + "/user_profiles?id=eq." + userId;
+
+            Request getRequest = new Request.Builder()
+                    .url(profileUrl)
+                    .addHeader("apikey", SUPABASE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .get()
+                    .build();
+
+            client.newCall(getRequest).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("SupabaseService", "Failed to fetch profile for field check: " + e.getMessage());
+                    latch.countDown();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            String responseBody = response.body().string();
+                            JSONArray jsonArray = new JSONArray(responseBody);
+                            
+                            if (jsonArray.length() > 0) {
+                                JSONObject profile = jsonArray.getJSONObject(0);
+                                JSONObject updates = new JSONObject();
+                                boolean needsUpdate = false;
+
+                                // Check each chapter's quiz completion field
+                                for (int i = 1; i <= 5; i++) {
+                                    String fieldName = "chapter_" + i + "_quiz_completed";
+                                    if (!profile.has(fieldName)) {
+                                        updates.put(fieldName, false);
+                                        needsUpdate = true;
+                                        Log.d("SupabaseService", "Missing field detected: " + fieldName);
+                                    }
+                                }
+
+                                if (needsUpdate) {
+                                    // Update the profile with missing fields
+                                    updates.put("updated_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date()));
+                                    
+                                    RequestBody body = RequestBody.create(updates.toString(), JSON);
+                                    Request updateRequest = new Request.Builder()
+                                            .url(profileUrl)
+                                            .addHeader("apikey", SUPABASE_API_KEY)
+                                            .addHeader("Authorization", "Bearer " + accessToken)
+                                            .addHeader("Content-Type", "application/json")
+                                            .addHeader("Prefer", "return=minimal")
+                                            .patch(body)
+                                            .build();
+
+                                    client.newCall(updateRequest).enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            Log.e("SupabaseService", "Failed to update missing fields: " + e.getMessage());
+                                            latch.countDown();
+                                        }
+
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            if (response.isSuccessful()) {
+                                                Log.d("SupabaseService", "✅ Quiz completion fields initialized successfully");
+                                                success.set(true);
+                                            } else {
+                                                Log.e("SupabaseService", "❌ Failed to initialize quiz fields: " + response.body().string());
+                                            }
+                                            latch.countDown();
+                                        }
+                                    });
+                                } else {
+                                    Log.d("SupabaseService", "✅ All quiz completion fields already exist");
+                                    success.set(true);
+                                    latch.countDown();
+                                }
+                            } else {
+                                Log.e("SupabaseService", "No profile found for field initialization");
+                                latch.countDown();
+                            }
+                        } else {
+                            Log.e("SupabaseService", "Failed to fetch profile: " + response.body().string());
+                            latch.countDown();
+                        }
+                    } catch (Exception e) {
+                        Log.e("SupabaseService", "Error during field initialization: " + e.getMessage());
+                        latch.countDown();
+                    }
+                }
+            });
+
+            latch.await(15, TimeUnit.SECONDS);
+            return success.get();
+
+        } catch (Exception e) {
+            Log.e("SupabaseService", "Error ensuring quiz completion fields: " + e.getMessage());
+            return false;
+        }
+    }
 
     public static String getAccessToken() {
         return accessToken;
@@ -713,6 +844,11 @@ public class SupabaseJavaService {
             json.put("username", username);
             json.put("total_chapters_completed", 0);
             json.put("total_quizzes_passed", 0);
+            
+            // Initialize quiz completion fields for all chapters
+            for (int i = 1; i <= 5; i++) {
+                json.put("chapter_" + i + "_quiz_completed", false);
+            }
 
             RequestBody body = RequestBody.create(json.toString(), JSON);
             Request request = new Request.Builder()

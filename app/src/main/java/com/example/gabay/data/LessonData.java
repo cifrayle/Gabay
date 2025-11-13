@@ -1,96 +1,98 @@
+// In LessonData.java
+
 package com.example.gabay.data;
 
 import com.example.gabay.R;
+
 public class LessonData {
 
-    // A simple model for each lesson
+    // MODIFIED: The model now holds an integer resource ID for the title
     public static class Lesson {
-        public final String title;
-        public final int videoRes;
+        public final int titleResId; // Changed from String to int
+        public final int videoResId;
 
-        public Lesson(String title, int videoRes) {
-            this.title = title;
-            this.videoRes = videoRes;
+        public Lesson(int titleResId, int videoResId) {
+            this.titleResId = titleResId;
+            this.videoResId = videoResId;
         }
     }
 
+    // MODIFIED: All chapters now use R.string references
+
     // Chapter 1 - Filipino Alphabet
     public static final Lesson[] CHAPTER1 = new Lesson[]{
-            new Lesson("Letter A", R.raw.a),
-            new Lesson("Letter B", R.raw.b),
-            new Lesson("Letter C", R.raw.c),
-            new Lesson("Letter D", R.raw.d),
-            new Lesson("Letter E", R.raw.e),
-            new Lesson("Letter F", R.raw.f),
-            new Lesson("Letter G", R.raw.g),
-            new Lesson("Letter H", R.raw.h),
-            new Lesson("Letter I", R.raw.i),
-            new Lesson("Letter J", R.raw.j),
-            new Lesson("Letter K", R.raw.k),
-            new Lesson("Letter L", R.raw.l),
-            new Lesson("Letter M", R.raw.m),
-            new Lesson("Letter N", R.raw.n),
-            new Lesson("Letter Ñ", R.raw.enye),
-            new Lesson("Letter NG", R.raw.ng),
-            new Lesson("Letter O", R.raw.o),
-            new Lesson("Letter P", R.raw.p),
-            new Lesson("Letter Q", R.raw.q),
-            new Lesson("Letter R", R.raw.r),
-            new Lesson("Letter S", R.raw.s),
-            new Lesson("Letter T", R.raw.t),
-            new Lesson("Letter U", R.raw.u),
-            new Lesson("Letter V", R.raw.v),
-            new Lesson("Letter W", R.raw.w),
-            new Lesson("Letter X", R.raw.x),
-            new Lesson("Letter Y", R.raw.y),
-            new Lesson("Letter Z", R.raw.z)
+            new Lesson(R.string.lesson_letter_a, R.raw.a),
+            new Lesson(R.string.lesson_letter_b, R.raw.b),
+            new Lesson(R.string.lesson_letter_c, R.raw.c),
+            new Lesson(R.string.lesson_letter_d, R.raw.d),
+            new Lesson(R.string.lesson_letter_e, R.raw.e),
+            new Lesson(R.string.lesson_letter_f, R.raw.f),
+            new Lesson(R.string.lesson_letter_g, R.raw.g),
+            new Lesson(R.string.lesson_letter_h, R.raw.h),
+            new Lesson(R.string.lesson_letter_i, R.raw.i),
+            new Lesson(R.string.lesson_letter_j, R.raw.j),
+            new Lesson(R.string.lesson_letter_k, R.raw.k),
+            new Lesson(R.string.lesson_letter_l, R.raw.l),
+            new Lesson(R.string.lesson_letter_m, R.raw.m),
+            new Lesson(R.string.lesson_letter_n, R.raw.n),
+            new Lesson(R.string.lesson_letter_enye, R.raw.enye),
+            new Lesson(R.string.lesson_letter_ng, R.raw.ng),
+            new Lesson(R.string.lesson_letter_o, R.raw.o),
+            new Lesson(R.string.lesson_letter_p, R.raw.p),
+            new Lesson(R.string.lesson_letter_q, R.raw.q),
+            new Lesson(R.string.lesson_letter_r, R.raw.r),
+            new Lesson(R.string.lesson_letter_s, R.raw.s),
+            new Lesson(R.string.lesson_letter_t, R.raw.t),
+            new Lesson(R.string.lesson_letter_u, R.raw.u),
+            new Lesson(R.string.lesson_letter_v, R.raw.v),
+            new Lesson(R.string.lesson_letter_w, R.raw.w),
+            new Lesson(R.string.lesson_letter_x, R.raw.x),
+            new Lesson(R.string.lesson_letter_y, R.raw.y),
+            new Lesson(R.string.lesson_letter_z, R.raw.z)
     };
 
     // chapter2  - basic greetings
     public static final Lesson[] CHAPTER2 = new Lesson[]{
-            new Lesson("Hello", R.raw.hello),
-            new Lesson("How are you?", R.raw.howareyou),
-            new Lesson("Sorry", R.raw.sorry),
-            new Lesson("Thank you (Formal)", R.raw.thankyouf), // thank you (formal)
-            new Lesson("Thank you (Informal)", R.raw.thankyouin), // thank you (informal)
-
+            new Lesson(R.string.lesson_greeting_hello, R.raw.hello),
+            new Lesson(R.string.lesson_greeting_how_are_you, R.raw.howareyou),
+            new Lesson(R.string.lesson_greeting_sorry, R.raw.sorry),
+            new Lesson(R.string.lesson_greeting_thank_you_formal, R.raw.thankyouf),
+            new Lesson(R.string.lesson_greeting_thank_you_informal, R.raw.thankyouin),
     };
 
     // chapter3  - numbers
     public static final Lesson[] CHAPTER3 = new Lesson[]{
-            new Lesson("Number 1", R.raw.one),
-            new Lesson("Number 2", R.raw.two),
-            new Lesson("Number 3", R.raw.three),
-            new Lesson("Number 4", R.raw.four),
-            new Lesson("Number 5", R.raw.five),
-            new Lesson("Number 6", R.raw.six),
-            new Lesson("Number 7", R.raw.seven),
-            new Lesson("Number 8", R.raw.eight),
-            new Lesson("Number 9", R.raw.nine),
-            new Lesson("Number 10", R.raw.ten)
+            new Lesson(R.string.lesson_number_1, R.raw.one),
+            new Lesson(R.string.lesson_number_2, R.raw.two),
+            new Lesson(R.string.lesson_number_3, R.raw.three),
+            new Lesson(R.string.lesson_number_4, R.raw.four),
+            new Lesson(R.string.lesson_number_5, R.raw.five),
+            new Lesson(R.string.lesson_number_6, R.raw.six),
+            new Lesson(R.string.lesson_number_7, R.raw.seven),
+            new Lesson(R.string.lesson_number_8, R.raw.eight),
+            new Lesson(R.string.lesson_number_9, R.raw.nine),
+            new Lesson(R.string.lesson_number_10, R.raw.ten)
     };
 
     // chapter4 - questions
     public static final Lesson[] CHAPTER4 = new Lesson[]{
-            new Lesson("What", R.raw.what),
-            new Lesson("When", R.raw.when),
-            new Lesson("Where", R.raw.where),
-            new Lesson("Which", R.raw.which),
-            new Lesson("Who", R.raw.who),
-            new Lesson("Why", R.raw.why),
-            new Lesson("How", R.raw.how),
-
+            new Lesson(R.string.lesson_question_what, R.raw.what),
+            new Lesson(R.string.lesson_question_when, R.raw.when),
+            new Lesson(R.string.lesson_question_where, R.raw.where),
+            new Lesson(R.string.lesson_question_which, R.raw.which),
+            new Lesson(R.string.lesson_question_who, R.raw.who),
+            new Lesson(R.string.lesson_question_why, R.raw.why),
+            new Lesson(R.string.lesson_question_how, R.raw.how),
     };
 
     // chapter5 - days of the week
     public static final Lesson[] CHAPTER5 = new Lesson[]{
-            new Lesson("Monday", R.raw.monday),
-            new Lesson("Tuesday", R.raw.tuesday),
-            new Lesson("Wednesday", R.raw.wednesday),
-            new Lesson("Thursday", R.raw.thursday),
-            new Lesson("Friday", R.raw.friday),
-            new Lesson("Saturday", R.raw.saturday),
-            new Lesson("Sunday", R.raw.sunday),
-
+            new Lesson(R.string.lesson_day_monday, R.raw.monday),
+            new Lesson(R.string.lesson_day_tuesday, R.raw.tuesday),
+            new Lesson(R.string.lesson_day_wednesday, R.raw.wednesday),
+            new Lesson(R.string.lesson_day_thursday, R.raw.thursday),
+            new Lesson(R.string.lesson_day_friday, R.raw.friday),
+            new Lesson(R.string.lesson_day_saturday, R.raw.saturday),
+            new Lesson(R.string.lesson_day_sunday, R.raw.sunday),
     };
 }
