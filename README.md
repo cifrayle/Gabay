@@ -13,7 +13,7 @@ Gabay (Tagalog for "Guide") is an award-winning Android-based educational platfo
 ## Key Features
 - **Real-time FSL Recognition:** Instant translation of hand signs using the device camera.
 
-- **Interactive Lessons:** Structured curriculum for learning FSL alphabet, common phrases, and grammar.
+- **Interactive Lessons:** Structured curriculum for learning FSL alphabet, common phrases, and greetings.
 
 - **Progress Tracking:** Quiz modules to assess user mastery of signs.
 
